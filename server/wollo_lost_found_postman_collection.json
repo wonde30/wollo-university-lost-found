@@ -1,0 +1,1117 @@
+{
+  "info": {
+    "name": "Wollo University - Lost & Found Management Platform API",
+    "_postman_id": "wu-lost-found-api-v1-postman-collection",
+    "description": "Complete production-ready Postman collection for the Wollo University Lost and Found API (Laravel 13 + PHP 8.4 + Sanctum Bearer/SPA authentication). Includes automated token extraction tests, pre-populated variables, and full test assertions for all 89 API endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@wu.edu.et",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "Admin@Wollo2026!",
+      "type": "string"
+    },
+    {
+      "key": "staffEmail",
+      "value": "security.dessie@wu.edu.et",
+      "type": "string"
+    },
+    {
+      "key": "staffPassword",
+      "value": "Staff@Dessie2026!",
+      "type": "string"
+    },
+    {
+      "key": "studentEmail",
+      "value": "student.wollo@wu.edu.et",
+      "type": "string"
+    },
+    {
+      "key": "studentPassword",
+      "value": "Student@Wollo2026!",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "claimId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "returnId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "referenceCode",
+      "value": "WU-ABC12345",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01. Auth & Verification",
+      "item": [
+        {
+          "name": "Register Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.token) {",
+                  "        pm.collectionVariables.set('authToken', jsonData.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Abebe Bikila\",\n  \"university_id\": \"WU/12345/16\",\n  \"email\": \"student.wollo@wu.edu.et\",\n  \"password\": \"Student@Wollo2026!\",\n  \"password_confirmation\": \"Student@Wollo2026!\",\n  \"phone\": \"+251911223344\",\n  \"department_id\": 13\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Verify Email OTP",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.wollo@wu.edu.et\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-email"]
+            }
+          }
+        },
+        {
+          "name": "Resend Verification OTP",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.wollo@wu.edu.et\",\n  \"type\": \"email_verification\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/resend-verification",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "resend-verification"]
+            }
+          }
+        },
+        {
+          "name": "Login - Admin (Sets Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('authToken', jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"device_name\": \"Postman_Admin_Console\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Staff (Security Office)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('authToken', jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{staffEmail}}\",\n  \"password\": \"{{staffPassword}}\",\n  \"device_name\": \"Postman_Staff_Console\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('authToken', jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{studentEmail}}\",\n  \"password\": \"{{studentPassword}}\",\n  \"device_name\": \"Postman_Student_Client\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Authenticated User Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password Request",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.wollo@wu.edu.et\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Verify Password Reset OTP",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.wollo@wu.edu.et\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-password-reset",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-password-reset"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.wollo@wu.edu.et\",\n  \"otp\": \"123456\",\n  \"password\": \"Student@Wollo2026New!\",\n  \"password_confirmation\": \"Student@Wollo2026New!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Public Discovery (Zero PII)",
+      "item": [
+        {
+          "name": "Public Search Found Items",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/public/items?query=Samsung&category_id=1&per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "items"],
+              "query": [
+                { "key": "query", "value": "Samsung" },
+                { "key": "category_id", "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Public Item Detail",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/public/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "items", "{{itemId}}"]
+            }
+          }
+        },
+        {
+          "name": "Public Categories List",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/public/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Public Locations List",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/public/locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "locations"]
+            }
+          }
+        },
+        {
+          "name": "Track Item by Reference Code",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/public/track/{{referenceCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "track", "{{referenceCode}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Items Management",
+      "item": [
+        {
+          "name": "List Authenticated User Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/items?type=lost&status=lost&per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["items"],
+              "query": [
+                { "key": "type", "value": "lost" },
+                { "key": "status", "value": "lost" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Report Lost Item (Store Lost)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set('itemId', jsonData.data.id);",
+                  "    }",
+                  "    if (jsonData.data && jsonData.data.reference_code) {",
+                  "        pm.collectionVariables.set('referenceCode', jsonData.data.reference_code);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black HP Laptop in Blue Bag\",\n  \"description\": \"HP Pavilion 15 with Intel Core i7 sticker left on the library 2nd floor desk.\",\n  \"category_id\": 1,\n  \"campus_id\": 1,\n  \"location_id\": 2,\n  \"location_detail\": \"Table #14 near the window\",\n  \"brand\": \"HP\",\n  \"color\": \"Black\",\n  \"serial_number\": \"CND7123XYZ\",\n  \"incident_date\": \"2026-08-16\",\n  \"incident_time\": \"14:30:00\",\n  \"estimated_value\": 45000.00,\n  \"is_high_value\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items/lost",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "lost"]
+            }
+          }
+        },
+        {
+          "name": "Report Found Item (Store Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set('itemId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Found Leather Wallet with ID Card\",\n  \"description\": \"Brown leather wallet containing Wollo University student ID card and some cash.\",\n  \"category_id\": 6,\n  \"campus_id\": 1,\n  \"location_id\": 4,\n  \"held_at\": \"security_office\",\n  \"storage_location_id\": 1,\n  \"incident_date\": \"2026-08-16\",\n  \"incident_time\": \"10:15:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items/found",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "found"]
+            }
+          }
+        },
+        {
+          "name": "Get Item Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "{{itemId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Item Report",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black HP Pavilion Laptop (Updated Details)\",\n  \"description\": \"Includes charger and black mouse inside the front pocket.\",\n  \"color\": \"Matte Black\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "{{itemId}}"]
+            }
+          }
+        },
+        {
+          "name": "Change Item Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"withdrawn\",\n  \"reason\": \"Item found independently by owner\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/items/{{itemId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "{{itemId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Item (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "{{itemId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Claims & Verification",
+      "item": [
+        {
+          "name": "List Claims",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/claims?status=pending&per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims"],
+              "query": [
+                { "key": "status", "value": "pending" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Claim on Found Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set('claimId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": {{itemId}},\n  \"explanation\": \"This is my brown wallet. It has my student ID card with ID WU/12345/16 and a photo on the inside sleeve.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/claims",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims"]
+            }
+          }
+        },
+        {
+          "name": "Get Claim Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/claims/{{claimId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims", "{{claimId}}"]
+            }
+          }
+        },
+        {
+          "name": "Staff: Approve Claim (Auto-rejects competitors)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"review_note\": \"Claimant provided exact ID card number matching the item contents in Security Office custody.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/claims/{{claimId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims", "{{claimId}}", "review"]
+            }
+          }
+        },
+        {
+          "name": "Staff: Reject Claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\",\n  \"review_note\": \"Claimant descriptions did not match item contents.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/claims/{{claimId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims", "{{claimId}}", "review"]
+            }
+          }
+        },
+        {
+          "name": "Admin: Reverse Claim Approval (Dispute Reversal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"review_note\": \"Approval reversed upon investigation of disputed ownership. Reopening item for review.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/claims/{{claimId}}/reverse",
+              "host": ["{{baseUrl}}"],
+              "path": ["claims", "{{claimId}}", "reverse"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Physical Custody & Storage",
+      "item": [
+        {
+          "name": "List Custody Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/custody?per_page=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["custody"],
+              "query": [
+                { "key": "per_page", "value": "15" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Custody Deposit / Intake",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": {{itemId}},\n  \"storage_location_id\": 1,\n  \"event_type\": \"deposited\",\n  \"condition\": \"good\",\n  \"notes\": \"Item intake verified at Dessie Security Office counter.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/custody",
+              "host": ["{{baseUrl}}"],
+              "path": ["custody"]
+            }
+          }
+        },
+        {
+          "name": "Move Item in Storage",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"storage_location_id\": 2,\n  \"notes\": \"Transferred to secure electronics cabinet #B\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/custody/items/{{itemId}}/move",
+              "host": ["{{baseUrl}}"],
+              "path": ["custody", "items", "{{itemId}}", "move"]
+            }
+          }
+        },
+        {
+          "name": "List Storage Locations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/custody/storage-locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["custody", "storage-locations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Physical Returns & Handover",
+      "item": [
+        {
+          "name": "List Physical Returns",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/returns?per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["returns"],
+              "query": [
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Physical Return Handover",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set('returnId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"claim_id\": {{claimId}},\n  \"item_id\": {{itemId}},\n  \"returned_to\": 1,\n  \"storage_location_id\": 1,\n  \"return_date\": \"2026-08-17\",\n  \"return_time\": \"11:00:00\",\n  \"condition_on_return\": \"good\",\n  \"notes\": \"Physical handover completed in Security Office upon signature and ID card verification.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/returns",
+              "host": ["{{baseUrl}}"],
+              "path": ["returns"]
+            }
+          }
+        },
+        {
+          "name": "Get Return Record Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/returns/{{returnId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["returns", "{{returnId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Notifications & Preferences",
+      "item": [
+        {
+          "name": "List User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?per_page=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/1/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "1", "read"]
+            }
+          }
+        },
+        {
+          "name": "Mark All Notifications as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            }
+          }
+        },
+        {
+          "name": "Get Notification Preferences",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "preferences"]
+            }
+          }
+        },
+        {
+          "name": "Update Notification Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"preferences\": [\n    {\n      \"channel\": \"email\",\n      \"notification_type\": \"claim_approved\",\n      \"is_enabled\": true\n    },\n    {\n      \"channel\": \"database\",\n      \"notification_type\": \"match_found\",\n      \"is_enabled\": true\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "preferences"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Admin Control Panel",
+      "item": [
+        {
+          "name": "Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard", "statistics"]
+            }
+          }
+        },
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?role=student&per_page=15",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"],
+              "query": [
+                { "key": "role", "value": "student" },
+                { "key": "per_page", "value": "15" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Role (FR-09 Admin Only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"staff\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/1/role",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "1", "role"]
+            }
+          }
+        },
+        {
+          "name": "Toggle User Active Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/1/toggle-active",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "1", "toggle-active"]
+            }
+          }
+        },
+        {
+          "name": "List System Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Update System Setting",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": \"90\",\n  \"description\": \"Updated auto-expiry threshold in days\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/settings/item_expiry_days",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "settings", "item_expiry_days"]
+            }
+          }
+        },
+        {
+          "name": "Generate Operational Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_type\": \"item_list\",\n  \"format\": \"csv\",\n  \"campus_id\": 1,\n  \"start_date\": \"2026-08-01\",\n  \"end_date\": \"2026-08-31\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/reports/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "reports", "generate"]
+            }
+          }
+        },
+        {
+          "name": "List Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/audit-logs?per_page=25",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "audit-logs"],
+              "query": [
+                { "key": "per_page", "value": "25" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export Audit Logs CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "text/csv" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/audit-logs/export",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "audit-logs", "export"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

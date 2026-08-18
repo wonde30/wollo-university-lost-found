@@ -1,0 +1,28 @@
+* text=auto eol=lf
+
+# Diff drivers
+*.php diff=php
+*.js diff=javascript
+*.json diff=json
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.vue diff=html
+
+# Ignore Blade in GitHub language statistics
+*.blade.php linguist-detectable=false
+
+# Generated files
+composer.lock linguist-generated=true
+package-lock.json linguist-generated=true
+pnpm-lock.yaml linguist-generated=true
+yarn.lock linguist-generated=true
+
+# Minified assets
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+
+# Export ignore
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore

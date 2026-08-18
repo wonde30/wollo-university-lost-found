@@ -1,0 +1,28 @@
+/* src/assets/styles/glass.css */
+:root {
+    --wu-primary: #0F5132;       /* Institutional Forest Green */
+    --wu-gold: #D4AF37;          /* Heritage Gold */
+    --wu-bg-dark: #0B130E;       /* Deep obsidian surface */
+    --wu-surface: rgba(18, 30, 23, 0.7);
+    --wu-border: rgba(212, 175, 55, 0.15);
+}
+
+.glass-card {
+    background: var(--wu-surface);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--wu-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-dropdown {
+    background: rgba(15, 25, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gold-gradient-text {
+    background: linear-gradient(135deg, #F6E05E 0%, #D4AF37 50%, #B7791F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
