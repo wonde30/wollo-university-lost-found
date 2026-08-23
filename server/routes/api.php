@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\LogoutController;
+use App\Http\Controllers\Api\V1\Auth\PasswordController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Auth\VerificationController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Api\V1\Admin\SystemSettingController as AdminSystemSett
 use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\V1\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -43,7 +45,7 @@ Route::prefix('v1')->group(function (): void {
     */
     Route::prefix('auth')->group(function (): void {
         Route::post('/register', [RegisterController::class, 'register']);
-        Route::post('/login', [LoginController::class, 'login']);
+        Route::post('/login', [LoginController::class, 'login'])->name('login');
         Route::post('/verify-email', [VerificationController::class, 'verify']);
         Route::post('/resend-verification', [VerificationController::class, 'resend']);
         Route::post('/forgot-password', [PasswordResetController::class, 'request']);
@@ -70,7 +72,12 @@ Route::prefix('v1')->group(function (): void {
         Route::prefix('auth')->group(function (): void {
             Route::get('/me', [LoginController::class, 'me']);
             Route::post('/logout', [LogoutController::class, 'logout']);
+            Route::put('/password', [PasswordController::class, 'change']);
         });
+
+        // Profile
+        Route::put('/profile', [ProfileController::class, 'update']);
+        Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar']);
 
         // Student / User Items (FR-10)
         Route::prefix('items')->group(function (): void {
@@ -137,6 +144,7 @@ Route::prefix('v1')->group(function (): void {
         Route::prefix('admin')->middleware('role:admin')->group(function (): void {
             Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
             Route::apiResource('campuses', AdminCampusController::class);
+            Route::patch('/campuses/{id}/restore', [AdminCampusController::class, 'restore']);
             Route::apiResource('departments', AdminDepartmentController::class);
             Route::apiResource('categories', AdminCategoryController::class);
             Route::apiResource('locations', AdminLocationController::class);

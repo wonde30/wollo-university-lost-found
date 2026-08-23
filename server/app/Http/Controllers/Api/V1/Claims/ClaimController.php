@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Claims;
 
+use App\Events\ClaimSubmitted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Claims\StoreClaimRequest;
 use App\Http\Resources\Api\V1\ClaimResource;
@@ -119,6 +120,9 @@ class ClaimController extends Controller
                 'item_id' => ['You have already submitted an active claim for this item.'],
             ]);
         }
+
+        // Fire event — listeners deliver notifications to claimant & item reporter
+        ClaimSubmitted::dispatch($claim);
 
         return response()->json([
             'message' => 'Claim submitted successfully.',

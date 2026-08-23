@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Claims;
 
+use App\Events\ClaimApproved;
+use App\Events\ClaimRejected;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Claims\ClaimReviewRequest;
 use App\Http\Resources\Api\V1\ClaimResource;
@@ -136,6 +138,13 @@ class ClaimReviewController extends Controller
         });
 
         $claim = Claim::with(['item', 'claimant', 'reviewer'])->findOrFail($id);
+
+        // Fire notification event AFTER the transaction so the claim is fully committed
+        if ($status === 'approved') {
+            ClaimApproved::dispatch($claim);
+        } else {
+            ClaimRejected::dispatch($claim);
+        }
 
         return response()->json([
             'message' => "Claim {$status} successfully.",

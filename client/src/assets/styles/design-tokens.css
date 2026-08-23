@@ -1,0 +1,122 @@
+/**
+ * Wollo University Lost & Found System
+ * Enterprise Design Tokens 
+ * Research-based institutional color palette and design system tokens
+ */
+
+:root {
+  /* ==========================================================================
+     Color System (Research-grounded Institutional Palette)
+     ========================================================================== */
+
+  /* Primary: Wollo University Institutional Forest Green */
+  --wu-primary-50: #eef7f2;
+  --wu-primary-100: #d5eedf;
+  --wu-primary-200: #aedec3;
+  --wu-primary-300: #7dc6a1;
+  --wu-primary-400: #4da97f;
+  --wu-primary-500: #198754;
+  --wu-primary-600: #146c43;
+  --wu-primary-700: #0f5132; /* Primary Brand Core */
+  --wu-primary-800: #0b3822; /* Primary Dark / Active */
+  --wu-primary-900: #072516; /* Primary Deep */
+  --wu-primary-950: #03140b;
+
+  /* Secondary: Ethiopian Warm Gold / Amber Accent */
+  --wu-gold-50: #fbf8eb;
+  --wu-gold-100: #f7edcb;
+  --wu-gold-200: #eedda1;
+  --wu-gold-300: #e2c66d;
+  --wu-gold-400: #d4af37; /* Metallic Gold Accent */
+  --wu-gold-500: #b7791f; /* Warm Amber */
+  --wu-gold-600: #996515;
+  --wu-gold-700: #7b4f10;
+  --wu-gold-800: #5d3a0c;
+  --wu-gold-900: #3f2508;
+
+  /* Neutrals: Deep Slate / High-Contrast Surfaces */
+  --wu-slate-50: #f8fafc;
+  --wu-slate-100: #f1f5f9;
+  --wu-slate-200: #e2e8f0;
+  --wu-slate-300: #cbd5e1;
+  --wu-slate-400: #94a3b8;
+  --wu-slate-500: #64748b;
+  --wu-slate-600: #475569;
+  --wu-slate-700: #334155;
+  --wu-slate-800: #1e293b;
+  --wu-slate-900: #0f172a;
+  --wu-slate-950: #080c14;
+
+  /* Semantic Feedback */
+  --wu-success-50: #ecfdf5;
+  --wu-success-500: #10b981;
+  --wu-success-600: #059669;
+  --wu-success-700: #047857;
+
+  --wu-warning-50: #fffbeb;
+  --wu-warning-500: #f59e0b;
+  --wu-warning-600: #d97706;
+  --wu-warning-700: #b45309;
+
+  --wu-danger-50: #fff1f2;
+  --wu-danger-500: #f43f5e;
+  --wu-danger-600: #e11d48;
+  --wu-danger-700: #be123c;
+
+  --wu-info-50: #eff6ff;
+  --wu-info-500: #3b82f6;
+  --wu-info-600: #2563eb;
+  --wu-info-700: #1d4ed8;
+
+  /* ==========================================================================
+     Typography
+     ========================================================================== */
+  --wu-font-sans: 'Inter', 'Outfit', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Nyala', 'Abyssinica SIL', sans-serif;
+  --wu-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Typography Scale */
+  --wu-text-xs: 0.75rem;     /* 12px */
+  --wu-text-sm: 0.875rem;    /* 14px */
+  --wu-text-base: 1rem;      /* 16px */
+  --wu-text-lg: 1.125rem;    /* 18px */
+  --wu-text-xl: 1.25rem;     /* 20px */
+  --wu-text-2xl: 1.5rem;     /* 24px */
+  --wu-text-3xl: 1.875rem;   /* 30px */
+  --wu-text-4xl: 2.25rem;    /* 36px */
+
+  /* ==========================================================================
+     Spacing & Layout
+     ========================================================================== */
+  --wu-space-1: 0.25rem;   /* 4px */
+  --wu-space-2: 0.5rem;    /* 8px */
+  --wu-space-3: 0.75rem;   /* 12px */
+  --wu-space-4: 1rem;      /* 16px */
+  --wu-space-5: 1.25rem;   /* 20px */
+  --wu-space-6: 1.5rem;    /* 24px */
+  --wu-space-8: 2rem;      /* 32px */
+  --wu-space-10: 2.5rem;   /* 40px */
+  --wu-space-12: 3rem;     /* 48px */
+  --wu-space-16: 4rem;     /* 64px */
+
+  /* Border Radii */
+  --wu-radius-sm: 0.375rem;  /* 6px */
+  --wu-radius-md: 0.5rem;    /* 8px */
+  --wu-radius-lg: 0.75rem;   /* 12px */
+  --wu-radius-xl: 1rem;      /* 16px */
+  --wu-radius-2xl: 1.25rem;  /* 20px */
+  --wu-radius-full: 9999px;
+
+  /* Shadows (Elevations) */
+  --wu-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --wu-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
+  --wu-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
+  --wu-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
+  --wu-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+  --wu-shadow-gold: 0 4px 14px 0 rgba(212, 175, 55, 0.3);
+  --wu-shadow-green: 0 4px 14px 0 rgba(15, 81, 50, 0.3);
+
+  /* Transitions */
+  --wu-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --wu-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --wu-transition-smooth: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}

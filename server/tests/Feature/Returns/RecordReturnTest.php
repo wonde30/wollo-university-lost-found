@@ -10,7 +10,6 @@ use App\Models\Location;
 use App\Models\StorageLocation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class RecordReturnTest extends TestCase
@@ -47,7 +46,7 @@ class RecordReturnTest extends TestCase
             'explanation' => 'My personal black Samsung phone with transparent protective case',
         ]);
 
-        Sanctum::actingAs($staff);
+        $this->actingAs($staff);
 
         $response = $this->postJson('/api/v1/returns', [
             'item_id' => $item->id,

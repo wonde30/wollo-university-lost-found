@@ -8,11 +8,16 @@ class NotificationPreferenceService
 {
     public function isEnabled(int $userId, string $type, string $channel = 'email'): bool
     {
-        $pref = NotificationPreference::where('user_id', $userId)
-            ->where('channel', $channel)
-            ->where('notification_type', $type)
-            ->first();
+        $pref = NotificationPreference::where('user_id', $userId)->first();
+        if (! $pref) {
+            return true;
+        }
 
-        return $pref ? (bool)$pref->is_enabled : true;
+        $column = 'email_on_' . $type;
+        if (isset($pref->$column)) {
+            return (bool) $pref->$column;
+        }
+
+        return true;
     }
 }

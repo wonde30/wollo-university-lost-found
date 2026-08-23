@@ -35,6 +35,8 @@ class PasswordResetController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
+        \App\Jobs\SendPasswordResetOtp::dispatch($user, $code);
+
         return response()->json([
             'message' => 'Password reset OTP has been sent to your email.',
         ]);

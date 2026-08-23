@@ -12,7 +12,7 @@ class SystemSettingPolicy
         return true;
     }
 
-    public function update(User $user, SystemSetting $setting): bool
+    public function update(User $user, ?SystemSetting $setting = null): bool
     {
         return $user->isAdmin();
     }

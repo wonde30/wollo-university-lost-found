@@ -1,8 +1,12 @@
 # Environment
 .env
 .env.*
+!.env.example
 server/.env
+!server/.env.example
 client/.env
+!client/.env.example
+
 
 # Dependencies
 server/vendor/

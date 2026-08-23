@@ -12,6 +12,7 @@ class CustodyEventResource extends JsonResource
         return [
             'id' => $this->id,
             'item_id' => $this->item_id,
+            'storage_location_id' => $this->storage_location_id,
             'event_type' => $this->event_type instanceof \BackedEnum ? $this->event_type->value : (string) $this->event_type,
             'condition' => $this->condition,
             'notes' => $this->notes,

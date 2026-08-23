@@ -26,7 +26,11 @@ class StorageLocationController extends Controller
     public function store(StoreStorageLocationRequest $request): JsonResponse
     {
         $this->authorize('create', StorageLocation::class);
-        $location = StorageLocation::create($request->validated());
+        $validated = $request->validated();
+        if (empty($validated['code'])) {
+            $validated['code'] = 'SL-' . strtoupper(substr(uniqid(), -6));
+        }
+        $location = StorageLocation::create($validated);
 
         return response()->json([
             'message' => 'Storage location created successfully',

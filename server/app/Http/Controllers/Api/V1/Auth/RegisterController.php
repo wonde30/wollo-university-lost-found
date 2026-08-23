@@ -60,6 +60,8 @@ class RegisterController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
+            \App\Jobs\SendRegistrationOtp::dispatch($user, $otp);
+
             return $user;
         });
 

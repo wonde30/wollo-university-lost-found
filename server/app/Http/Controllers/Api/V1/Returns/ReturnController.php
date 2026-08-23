@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Returns;
 
+use App\Events\ItemReturned;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Returns\StoreReturnRequest;
 use App\Http\Resources\Api\V1\ReturnResource;
@@ -142,6 +143,9 @@ class ReturnController extends Controller
 
             return $returnRecord;
         });
+
+        // Fire event — listener notifies claimant of the physical handover
+        ItemReturned::dispatch($return);
 
         return response()->json([
             'message' => 'Physical return recorded successfully.',

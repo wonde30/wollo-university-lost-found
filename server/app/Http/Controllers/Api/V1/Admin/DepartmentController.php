@@ -26,7 +26,12 @@ class DepartmentController extends Controller
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
         $this->authorize('create', Department::class);
-        $dept = Department::create($request->validated());
+        $validated = $request->validated();
+        if (empty($validated['short_code'])) {
+            $validated['short_code'] = $validated['code'] ?? strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $validated['name']), 0, 6));
+        }
+        unset($validated['code']);
+        $dept = Department::create($validated);
 
         return response()->json([
             'message' => 'Department created successfully',

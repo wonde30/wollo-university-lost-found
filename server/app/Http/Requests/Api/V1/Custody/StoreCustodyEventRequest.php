@@ -16,7 +16,8 @@ class StoreCustodyEventRequest extends FormRequest
         return [
             'item_id' => ['required', 'integer', 'exists:items,id'],
             'storage_location_id' => ['nullable', 'integer', 'exists:storage_locations,id'],
-            'event_type' => ['required', 'string', 'in:checked_in,moved,checked_out,transferred,audited'],
+            'event_type' => ['required', 'string', 'in:deposited,transferred,inspected,released,disposed'],
+            'condition' => ['nullable', 'string', 'in:excellent,good,fair,damaged,poor,unknown'],
             'notes' => ['nullable', 'string'],
             'custody_proof_url' => ['nullable', 'string'],
         ];

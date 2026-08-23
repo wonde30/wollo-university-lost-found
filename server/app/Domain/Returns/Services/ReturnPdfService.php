@@ -8,7 +8,7 @@ class ReturnPdfService
 {
     public function generateAcknowledgementPdf(ReturnRecord $record): string
     {
-        $path = 'return-documents/' . $record->return_reference . '.pdf';
+        $path = 'return-documents/return_' . $record->id . '_' . uniqid() . '.pdf';
         return $path;
     }
 }

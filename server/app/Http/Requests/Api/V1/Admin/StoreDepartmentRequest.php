@@ -16,9 +16,18 @@ class StoreDepartmentRequest extends FormRequest
         return [
             'campus_id' => ['required', 'integer', 'exists:campuses,id'],
             'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:50', 'unique:departments,code'],
+            'short_code' => ['nullable', 'string', 'max:50'],
+            'code' => ['nullable', 'string', 'max:50'],
+            'type' => ['nullable', 'string', 'in:college,school,institute,department,office'],
             'description' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        if (empty($this->short_code) && !empty($this->code)) {
+            $this->merge(['short_code' => $this->code]);
+        }
     }
 }

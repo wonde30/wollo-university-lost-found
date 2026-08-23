@@ -8,7 +8,6 @@ use App\Models\Location;
 use App\Models\StorageLocation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CreateFoundItemTest extends TestCase
@@ -18,7 +17,7 @@ class CreateFoundItemTest extends TestCase
     public function test_staff_can_register_found_item_into_storage(): void
     {
         $user = User::factory()->staff()->create();
-        Sanctum::actingAs($user);
+        $this->actingAs($user);
 
         $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
         $location = Location::create(['campus_id' => $campus->id, 'name' => 'Cafeteria', 'code' => 'LOC-CAF-01', 'zone' => 'cafeteria']);

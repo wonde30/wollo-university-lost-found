@@ -41,11 +41,12 @@ class VerificationController extends Controller
     {
         $user = User::where('email', $request->email)->firstOrFail();
 
+        $type = $request->input('type', 'email_verification');
         $code = (string) rand(100000, 999999);
         AuthVerification::create([
             'user_id' => $user->id,
             'email' => $user->email,
-            'type' => $request->input('type', 'email_verification'),
+            'type' => $type,
             'code' => $code,
             'token' => \Illuminate\Support\Facades\Hash::make($code),
             'attempts' => 1,
@@ -53,6 +54,12 @@ class VerificationController extends Controller
             'expires_at' => now()->addMinutes(15),
             'ip_address' => $request->ip(),
         ]);
+
+        if ($type === 'password_reset') {
+            \App\Jobs\SendPasswordResetOtp::dispatch($user, $code);
+        } else {
+            \App\Jobs\SendRegistrationOtp::dispatch($user, $code);
+        }
 
         return response()->json([
             'message' => __('auth.otp_sent'),

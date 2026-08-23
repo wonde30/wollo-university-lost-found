@@ -14,10 +14,14 @@ class UpdateNotificationPreferencesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'preferences' => ['required', 'array'],
-            'preferences.*.channel' => ['required', 'string', 'in:email,database,sms,push'],
-            'preferences.*.notification_type' => ['required', 'string'],
-            'preferences.*.is_enabled' => ['required', 'boolean'],
+            'email_on_report_submitted' => ['sometimes', 'boolean'],
+            'email_on_match_found' => ['sometimes', 'boolean'],
+            'email_on_claim_received' => ['sometimes', 'boolean'],
+            'email_on_claim_decided' => ['sometimes', 'boolean'],
+            'email_on_item_returned' => ['sometimes', 'boolean'],
+            'email_on_expiry_warning' => ['sometimes', 'boolean'],
+            'email_on_item_expired' => ['sometimes', 'boolean'],
+            'email_on_system_announcements' => ['sometimes', 'boolean'],
         ];
     }
 }

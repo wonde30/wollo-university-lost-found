@@ -13,10 +13,7 @@ class CategoryController extends Controller
 {
     public function index(): JsonResponse
     {
-        $categories = Category::with('children')
-            ->whereNull('parent_id')
-            ->where('is_active', true)
-            ->get();
+        $categories = Category::where('is_active', true)->get();
 
         return response()->json([
             'data' => CategoryResource::collection($categories),

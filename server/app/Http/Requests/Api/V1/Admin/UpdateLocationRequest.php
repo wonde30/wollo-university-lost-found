@@ -13,9 +13,12 @@ class UpdateLocationRequest extends FormRequest
 
     public function rules(): array
     {
+        $locationId = $this->route('location');
+        
         return [
             'campus_id' => ['sometimes', 'required', 'integer', 'exists:campuses,id'],
             'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'code' => ['sometimes', 'required', 'string', 'max:40', 'unique:locations,code,' . $locationId],
             'building' => ['nullable', 'string', 'max:255'],
             'floor' => ['nullable', 'string', 'max:50'],
             'room_number' => ['nullable', 'string', 'max:50'],

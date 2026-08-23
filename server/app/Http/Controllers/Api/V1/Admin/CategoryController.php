@@ -16,7 +16,7 @@ class CategoryController extends Controller
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', Category::class);
-        $categories = Category::with(['parent', 'children'])->withCount('items')->get();
+        $categories = Category::withCount('items')->get();
 
         return response()->json([
             'data' => CategoryResource::collection($categories),
@@ -36,7 +36,7 @@ class CategoryController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $category = Category::with(['parent', 'children'])->withCount('items')->findOrFail($id);
+        $category = Category::withCount('items')->findOrFail($id);
         $this->authorize('view', $category);
 
         return response()->json([

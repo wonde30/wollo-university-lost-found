@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1\Items;
 
+use App\Events\ItemReported;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Items\StoreFoundItemRequest;
 use App\Http\Requests\Api\V1\Items\StoreLostItemRequest;
@@ -119,6 +120,9 @@ class ItemController extends Controller
 
         $item->load(['category', 'location', 'reporter', 'photos', 'tags']);
 
+        // Fire event — listener kicks off async match-suggestion generation
+        ItemReported::dispatch($item);
+
         return response()->json([
             'message' => 'Lost item report submitted successfully.',
             'data' => new ItemDetailResource($item),
@@ -195,6 +199,9 @@ class ItemController extends Controller
         });
 
         $item->load(['category', 'location', 'reporter', 'photos', 'tags']);
+
+        // Fire event — listener kicks off async match-suggestion generation
+        ItemReported::dispatch($item);
 
         return response()->json([
             'message' => 'Found item report submitted successfully.',

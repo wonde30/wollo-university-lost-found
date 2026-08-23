@@ -26,7 +26,15 @@ class CampusController extends Controller
     public function store(StoreCampusRequest $request): JsonResponse
     {
         $this->authorize('create', Campus::class);
-        $campus = Campus::create($request->validated());
+        $validated = $request->validated();
+        if (empty($validated['short_code'])) {
+            $validated['short_code'] = $validated['code'] ?? strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $validated['name']), 0, 5));
+        }
+        unset($validated['code']);
+        $validated['city'] = $validated['city'] ?? 'Dessie';
+        $validated['region'] = $validated['region'] ?? 'Amhara';
+
+        $campus = Campus::create($validated);
 
         return response()->json([
             'message' => 'Campus created successfully',
@@ -62,10 +70,27 @@ class CampusController extends Controller
         $campus = Campus::findOrFail($id);
         $this->authorize('delete', $campus);
 
-        $campus->delete();
+        // Soft delete: deactivate instead of hard delete
+        $campus->update(['is_active' => false]);
 
         return response()->json([
-            'message' => 'Campus deleted successfully',
-        ], JsonResponse::HTTP_NO_CONTENT);
+            'message' => 'Campus deactivated successfully',
+        ]);
+    }
+
+    /**
+     * Restore (reactivate) a deactivated campus.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $campus = Campus::findOrFail($id);
+        $this->authorize('update', $campus);
+
+        $campus->update(['is_active' => true]);
+
+        return response()->json([
+            'message' => 'Campus activated successfully',
+            'data' => new CampusResource($campus),
+        ]);
     }
 }

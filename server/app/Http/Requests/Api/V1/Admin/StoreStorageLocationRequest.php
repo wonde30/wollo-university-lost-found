@@ -15,12 +15,11 @@ class StoreStorageLocationRequest extends FormRequest
     {
         return [
             'campus_id' => ['required', 'integer', 'exists:campuses,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'building' => ['nullable', 'string', 'max:255'],
-            'room_number' => ['nullable', 'string', 'max:50'],
-            'shelf_cabinet_code' => ['nullable', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:100'],
+            'code' => ['nullable', 'string', 'max:30', 'unique:storage_locations,code'],
+            'description' => ['nullable', 'string', 'max:255'],
             'capacity' => ['nullable', 'integer', 'min:1'],
-            'status' => ['nullable', 'string', 'in:active,full,maintenance'],
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 }

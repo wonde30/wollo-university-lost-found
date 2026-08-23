@@ -25,9 +25,10 @@ class LoginTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
-                'token',
                 'user' => ['id', 'email', 'full_name', 'role'],
             ]);
+
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_user_cannot_login_with_invalid_password(): void

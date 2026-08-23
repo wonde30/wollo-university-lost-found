@@ -14,10 +14,14 @@ class StoreCampusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:50', 'unique:campuses,code'],
+            'name' => ['required', 'string', 'max:100', 'unique:campuses,name'],
+            'short_code' => ['nullable', 'string', 'max:10', 'unique:campuses,short_code'],
+            'code' => ['nullable', 'string', 'max:10'],
+            'city' => ['nullable', 'string', 'max:80'],
+            'region' => ['nullable', 'string', 'max:80'],
             'address' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'phone' => ['nullable', 'string'],
+            'email' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

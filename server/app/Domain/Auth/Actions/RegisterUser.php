@@ -4,6 +4,7 @@ namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\DTOs\RegisterUserData;
 use App\Domain\Auth\Services\OtpService;
+use App\Jobs\SendRegistrationOtp;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserDepartment;
@@ -44,6 +45,9 @@ class RegisterUser
             }
 
             $verification = $this->otpService->generateOtp($user, AuthVerificationType::EMAIL_VERIFICATION->value);
+
+            SendRegistrationOtp::dispatch($user, $verification->code);
+
             return [
                 'user' => $user->load(['profile', 'departments']),
                 'verification_code' => $verification->code,

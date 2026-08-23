@@ -8,7 +8,6 @@ use App\Models\Item;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CreateClaimTest extends TestCase
@@ -37,7 +36,7 @@ class CreateClaimTest extends TestCase
             'incident_date' => now(),
         ]);
 
-        Sanctum::actingAs($claimant);
+        $this->actingAs($claimant);
 
         $response = $this->postJson('/api/v1/claims', [
             'item_id' => $item->id,

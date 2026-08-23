@@ -30,7 +30,6 @@ class RegistrationTest extends TestCase
                 'message',
                 'data' => [
                     'user' => ['id', 'email', 'full_name', 'role'],
-                    'token',
                 ],
             ]);
 

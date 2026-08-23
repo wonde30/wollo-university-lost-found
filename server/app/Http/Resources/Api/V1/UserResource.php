@@ -15,6 +15,7 @@ class UserResource extends JsonResource
             'name' => $this->full_name,
             'university_id' => $this->university_id,
             'email' => $this->email,
+            'email_verified_at' => $this->email_verified_at?->toISOString(),
             'phone' => $this->phone,
             'role' => $this->role instanceof \BackedEnum ? $this->role->value : (string) $this->role,
             'language' => $this->language,

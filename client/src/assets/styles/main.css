@@ -1,2 +1,5 @@
 @import "tailwindcss";
+@import "./design-tokens.css";
+@import "./transitions.css";
 @import "./glass.css";
+@import "./utilities.css";

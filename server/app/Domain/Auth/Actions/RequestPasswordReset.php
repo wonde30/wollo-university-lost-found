@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\Services\OtpService;
+use App\Jobs\SendPasswordResetOtp;
 use App\Models\User;
 
 class RequestPasswordReset
@@ -13,6 +14,8 @@ class RequestPasswordReset
     public function execute(string $email): void
     {
         $user = User::where('email', $email)->firstOrFail();
-        $this->otpService->generateOtp($user, 'password_reset');
+        $verification = $this->otpService->generateOtp($user, 'password_reset');
+
+        SendPasswordResetOtp::dispatch($user, $verification->code);
     }
 }

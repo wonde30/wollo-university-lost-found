@@ -14,13 +14,23 @@ class NotificationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $notifications = Notification::where('user_id', $request->user()->id)
-            ->orderByDesc('created_at')
+        $userId = $request->user()->id;
+        $query = Notification::where('user_id', $userId);
+
+        if ($request->has('read')) {
+            $query->where('is_read', $request->boolean('read'));
+        }
+
+        if ($type = $request->query('type')) {
+            $query->where('type', $type);
+        }
+
+        $notifications = $query->orderByDesc('created_at')
             ->paginate($request->integer('per_page', 20));
 
         return response()->json([
             'data' => NotificationResource::collection($notifications),
-            'unread_count' => Notification::where('user_id', $request->user()->id)->whereNull('read_at')->count(),
+            'unread_count' => Notification::where('user_id', $userId)->where('is_read', false)->count(),
             'meta' => [
                 'current_page' => $notifications->currentPage(),
                 'last_page' => $notifications->lastPage(),

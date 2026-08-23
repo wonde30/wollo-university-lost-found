@@ -15,35 +15,26 @@ class NotificationPreferenceController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $prefs = NotificationPreference::where('user_id', $request->user()->id)->get();
+        $prefs = NotificationPreference::firstOrCreate(
+            ['user_id' => $request->user()->id]
+        );
 
         return response()->json([
-            'data' => NotificationPreferenceResource::collection($prefs),
+            'data' => new NotificationPreferenceResource($prefs),
         ]);
     }
 
     public function update(UpdateNotificationPreferencesRequest $request): JsonResponse
     {
-        $userId = $request->user()->id;
+        $prefs = NotificationPreference::firstOrCreate(
+            ['user_id' => $request->user()->id]
+        );
 
-        foreach ($request->validated('preferences') as $pref) {
-            NotificationPreference::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'channel' => $pref['channel'],
-                    'notification_type' => $pref['notification_type'],
-                ],
-                [
-                    'is_enabled' => $pref['is_enabled'],
-                ]
-            );
-        }
-
-        $all = NotificationPreference::where('user_id', $userId)->get();
+        $prefs->update($request->validated());
 
         return response()->json([
-            'message' => 'Notification preferences updated successfully',
-            'data' => NotificationPreferenceResource::collection($all),
+            'message' => 'Notification preferences updated successfully.',
+            'data' => new NotificationPreferenceResource($prefs->fresh()),
         ]);
     }
 }

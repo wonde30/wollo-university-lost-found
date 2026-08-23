@@ -12,7 +12,6 @@ use App\Models\User;
 use App\Support\Enums\UserRole;
 use App\Support\Services\AuditLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class RoleAndPermissionEnforcementTest extends TestCase
@@ -27,11 +26,11 @@ class RoleAndPermissionEnforcementTest extends TestCase
         $this->assertEquals(UserRole::STUDENT, $student->role);
 
         // Student cannot change own or other's role (FR-13 / FR-09)
-        Sanctum::actingAs($student);
+        $this->actingAs($student);
         $this->patchJson("/api/v1/admin/users/{$student->id}/role", ['role' => 'admin'])->assertStatus(403);
 
         // Admin can change user role (FR-09, FR-12)
-        Sanctum::actingAs($admin);
+        $this->actingAs($admin);
         $this->patchJson("/api/v1/admin/users/{$student->id}/role", ['role' => 'staff'])->assertOk();
         $this->assertEquals(UserRole::STAFF, $student->fresh()->role);
     }
@@ -39,7 +38,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
     public function test_fr09_role_snapshot_stored_in_audit_logs_at_event_time(): void
     {
         $staff = User::factory()->staff()->create();
-        Sanctum::actingAs($staff);
+        $this->actingAs($staff);
 
         AuditLogger::log('item.status_changed', null, ['status' => 'lost'], ['status' => 'found_unclaimed'], $staff);
 
@@ -51,7 +50,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
     public function test_fr10_student_cannot_access_staff_or_admin_routes(): void
     {
         $student = User::factory()->create();
-        Sanctum::actingAs($student);
+        $this->actingAs($student);
 
         $this->getJson('/api/v1/custody')->assertStatus(403);
         $this->getJson('/api/v1/returns')->assertStatus(403);
@@ -85,7 +84,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
             'incident_date' => now(),
         ]);
 
-        Sanctum::actingAs($otherStudent);
+        $this->actingAs($otherStudent);
         $response = $this->getJson("/api/v1/items/{$item->id}");
         $response->assertOk();
 
@@ -124,7 +123,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
             'explanation' => 'My blue backpack which contains my 3 computer science lecture notebooks',
         ]);
 
-        Sanctum::actingAs($staff);
+        $this->actingAs($staff);
 
         $response = $this->postJson("/api/v1/claims/{$claim->id}/review", [
             'status' => 'approved',
@@ -138,7 +137,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
     public function test_fr12_admin_can_access_audit_logs_and_export_csv(): void
     {
         $admin = User::factory()->admin()->create();
-        Sanctum::actingAs($admin);
+        $this->actingAs($admin);
 
         AuditLogger::log('user.created', $admin, null, ['name' => 'New User'], $admin);
 

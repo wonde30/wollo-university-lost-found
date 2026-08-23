@@ -50,9 +50,8 @@ class CustodyController extends Controller
 
         $validated = $request->validated();
         $user = $request->user();
-
         $event = DB::transaction(function () use ($validated, $user) {
-            $event = CustodyEvent::create([
+            return CustodyEvent::create([
                 'item_id' => $validated['item_id'],
                 'actor_id' => $user->id,
                 'storage_location_id' => $validated['storage_location_id'] ?? null,
@@ -61,12 +60,6 @@ class CustodyController extends Controller
                 'notes' => $validated['notes'] ?? null,
                 'reference_photo' => $validated['reference_photo'] ?? null,
             ]);
-
-            if (! empty($validated['storage_location_id'])) {
-                StorageLocation::where('id', $validated['storage_location_id'])->increment('current_occupancy');
-            }
-
-            return $event;
         });
 
         return response()->json([

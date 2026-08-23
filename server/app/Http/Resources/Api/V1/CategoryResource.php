@@ -11,17 +11,13 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'parent_id' => $this->parent_id,
             'name' => $this->name,
-            'slug' => $this->slug,
-            'description' => $this->description,
-            'icon' => $this->icon,
+            'name_am' => $this->name_am,
+            'icon_slug' => $this->icon_slug,
+            'icon' => $this->icon_slug,  // Alias for backwards compatibility
+            'sort_order' => $this->sort_order,
             'is_active' => (bool)$this->is_active,
-            'parent' => new CategoryResource($this->whenLoaded('parent')),
-            'children' => CategoryResource::collection($this->whenLoaded('children')),
             'items_count' => $this->whenCounted('items'),
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
 }
