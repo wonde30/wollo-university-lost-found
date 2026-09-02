@@ -46,9 +46,11 @@ class SendMatchNotification implements ShouldQueue
             ]
         ));
 
-        // Email notification if reporter has email
-        $reporter = $lostItem->reporter ?? \App\Models\User::find($lostItem->reporter_id);
-        if ($reporter && $reporter->email) {
+        // Email notification if reporter has email and preference is enabled
+        $reporter = $lostItem->reporter ?? \App\Models\User::with('notificationPreference')->find($lostItem->reporter_id);
+        $emailEnabled = $reporter?->notificationPreference ? (bool) $reporter->notificationPreference->email_on_match_found : true;
+
+        if ($reporter && $reporter->email && $emailEnabled) {
             \Illuminate\Support\Facades\Mail::to($reporter->email)->send(new \App\Mail\Matching\MatchSuggestionMail($match));
         }
 

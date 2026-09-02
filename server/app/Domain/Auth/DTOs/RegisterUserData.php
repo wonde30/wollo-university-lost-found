@@ -10,6 +10,6 @@ readonly class RegisterUserData
         public string $email,
         public string $password,
         public ?string $phone = null,
-        public ?int $departmentId = null
+        public ?int $organizationalUnitId = null
     ) {}
 }

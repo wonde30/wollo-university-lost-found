@@ -15,7 +15,7 @@ class ClaimResource extends JsonResource
             'claimant_id' => $this->claimant_id,
             'user_id' => $this->claimant_id,
             'explanation' => $this->explanation,
-            'status' => $this->status instanceof \BackedEnum ? $this->status->value : (string) $this->status,
+            'status' => (string) $this->status,
             'reviewed_by' => $this->reviewed_by,
             'review_note' => $this->review_note,
             'reviewed_at' => $this->reviewed_at?->toISOString(),
@@ -26,6 +26,7 @@ class ClaimResource extends JsonResource
             'reviewer' => new UserResource($this->whenLoaded('reviewer')),
             'evidence' => ClaimEvidenceResource::collection($this->whenLoaded('evidence')),
             'status_histories' => ClaimStatusHistoryResource::collection($this->whenLoaded('statusHistories')),
+            'return_record' => new ReturnResource($this->whenLoaded('returnRecord')),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

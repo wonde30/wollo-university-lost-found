@@ -14,12 +14,19 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:categories,slug'],
-            'description' => ['nullable', 'string'],
-            'icon' => ['nullable', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:60', 'unique:categories,name'],
+            'name_am' => ['nullable', 'string', 'max:60'],
+            'icon_slug' => ['nullable', 'string', 'max:50'],
+            'icon' => ['nullable', 'string', 'max:50'],
+            'sort_order' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        if (empty($this->icon_slug) && !empty($this->icon)) {
+            $this->merge(['icon_slug' => $this->icon]);
+        }
     }
 }

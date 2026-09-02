@@ -1,6 +1,6 @@
 /**
- * Public constants and domain types barrel export.
- * Authoritative single source of truth for the application.
+ Public constants and domain types barrel export.
+ Authoritative single source of truth for the application.
  */
 
 export * from './roles.constants'

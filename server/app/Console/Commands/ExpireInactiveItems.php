@@ -17,13 +17,11 @@ class ExpireInactiveItems extends Command
     {
         $this->info('Checking for expired items...');
 
-        $expiryDaysSetting = SystemSetting::where('key', 'item_expiry_days')->value('value');
-        $expiryDays        = $expiryDaysSetting ? (int) $expiryDaysSetting : 30;
+        $expiryDays = (int) SystemSetting::get('item_expiry_days', 90);
 
-        // Fix: use real status enum values ('lost', 'found_unclaimed')
         $expiredItems = Item::whereIn('status', ['lost', 'found_unclaimed'])
             ->where('is_deleted', false)
-            ->where('created_at', '<', now()->subDays($expiryDays))
+            ->where('last_activity_at', '<', now()->subDays($expiryDays)) // FR-25: use last_activity_at
             ->get();
 
         $count = 0;
@@ -45,3 +43,4 @@ class ExpireInactiveItems extends Command
         return Command::SUCCESS;
     }
 }
+

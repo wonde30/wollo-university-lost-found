@@ -19,7 +19,64 @@ export interface ConfirmDialogOptions {
   onCancel?: () => void
 }
 
+export type ThemeMode = 'light' | 'dark' | 'system'
+
 export const useUiStore = defineStore('ui', () => {
+  // Theme state
+  const theme = ref<ThemeMode>(
+    (typeof localStorage !== 'undefined' ? (localStorage.getItem('wu_theme') as ThemeMode) : null) || 'system'
+  )
+  const isDark = ref<boolean>(false)
+
+  function applyTheme(newTheme: ThemeMode): void {
+    theme.value = newTheme
+    if (typeof window === 'undefined') return
+
+    localStorage.setItem('wu_theme', newTheme)
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const shouldBeDark = newTheme === 'dark' || (newTheme === 'system' && prefersDark)
+    
+    isDark.value = shouldBeDark
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
+
+  function setTheme(newTheme: ThemeMode): void {
+    applyTheme(newTheme)
+  }
+
+  function toggleTheme(): void {
+    if (theme.value === 'dark') {
+      applyTheme('light')
+    } else if (theme.value === 'light') {
+      applyTheme('dark')
+    } else {
+      // If currently system, toggle opposite to current computed dark state
+      applyTheme(isDark.value ? 'light' : 'dark')
+    }
+  }
+
+  // Initialize theme on creation
+  if (typeof window !== 'undefined') {
+    applyTheme(theme.value)
+    
+    // Listen for OS color scheme change
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', (e) => {
+      if (theme.value === 'system') {
+        isDark.value = e.matches
+        if (e.matches) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+    })
+  }
+
   // Sidebar state
   const sidebarCollapsed = ref(false)
   const sidebarMobileOpen = ref(false)
@@ -139,6 +196,10 @@ export const useUiStore = defineStore('ui', () => {
   }
 
   return {
+    theme,
+    isDark,
+    setTheme,
+    toggleTheme,
     sidebarCollapsed,
     sidebarMobileOpen,
     isSidebarOpen,

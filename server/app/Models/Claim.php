@@ -1,14 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Support\Enums\ClaimStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property int         $id
+ * @property int         $item_id
+ * @property int         $claimant_id
+ * @property string|null $explanation
+ * @property string      $status
+ * @property int|null    $reviewed_by
+ * @property string|null $review_note
+ * @property \Carbon\Carbon|null $reviewed_at
+ * @property bool        $auto_rejected
+ * @property string|null $ip_address
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class Claim extends Model
 {
     use HasFactory;
@@ -28,11 +43,23 @@ class Claim extends Model
     protected function casts(): array
     {
         return [
-            'status' => ClaimStatus::class,
-            'reviewed_at' => 'datetime',
+            'item_id'       => 'integer',
+            'claimant_id'   => 'integer',
+            'reviewed_by'   => 'integer',
+            'reviewed_at'   => 'datetime',
             'auto_rejected' => 'boolean',
         ];
     }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => \Illuminate\Support\Facades\Cache::forget('admin.statistics'));
+        static::deleted(fn () => \Illuminate\Support\Facades\Cache::forget('admin.statistics'));
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function item(): BelongsTo
     {
@@ -44,6 +71,7 @@ class Claim extends Model
         return $this->belongsTo(User::class, 'claimant_id');
     }
 
+    /** Alias kept for backward compatibility. */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'claimant_id');

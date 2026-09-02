@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
+import { t } from '@/i18n'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
@@ -29,25 +30,25 @@ function clearError(field: string) {
 function validate(): boolean {
   errors.value = {}
   if (!form.current_password) {
-    errors.value.current_password = 'Current password is required.'
+    errors.value.current_password = t('validation.required')
   }
   if (!form.new_password) {
-    errors.value.new_password = 'New password is required.'
+    errors.value.new_password = t('validation.required')
   } else if (form.new_password.length < 8) {
-    errors.value.new_password = 'Password must be at least 8 characters.'
+    errors.value.new_password = t('validation.minLength', { min: 8 })
   } else if (!/(?=.*[a-z])/.test(form.new_password)) {
-    errors.value.new_password = 'Password must contain at least one lowercase letter.'
+    errors.value.new_password = t('validation.passwordComplexity')
   } else if (!/(?=.*[A-Z])/.test(form.new_password)) {
-    errors.value.new_password = 'Password must contain at least one uppercase letter.'
+    errors.value.new_password = t('validation.passwordComplexity')
   } else if (!/(?=.*\d)/.test(form.new_password)) {
-    errors.value.new_password = 'Password must contain at least one number.'
+    errors.value.new_password = t('validation.passwordComplexity')
   } else if (!/(?=.*[@$!%*?&])/.test(form.new_password)) {
-    errors.value.new_password = 'Password must contain at least one special character (@$!%*?&).'
+    errors.value.new_password = t('validation.passwordComplexity')
   }
   if (!form.new_password_confirmation) {
-    errors.value.new_password_confirmation = 'Please confirm your new password.'
+    errors.value.new_password_confirmation = t('validation.required')
   } else if (form.new_password !== form.new_password_confirmation) {
-    errors.value.new_password_confirmation = 'Passwords do not match.'
+    errors.value.new_password_confirmation = t('validation.passwordMatch')
   }
   return Object.keys(errors.value).length === 0
 }
@@ -58,12 +59,12 @@ async function handleSubmit(): Promise<void> {
   loading.value = true
   try {
     await authStore.changePassword(form.current_password, form.new_password, form.new_password_confirmation)
-    uiStore.success('Password changed successfully.')
+    uiStore.success(t('profile.passwordUpdated'))
     form.current_password = ''
     form.new_password = ''
     form.new_password_confirmation = ''
   } catch (err) {
-    generalError.value = getErrorMessage(err, 'Failed to change password.')
+    generalError.value = getErrorMessage(err, t('common.errorOccurred'))
   } finally {
     loading.value = false
   }
@@ -72,15 +73,15 @@ async function handleSubmit(): Promise<void> {
 
 <template>
   <form class="space-y-5" @submit.prevent="handleSubmit">
-    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-400">
       {{ generalError }}
     </div>
 
     <AppInput
       id="pw-current"
-      label="Current Password"
+      :label="t('profile.currentPassword')"
       type="password"
-      placeholder="Enter current password"
+      placeholder="••••••••"
       :model-value="form.current_password"
       :error="errors.current_password"
       required
@@ -89,30 +90,30 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="pw-new"
-      label="New Password"
+      :label="t('auth.resetPassword.newPassword')"
       type="password"
-      placeholder="Min. 8 chars, uppercase, lowercase, number, special"
+      :placeholder="t('auth.placeholders.newPassword')"
       :model-value="form.new_password"
       :error="errors.new_password"
-      hint="Must include uppercase, lowercase, number, and special character"
+      :hint="t('validation.passwordComplexity')"
       required
       @update:model-value="form.new_password = $event; clearError('new_password'); clearError('new_password_confirmation')"
     />
 
     <AppInput
       id="pw-confirm"
-      label="Confirm New Password"
+      :label="t('auth.resetPassword.confirmNewPassword')"
       type="password"
-      placeholder="Repeat new password"
+      :placeholder="t('auth.placeholders.repeatNewPassword')"
       :model-value="form.new_password_confirmation"
       :error="errors.new_password_confirmation"
       required
       @update:model-value="form.new_password_confirmation = $event; clearError('new_password_confirmation')"
     />
 
-    <div class="flex justify-end pt-3 border-t border-slate-100">
+    <div class="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
       <AppButton variant="primary" type="submit" :loading="loading">
-        Change Password
+        {{ t('common.save') }}
       </AppButton>
     </div>
   </form>

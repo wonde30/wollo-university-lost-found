@@ -19,6 +19,6 @@ class CustodyEventPolicy
 
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isOfficer();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_CUSTODY');
     }
 }

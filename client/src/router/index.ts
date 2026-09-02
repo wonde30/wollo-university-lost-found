@@ -31,28 +31,52 @@ router.beforeEach(async (to) => {
     }
   }
 
-  // --- Auth guard ---
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return { name: ROUTE_NAMES.LOGIN, query: { redirect: to.fullPath } }
-  }
-
   // --- Guest guard: redirect authenticated users away from login/register ---
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    switch (authStore.user?.role) {
-      case 'admin':  return { name: ROUTE_NAMES.ADMIN_DASHBOARD }
-      case 'staff':  return { name: ROUTE_NAMES.STAFF_DASHBOARD }
-      case 'student': return { name: ROUTE_NAMES.STUDENT_DASHBOARD }
-      default:        return { name: ROUTE_NAMES.HOME }
-    }
+    return { path: authStore.dashboardRoute }
   }
 
-  // --- Role guard ---
-  if (to.meta.roles && (to.meta.roles as string[]).length > 0) {
+  // --- Dynamic Role, Capability & Permission Guard ---
+  const isProtected = to.meta.requiresAuth || to.meta.permission || to.meta.capability || (to.meta.roles && (to.meta.roles as string[]).length > 0)
+
+  if (isProtected) {
     if (!authStore.isAuthenticated || !authStore.user?.role) {
-      return { name: ROUTE_NAMES.FORBIDDEN }
+      return { name: ROUTE_NAMES.LOGIN, query: { redirect: to.fullPath } }
     }
-    if (!(to.meta.roles as string[]).includes(authStore.user.role)) {
-      return { name: ROUTE_NAMES.FORBIDDEN }
+
+    // Super-admin always has full access to all authenticated routes
+    if (authStore.isAdmin) {
+      return true
+    }
+
+    // 1. Explicit dynamic permission requirement (highest specificity)
+    if (to.meta.permission) {
+      const perm = to.meta.permission as string
+      if (!authStore.can(perm)) {
+        return { name: ROUTE_NAMES.FORBIDDEN }
+      }
+    }
+
+    // 2. General portal capability requirement
+    if (to.meta.capability) {
+      const cap = to.meta.capability as 'admin' | 'staff' | 'student'
+      if (cap === 'admin' && !authStore.canAccessAdminPortal) {
+        return { name: ROUTE_NAMES.FORBIDDEN }
+      }
+      if (cap === 'staff' && !authStore.canAccessStaffPortal) {
+        return { name: ROUTE_NAMES.FORBIDDEN }
+      }
+      if (cap === 'student' && !authStore.canAccessStudentPortal) {
+        return { name: ROUTE_NAMES.FORBIDDEN }
+      }
+    }
+
+    // 3. Fallback role check (if route explicitly demands a specific built-in role and no explicit permission was given)
+    if (to.meta.roles && (to.meta.roles as string[]).length > 0 && !to.meta.permission && !to.meta.capability) {
+      const requiredRoles = to.meta.roles as string[]
+      if (!requiredRoles.includes(authStore.user.role)) {
+        return { name: ROUTE_NAMES.FORBIDDEN }
+      }
     }
   }
 

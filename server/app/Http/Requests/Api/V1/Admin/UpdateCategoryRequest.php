@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Api\V1\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use IlluminateValidationRule;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -15,13 +15,21 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         $categoryId = $this->route('category') ?? $this->route('id');
+
         return [
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'slug' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('categories', 'slug')->ignore($categoryId)],
-            'description' => ['nullable', 'string'],
-            'icon' => ['nullable', 'string', 'max:100'],
+            'name' => ['sometimes', 'required', 'string', 'max:60', Rule::unique('categories', 'name')->ignore($categoryId)],
+            'name_am' => ['nullable', 'string', 'max:60'],
+            'icon_slug' => ['nullable', 'string', 'max:50'],
+            'icon' => ['nullable', 'string', 'max:50'],
+            'sort_order' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        if (empty($this->icon_slug) && !empty($this->icon)) {
+            $this->merge(['icon_slug' => $this->icon]);
+        }
     }
 }

@@ -1,16 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int         $id
+ * @property int         $item_id
+ * @property int|null    $user_id
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property \Carbon\Carbon $viewed_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class ItemView extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
 
     protected $fillable = [
         'item_id',
@@ -20,9 +30,18 @@ class ItemView extends Model
         'viewed_at',
     ];
 
-    protected $casts = [
-        'viewed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'item_id'   => 'integer',
+            'user_id'   => 'integer',
+            'viewed_at' => 'datetime',
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function item(): BelongsTo
     {

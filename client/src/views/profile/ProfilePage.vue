@@ -1,44 +1,47 @@
 <script setup lang="ts">
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import AvatarUpload from '@/features/profile/components/AvatarUpload.vue'
 import ProfileForm from '@/features/profile/components/ProfileForm.vue'
 import PasswordChangeForm from '@/features/profile/components/PasswordChangeForm.vue'
+import NotificationPreferencesForm from '@/features/notifications/components/NotificationPreferencesForm.vue'
 import AppTabs from '@/components/ui/AppTabs.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { t } from '@/i18n'
 
 const activeTab = ref('profile')
 
-const tabs = [
-  { id: 'profile', label: 'Profile Details' },
-  { id: 'password', label: 'Change Password' },
-]
+const tabs = computed(() => [
+  { id: 'profile', label: t('profile.detailsTab') },
+  { id: 'password', label: t('profile.passwordTab') },
+  { id: 'notifications', label: t('nav.notifications') },
+])
 </script>
 
 <template>
-  <DashboardLayout>
-    <div class="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 class="text-xl font-black text-slate-900">My Profile</h1>
-        <p class="text-sm text-slate-500 mt-0.5">Manage your personal information and account security.</p>
+  <div class="max-w-2xl mx-auto space-y-4 sm:space-y-5">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">{{ t('nav.profile') }}</h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{{ t('profile.subtitle') }}</p>
+    </div>
+
+    <!-- Avatar Section -->
+    <div class="bg-white dark:bg-[#111827] rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-2xs p-4 sm:p-5 transition-colors duration-150">
+      <h2 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">{{ t('profile.photo') }}</h2>
+      <AvatarUpload />
+    </div>
+
+    <!-- Tabs: Profile / Password / Notifications -->
+    <div class="bg-white dark:bg-[#111827] rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-2xs p-4 sm:p-5 space-y-4 transition-colors duration-150">
+      <AppTabs v-model="activeTab" :tabs="tabs" />
+
+      <div v-if="activeTab === 'profile'">
+        <ProfileForm />
       </div>
-
-      <!-- Avatar Section -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
-        <h2 class="text-sm font-bold text-slate-700 mb-5">Profile Photo</h2>
-        <AvatarUpload />
+      <div v-else-if="activeTab === 'password'">
+        <PasswordChangeForm />
       </div>
-
-      <!-- Tabs: Profile / Password -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-5">
-        <AppTabs v-model="activeTab" :tabs="tabs" />
-
-        <div v-if="activeTab === 'profile'">
-          <ProfileForm />
-        </div>
-        <div v-else-if="activeTab === 'password'">
-          <PasswordChangeForm />
-        </div>
+      <div v-else-if="activeTab === 'notifications'">
+        <NotificationPreferencesForm />
       </div>
     </div>
-  </DashboardLayout>
+  </div>
 </template>

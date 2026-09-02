@@ -11,14 +11,19 @@ export const ITEM_TYPES = {
 export type ItemType = typeof ITEM_TYPES[keyof typeof ITEM_TYPES]
 
 export const ITEM_STATUS = {
-  REPORTED: 'reported',
-  VERIFIED: 'verified',
+  LOST: 'lost',
+  FOUND_UNCLAIMED: 'found_unclaimed',
+  FOUND_CLAIMED: 'found_claimed',
   IN_CUSTODY: 'in_custody',
-  CLAIM_PENDING: 'claim_pending',
+  MATCHED: 'matched',
   CLAIMED: 'claimed',
   RETURNED: 'returned',
-  CLOSED: 'closed',
+  PENDING_VERIFICATION: 'pending_verification',
+  PENDING_SURRENDER: 'pending_surrender',
+  WITHDRAWN: 'withdrawn',
+  CANCELLED: 'cancelled',
   EXPIRED: 'expired',
+  DISPOSED: 'disposed',
 } as const
 
 export type ItemStatus = typeof ITEM_STATUS[keyof typeof ITEM_STATUS]

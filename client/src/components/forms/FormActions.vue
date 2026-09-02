@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import { t } from '@/i18n'
 
 interface Props {
   submitText?: string
@@ -9,13 +11,16 @@ interface Props {
   showCancel?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
-  submitText: 'Save Changes',
-  cancelText: 'Cancel',
+const props = withDefaults(defineProps<Props>(), {
+  submitText: undefined,
+  cancelText: undefined,
   loading: false,
   disabled: false,
   showCancel: true,
 })
+
+const resolvedSubmitText = computed(() => props.submitText || t('common.save'))
+const resolvedCancelText = computed(() => props.cancelText || t('common.cancel'))
 
 defineEmits<{
   (e: 'submit'): void
@@ -24,7 +29,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+  <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
     <AppButton
       v-if="showCancel"
       type="button"
@@ -32,7 +37,7 @@ defineEmits<{
       :disabled="loading"
       @click="$emit('cancel')"
     >
-      {{ cancelText }}
+      {{ resolvedCancelText }}
     </AppButton>
 
     <AppButton
@@ -42,7 +47,7 @@ defineEmits<{
       :disabled="disabled || loading"
       @click="$emit('submit')"
     >
-      {{ submitText }}
+      {{ resolvedSubmitText }}
     </AppButton>
   </div>
 </template>

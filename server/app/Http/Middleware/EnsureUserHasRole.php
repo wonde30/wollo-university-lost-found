@@ -18,7 +18,7 @@ class EnsureUserHasRole
             ], 401);
         }
 
-        $userRole = $user->role instanceof \BackedEnum ? $user->role->value : (string) $user->role;
+        $userRole = $user->getRoleName();
 
         // Admin has super-user access across staff endpoints as per FR-12
         if ($userRole === 'admin') {
@@ -26,6 +26,26 @@ class EnsureUserHasRole
         }
 
         if (in_array($userRole, $roles, true)) {
+            return $next($request);
+        }
+
+        // Allow custom roles that hold staff-level operational capabilities
+        if (in_array('staff', $roles, true) && $user->isOfficer()) {
+            return $next($request);
+        }
+
+        // Allow custom roles that hold admin dashboard or management capabilities
+        if (in_array('admin', $roles, true) && (
+            $user->hasPermission('ACCESS_ADMIN_DASHBOARD')
+            || $user->hasPermission('MANAGE_USERS')
+            || $user->hasPermission('MANAGE_PERMISSIONS')
+            || $user->hasPermission('MANAGE_CAMPUSES')
+            || $user->hasPermission('MANAGE_CATEGORIES')
+            || $user->hasPermission('MANAGE_LOCATIONS')
+            || $user->hasPermission('MANAGE_SETTINGS')
+            || $user->hasPermission('VIEW_AUDIT_LOGS')
+            || $user->hasPermission('GENERATE_REPORTS')
+        )) {
             return $next($request);
         }
 

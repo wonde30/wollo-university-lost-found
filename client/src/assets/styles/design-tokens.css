@@ -1,28 +1,28 @@
 /**
  * Wollo University Lost & Found System
  * Enterprise Design Tokens 
- * Research-based institutional color palette and design system tokens
+ * Standardized institutional brand & operational color palette
  */
 
 :root {
   /* ==========================================================================
-     Color System (Research-grounded Institutional Palette)
+     Color System (Wollo University Institutional Green & Neutrals)
      ========================================================================== */
 
   /* Primary: Wollo University Institutional Forest Green */
-  --wu-primary-50: #eef7f2;
-  --wu-primary-100: #d5eedf;
-  --wu-primary-200: #aedec3;
-  --wu-primary-300: #7dc6a1;
-  --wu-primary-400: #4da97f;
-  --wu-primary-500: #198754;
-  --wu-primary-600: #146c43;
-  --wu-primary-700: #0f5132; /* Primary Brand Core */
-  --wu-primary-800: #0b3822; /* Primary Dark / Active */
-  --wu-primary-900: #072516; /* Primary Deep */
-  --wu-primary-950: #03140b;
+  --wu-primary-50: #e8f4ee;
+  --wu-primary-100: #d1e9dc;
+  --wu-primary-200: #a3d3ba;
+  --wu-primary-300: #75bd97;
+  --wu-primary-400: #3e9e70;
+  --wu-primary-500: #107c4f;
+  --wu-primary-600: #0d6d45;
+  --wu-primary-700: #0b5d3b; /* Primary Brand Core #0B5D3B */
+  --wu-primary-800: #084c30; /* Primary Hover #084C30 */
+  --wu-primary-900: #063d27; /* Primary Active / Deep #063D27 */
+  --wu-primary-950: #032014;
 
-  /* Secondary: Ethiopian Warm Gold / Amber Accent */
+  /* Secondary: Ethiopian Warm Gold / Amber Accent (Restrained use) */
   --wu-gold-50: #fbf8eb;
   --wu-gold-100: #f7edcb;
   --wu-gold-200: #eedda1;
@@ -112,8 +112,7 @@
   --wu-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
   --wu-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
   --wu-shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
-  --wu-shadow-gold: 0 4px 14px 0 rgba(212, 175, 55, 0.3);
-  --wu-shadow-green: 0 4px 14px 0 rgba(15, 81, 50, 0.3);
+  --wu-shadow-green: 0 4px 14px 0 rgba(11, 93, 59, 0.25);
 
   /* Transitions */
   --wu-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);

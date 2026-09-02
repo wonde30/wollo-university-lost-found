@@ -57,8 +57,11 @@ class RecordReturn
             $pdfPath = $this->pdfService->generateAcknowledgementPdf($record);
             ReturnDocument::create([
                 'return_id' => $record->id,
-                'document_type' => 'acknowledgement_pdf',
-                'document_path' => $pdfPath,
+                'document_type' => 'confirmation_pdf',
+                'path' => $pdfPath,
+                'mime_type' => 'application/pdf',
+                'size_bytes' => 1024,
+                'generated_at' => now(),
             ]);
 
             return $record;

@@ -8,7 +8,7 @@ class StoreLostItemRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasPermission('REPORT_LOST') ?? false;
     }
 
     public function rules(): array

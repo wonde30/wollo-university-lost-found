@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, useId } from 'vue'
+import { t } from '@/i18n'
 
 import type { SelectOption } from './types'
 export type { SelectOption }
@@ -22,165 +23,181 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   options: () => [],
   label: '',
-  placeholder: 'Select an option',
+  placeholder: undefined,
   error: null,
   hint: '',
   disabled: false,
   required: false,
-  id: undefined,
+  id: '',
   name: '',
   searchable: false,
 })
 
+const resolvedPlaceholder = computed(() => props.placeholder || t('common.selectOption'))
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void
-  (e: 'blur', event: FocusEvent): void
-  (e: 'focus', event: FocusEvent): void
+  (e: 'change', value: string | number): void
 }>()
 
-const selectId = props.id ?? useId()
+const selectId = props.id || useId()
 const isOpen = ref(false)
+const selectRef = ref<HTMLDivElement | null>(null)
 const searchFilter = ref('')
-const containerRef = ref<HTMLElement | null>(null)
 
-const normalizedOptions = computed(() => {
-  return props.options.map(opt => {
-    if ('value' in opt) {
-      return { label: opt.label, value: opt.value, disabled: opt.disabled ?? false }
+const normalizedOptions = computed<SelectOption[]>(() => {
+  return (props.options || []).map(opt => {
+    if ('name' in opt && 'id' in opt && !('label' in opt)) {
+      return { label: opt.name, value: opt.id }
     }
-    return { label: opt.name, value: opt.id, disabled: false }
+    return opt as SelectOption
   })
 })
 
 const filteredOptions = computed(() => {
-  if (!props.searchable || !searchFilter.value.trim()) {
-    return normalizedOptions.value
-  }
+  if (!props.searchable || !searchFilter.value) return normalizedOptions.value
   const q = searchFilter.value.toLowerCase()
-  return normalizedOptions.value.filter(opt => opt.label.toLowerCase().includes(q))
+  return normalizedOptions.value.filter(opt =>
+    opt.label.toLowerCase().includes(q)
+  )
 })
 
 const selectedOption = computed(() => {
   return normalizedOptions.value.find(opt => String(opt.value) === String(props.modelValue))
 })
 
-function selectOption(value: string | number, disabled = false) {
-  if (disabled) return
-  emit('update:modelValue', value)
+function toggleDropdown() {
+  if (props.disabled) return
+  isOpen.value = !isOpen.value
+  if (isOpen.value) {
+    searchFilter.value = ''
+  }
+}
+
+function selectOption(option: SelectOption) {
+  emit('update:modelValue', option.value)
+  emit('change', option.value)
   isOpen.value = false
-  searchFilter.value = ''
 }
 
 function handleClickOutside(event: MouseEvent) {
-  if (containerRef.value && !containerRef.value.contains(event.target as Node)) {
+  if (selectRef.value && !selectRef.value.contains(event.target as Node)) {
     isOpen.value = false
   }
 }
 
 onMounted(() => {
-  if (typeof document !== 'undefined') {
-    document.addEventListener('click', handleClickOutside)
-  }
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
-  if (typeof document !== 'undefined') {
-    document.removeEventListener('click', handleClickOutside)
-  }
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <template>
-  <div ref="containerRef" class="w-full relative">
+  <div ref="selectRef" class="w-full space-y-1.5 relative">
     <label
       v-if="label"
       :for="selectId"
-      class="block text-xs font-semibold text-slate-700 mb-1.5 select-none"
+      class="block text-xs font-bold text-slate-800 dark:text-slate-200 select-none"
     >
       {{ label }}
-      <span v-if="required" class="text-rose-500 font-bold">*</span>
+      <span v-if="required" class="text-rose-500 font-extrabold ml-0.5">*</span>
     </label>
 
-    <!-- Custom Select Trigger Button -->
-    <div
-      :id="selectId"
-      tabindex="0"
-      :class="[
-        'w-full flex items-center justify-between rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-all outline-none cursor-pointer select-none',
-        'focus:ring-2 focus:border-transparent',
-        error
-          ? 'border-rose-400 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/10'
-          : 'border-slate-300 focus:border-[#0F5132] focus:ring-[#0F5132]/20',
-        disabled ? 'bg-slate-50 text-slate-400 cursor-not-allowed border-slate-200 pointer-events-none' : '',
-        isOpen ? 'ring-2 border-transparent border-[#0F5132] ring-[#0F5132]/20' : '',
-      ]"
-      @click="!disabled && (isOpen = !isOpen)"
-      @keydown.esc="isOpen = false"
-      @keydown.enter.prevent="!disabled && (isOpen = !isOpen)"
-    >
-      <span v-if="selectedOption" class="font-medium text-slate-800 truncate">
-        {{ selectedOption.label }}
-      </span>
-      <span v-else class="text-slate-400 truncate">
-        {{ placeholder }}
-      </span>
+    <div class="relative">
+      <button
+        :id="selectId"
+        type="button"
+        :name="name"
+        :disabled="disabled"
+        :class="[
+          'w-full flex items-center justify-between px-3.5 py-2 text-sm rounded-xl border bg-white dark:bg-[#111827] transition-all text-left select-none cursor-pointer',
+          isOpen
+            ? 'border-[#0B5D3B] ring-2 ring-[#0B5D3B]/20 dark:ring-[#3e9e70]/20'
+            : error
+              ? 'border-rose-400 dark:border-rose-500'
+              : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600',
+          disabled ? 'opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : '',
+        ]"
+        @click="toggleDropdown"
+      >
+        <span
+          :class="[
+            'truncate',
+            selectedOption ? 'text-slate-900 dark:text-white font-semibold' : 'text-slate-400 dark:text-slate-500',
+          ]"
+        >
+          {{ selectedOption ? selectedOption.label : resolvedPlaceholder }}
+        </span>
 
-      <div class="pointer-events-none flex items-center pl-2 text-slate-400 transition-transform duration-200" :class="isOpen ? 'rotate-180 text-[#0F5132]' : ''">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        <svg
+          class="h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200"
+          :class="isOpen ? 'rotate-180 text-[#0B5D3B] dark:text-[#3e9e70]' : ''"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clip-rule="evenodd"
+          />
         </svg>
-      </div>
-    </div>
+      </button>
 
-    <!-- Dropdown Menu -->
-    <Transition name="dropdown">
+      <!-- Dropdown Menu -->
       <div
-        v-if="isOpen && !disabled"
-        class="absolute z-50 mt-1.5 w-full rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5 max-h-60 overflow-y-auto"
+        v-if="isOpen"
+        class="absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] p-1 shadow-lg animate-in fade-in zoom-in-95 duration-100"
       >
         <!-- Search filter if enabled -->
-        <div v-if="searchable" class="p-1 mb-1 border-b border-slate-100">
+        <div v-if="searchable" class="p-1 mb-1 border-b border-slate-100 dark:border-slate-800">
           <input
             v-model="searchFilter"
             type="text"
-            placeholder="Search..."
-            class="w-full rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 outline-none focus:bg-white focus:ring-1 focus:ring-[#0F5132]"
+            :placeholder="t('common.searchPlaceholder')"
+            class="w-full rounded-lg bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-700 focus:ring-1 focus:ring-[#0B5D3B] dark:focus:ring-[#3e9e70]"
             @click.stop
           />
         </div>
 
-        <div v-if="filteredOptions.length === 0" class="p-3 text-center text-xs text-slate-400">
-          No options found
+        <div v-if="filteredOptions.length === 0" class="p-3 text-center text-sm text-slate-400 dark:text-slate-500">
+          {{ t('common.noData') }}
         </div>
 
         <div
           v-for="opt in filteredOptions"
           :key="opt.value"
           :class="[
-            'flex items-center justify-between px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors select-none',
-            String(opt.value) === String(modelValue) ? 'bg-[#0F5132] text-white font-semibold' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900',
-            opt.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : '',
+            'flex items-center justify-between px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors select-none',
+            String(opt.value) === String(modelValue)
+              ? 'bg-[#0B5D3B] text-white font-semibold'
+              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
           ]"
-          @click="selectOption(opt.value, opt.disabled)"
+          @click="selectOption(opt)"
         >
           <span class="truncate">{{ opt.label }}</span>
           <svg
             v-if="String(opt.value) === String(modelValue)"
-            class="h-4 w-4 shrink-0 text-white"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
+            class="h-4 w-4 shrink-0"
+            viewBox="0 0 20 20"
+            fill="currentColor"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <path
+              fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
           </svg>
         </div>
       </div>
-    </Transition>
+    </div>
 
-    <p v-if="error" class="mt-1.5 text-xs text-rose-600 font-medium">
+    <p v-if="error" class="text-xs text-rose-600 dark:text-rose-400 font-medium">
       {{ error }}
     </p>
-    <p v-else-if="hint" class="mt-1.5 text-xs text-slate-500">
+    <p v-else-if="hint" class="text-[11px] text-slate-400 dark:text-slate-500">
       {{ hint }}
     </p>
   </div>

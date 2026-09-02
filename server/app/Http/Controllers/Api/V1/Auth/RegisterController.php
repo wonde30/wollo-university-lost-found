@@ -8,14 +8,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Http\Resources\Api\V1\AuthUserResource;
 use App\Models\AuthVerification;
+use App\Models\NotificationPreference;
+use App\Models\Role;
+use App\Models\SystemSetting;
 use App\Models\User;
+use App\Models\UserOrganizationalUnit;
 use App\Models\UserProfile;
-use App\Models\UserDepartment;
-use App\Support\Enums\UserRole;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -24,40 +26,51 @@ class RegisterController extends Controller
         $validated = $request->validated();
 
         $user = DB::transaction(function () use ($validated, $request) {
+            $studentRole = Role::where('name', 'student')->first();
+
             $user = User::create([
-                'full_name' => $validated['full_name'],
+                'full_name'     => $validated['full_name'],
                 'university_id' => $validated['university_id'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'phone' => $validated['phone'] ?? null,
-                'role' => UserRole::STUDENT,
-                'language' => 'en',
-                'is_active' => true,
+                'email'         => $validated['email'],
+                'password'      => Hash::make($validated['password']),
+                'phone'         => $validated['phone'] ?? null,
+                'role_id'       => $studentRole?->id ?? Role::firstOrCreate(
+                    ['name' => 'student'],
+                    ['display_name' => 'Student', 'is_system' => true, 'is_active' => true]
+                )->id,
+                'language'      => 'en',
+                'is_active'     => true,
             ]);
 
             UserProfile::create([
                 'user_id' => $user->id,
             ]);
 
-            if (! empty($validated['department_id'])) {
-                UserDepartment::create([
-                    'user_id' => $user->id,
-                    'department_id' => $validated['department_id'],
-                    'is_primary' => true,
+            NotificationPreference::create([
+                'user_id' => $user->id,
+            ]);
+
+            if (! empty($validated['organizational_unit_id'])) {
+                UserOrganizationalUnit::create([
+                    'user_id'                  => $user->id,
+                    'organizational_unit_id'   => $validated['organizational_unit_id'],
+                    'is_primary'               => true,
                 ]);
             }
 
             $otp = (string) rand(100000, 999999);
+            $otpMinutes = (int) SystemSetting::get('otp_expiry_minutes', 10);
+
             AuthVerification::create([
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'type' => 'email_verification',
-                'code' => $otp,
-                'token' => Hash::make($otp),
-                'attempts' => 0,
+                'user_id'      => $user->id,
+                'email'        => $user->email,
+                'type'         => 'email_verification',
+                'code'         => $otp,
+                'token'        => Hash::make($otp),
+                'attempts'     => 0,
                 'last_sent_at' => now(),
-                'expires_at' => now()->addMinutes(10), // FR-02 (10 minutes)
-                'ip_address' => $request->ip(),
+                'expires_at'   => now()->addMinutes($otpMinutes),
+                'ip_address'   => $request->ip(),
             ]);
 
             \App\Jobs\SendRegistrationOtp::dispatch($user, $otp);
@@ -65,7 +78,7 @@ class RegisterController extends Controller
             return $user;
         });
 
-        $user->load(['profile', 'departments']);
+        $user->load(['profile', 'organizationalUnits']);
         Auth::guard('web')->login($user);
 
         if ($request->hasSession()) {

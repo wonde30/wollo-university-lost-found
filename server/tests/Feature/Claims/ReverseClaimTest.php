@@ -57,7 +57,7 @@ class ReverseClaimTest extends TestCase
         $response->assertOk()
             ->assertJsonPath('data.status', 'rejected');
 
-        $this->assertEquals('rejected', $claim->fresh()->status->value);
-        $this->assertEquals('found_unclaimed', $item->fresh()->status->value);
+        $this->assertEquals('rejected', (string) $claim->fresh()->status);
+        $this->assertEquals('found_unclaimed', (string) $item->fresh()->status);
     }
 }

@@ -1,58 +1,101 @@
-# Environment
+# ==============================================================================
+# Wollo University Lost & Found - Root Git Ignore Configuration
+# ==============================================================================
+
+# Environment & Secrets
 .env
 .env.*
+.env.backup
+.env.production
+.env.local
 !.env.example
 server/.env
+server/.env.*
+server/.env.backup
+server/.env.production
 !server/.env.example
 client/.env
+client/.env.*
+client/.env.local
 !client/.env.example
 
-
 # Dependencies
-server/vendor/
-server/node_modules/
+node_modules/
 client/node_modules/
+server/node_modules/
+server/vendor/
 
-# Build Output
+# Build Output & Distribution
 client/dist/
+client/dist-ssr/
+server/public/build/
 server/public/hot
 server/public/storage
 
-# Laravel
+# Laravel Storage & Cache
 server/storage/*.key
 server/storage/logs/*
+!server/storage/logs/.gitignore
 server/storage/framework/cache/*
+!server/storage/framework/cache/.gitignore
 server/storage/framework/sessions/*
+!server/storage/framework/sessions/.gitignore
 server/storage/framework/testing/*
+!server/storage/framework/testing/.gitignore
 server/storage/framework/views/*
+!server/storage/framework/views/.gitignore
+server/storage/pail/*
 server/bootstrap/cache/*
+!server/bootstrap/cache/.gitignore
+
+# Testing & Coverage
+.phpunit.result.cache
+server/.phpunit.result.cache
+.phpunit.cache/
+server/.phpunit.cache/
+coverage/
+client/coverage/
+server/coverage/
 
 # Logs
 *.log
+logs/
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # IDEs & Editors
 .vscode/*
 !.vscode/extensions.json
 .idea/
+.fleet/
+.cursor/
+.zed/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+Homestead.json
+Homestead.yaml
 
 # Operating System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+[Dd]esktop.ini
 
-# Testing
-coverage/
-
-# Composer
-server/composer.phar
-
-# Cache & Temporary Files
+# Temporary Files
 *.cache
 *.tmp
 *.temp
+*.sw?
+*.bak

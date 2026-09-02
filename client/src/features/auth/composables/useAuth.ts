@@ -10,7 +10,22 @@ export function useAuth() {
   const authStore = useAuthStore()
   
   // Extract reactive state
-  const { user, loading, initialized, isAuthenticated, isAdmin, isStaff, isStudent, hasRole } = storeToRefs(authStore)
+  const {
+    user,
+    loading,
+    initialized,
+    isAuthenticated,
+    isAdmin,
+    isStaff,
+    isStudent,
+    hasRole,
+    hasPermission,
+    can,
+    canAccessAdminPortal,
+    canAccessStaffPortal,
+    canAccessStudentPortal,
+    dashboardRoute,
+  } = storeToRefs(authStore)
   
   return {
     // State
@@ -24,11 +39,18 @@ export function useAuth() {
     isStaff,
     isStudent,
     hasRole,
+    hasPermission,
+    can,
+    canAccessAdminPortal,
+    canAccessStaffPortal,
+    canAccessStudentPortal,
+    dashboardRoute,
     
     // Actions
     login: authStore.login,
     register: authStore.register,
     fetchUser: authStore.fetchUser,
+    setUser: authStore.setUser,
     logout: authStore.logout,
     clearUser: authStore.clearUser,
     verifyEmail: authStore.verifyEmail,
@@ -36,5 +58,6 @@ export function useAuth() {
     forgotPassword: authStore.forgotPassword,
     verifyPasswordReset: authStore.verifyPasswordReset,
     resetPassword: authStore.resetPassword,
+    changePassword: authStore.changePassword,
   }
 }

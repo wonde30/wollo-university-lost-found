@@ -12,7 +12,7 @@ class AuthenticationService
 {
     public function authenticate(LoginData $data): array
     {
-        $user = User::with(['profile', 'departments'])->where('email', $data->email)->first();
+        $user = User::with(['profile', 'organizationalUnits'])->where('email', $data->email)->first();
 
         if (!$user || !Hash::check($data->password, $user->password)) {
             throw ValidationException::withMessages([

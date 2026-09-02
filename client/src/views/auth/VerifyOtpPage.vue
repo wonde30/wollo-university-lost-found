@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import VerifyOtpForm from '@/features/auth/components/VerifyOtpForm.vue'
+import { t } from '@/i18n'
 </script>
 
 <template>
   <AuthLayout
-    title="Verify your email"
-    subtitle="A 6-digit code was sent to your university email address"
+    :title="t('auth.verifyOtp.title')"
+    :subtitle="t('auth.verifyOtp.subtitle')"
   >
     <VerifyOtpForm />
   </AuthLayout>

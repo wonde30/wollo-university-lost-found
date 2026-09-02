@@ -50,13 +50,13 @@ const charCount = computed(() => {
       <label
         v-if="label"
         :for="textareaId"
-        class="block text-xs font-semibold text-slate-700 select-none"
+        class="block text-xs font-semibold text-slate-700 dark:text-slate-300 select-none"
       >
         {{ label }}
         <span v-if="required" class="text-rose-500 font-bold">*</span>
       </label>
 
-      <span v-if="maxlength" class="text-[11px] text-slate-400 font-mono">
+      <span v-if="maxlength" class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
         {{ charCount }}/{{ maxlength }}
       </span>
     </div>
@@ -72,23 +72,23 @@ const charCount = computed(() => {
       :required="required"
       :maxlength="maxlength"
       :class="[
-        'w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none resize-y',
+        'w-full rounded-xl border bg-white dark:bg-[#111827] px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all outline-none resize-y',
         'focus:ring-2 focus:border-transparent',
         error
-          ? 'border-rose-400 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/10'
-          : 'border-slate-300 focus:border-[#0F5132] focus:ring-[#0F5132]/20',
-        disabled ? 'bg-slate-50 text-slate-400 cursor-not-allowed border-slate-200' : '',
-        readonly ? 'bg-slate-50/75' : '',
+          ? 'border-rose-400 dark:border-rose-500 focus:ring-rose-500/20 focus:border-rose-500 bg-rose-50/10 dark:bg-rose-950/20'
+          : 'border-slate-300 dark:border-slate-700 focus:border-[#0B5D3B] dark:focus:border-[#75bd97] focus:ring-[#0B5D3B]/20 dark:focus:ring-[#75bd97]/20',
+        disabled ? 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-800' : '',
+        readonly ? 'bg-slate-50/75 dark:bg-slate-800/50' : '',
       ]"
       @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
       @blur="emit('blur', $event)"
       @focus="emit('focus', $event)"
     />
 
-    <p v-if="error" class="mt-1.5 text-xs text-rose-600 font-medium">
+    <p v-if="error" class="mt-1.5 text-xs text-rose-600 dark:text-rose-400 font-medium">
       {{ error }}
     </p>
-    <p v-else-if="hint" class="mt-1.5 text-xs text-slate-500">
+    <p v-else-if="hint" class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
       {{ hint }}
     </p>
   </div>

@@ -85,12 +85,12 @@ const sizeClasses = computed(() => {
 const positionClasses = computed(() => {
   switch (props.position) {
     case 'left':
-      return 'inset-y-0 left-0 border-r border-slate-200'
+      return 'inset-y-0 left-0 border-r border-slate-200 dark:border-slate-800'
     case 'bottom':
-      return 'inset-x-0 bottom-0 border-t border-slate-200 rounded-t-2xl'
+      return 'inset-x-0 bottom-0 border-t border-slate-200 dark:border-slate-800 rounded-t-2xl'
     case 'right':
     default:
-      return 'inset-y-0 right-0 border-l border-slate-200'
+      return 'inset-y-0 right-0 border-l border-slate-200 dark:border-slate-800'
   }
 })
 
@@ -112,22 +112,22 @@ const transitionName = computed(() => {
           <div
             v-if="open"
             :class="[
-              'w-full bg-white shadow-2xl flex flex-col',
+              'w-full bg-white dark:bg-slate-900 shadow-2xl flex flex-col',
               positionClasses,
               sizeClasses,
             ]"
             @click.stop
           >
             <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
               <slot name="header">
-                <h3 class="text-base font-bold text-slate-900">{{ title }}</h3>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ title }}</h3>
               </slot>
 
               <button
                 v-if="closable"
                 type="button"
-                class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+                class="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 @click="emit('close'); emit('update:open', false)"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,12 +137,12 @@ const transitionName = computed(() => {
             </div>
 
             <!-- Body -->
-            <div class="flex-1 overflow-y-auto p-6 text-sm text-slate-700">
+            <div class="flex-1 overflow-y-auto p-6 text-sm text-slate-700 dark:text-slate-300">
               <slot />
             </div>
 
             <!-- Footer -->
-            <div v-if="$slots.footer" class="p-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-slate-50/50">
+            <div v-if="$slots.footer" class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3 shrink-0 bg-slate-50/50 dark:bg-slate-800/40">
               <slot name="footer" />
             </div>
           </div>

@@ -5,6 +5,7 @@ import { useProfile } from '../composables/useProfile'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import { resolveStorageUrl } from '@/utils/url'
+import { t } from '@/i18n'
 import AppAvatar from '@/components/ui/AppAvatar.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
@@ -25,11 +26,11 @@ function handleFileSelect(event: Event): void {
   const file = target.files?.[0]
   if (!file) return
   if (!file.type.startsWith('image/')) {
-    uiStore.error('Only image files are allowed.')
+    uiStore.error(t('common.imageOnlyError'))
     return
   }
   if (file.size > 2 * 1024 * 1024) {
-    uiStore.error('Image must be under 2MB.')
+    uiStore.error(t('common.imageSizeError'))
     return
   }
   selectedFile.value = file
@@ -40,11 +41,11 @@ async function handleUpload(): Promise<void> {
   if (!selectedFile.value) return
   try {
     await uploadAvatar(selectedFile.value)
-    uiStore.success('Profile photo updated successfully.')
+    uiStore.success(t('common.photoUpdated'))
     selectedFile.value = null
     previewUrl.value = null
   } catch (err) {
-    uiStore.error(getErrorMessage(err, 'Failed to upload avatar.'))
+    uiStore.error(getErrorMessage(err, t('common.errorOccurred')))
   }
 }
 </script>
@@ -61,8 +62,8 @@ async function handleUpload(): Promise<void> {
       />
       <button
         type="button"
-        class="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#0F5132] text-white shadow flex items-center justify-center hover:bg-[#0a3d22] transition cursor-pointer"
-        title="Change photo"
+        class="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#0B5D3B] text-white shadow flex items-center justify-center hover:bg-[#084C30] transition cursor-pointer"
+        :title="t('common.changePhoto')"
         @click="fileInput?.click()"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,12 +74,12 @@ async function handleUpload(): Promise<void> {
 
     <div class="space-y-2 text-center sm:text-left">
       <p class="text-xs text-slate-500">
-        Accepted: JPEG, PNG, WebP — Max 2MB
+        {{ t('common.uploadHint') }}
       </p>
 
       <div class="flex items-center justify-center sm:justify-start gap-2">
         <AppButton variant="outline" size="sm" type="button" @click="fileInput?.click()">
-          Choose Photo
+          {{ t('common.addPhoto') }}
         </AppButton>
         <AppButton
           v-if="selectedFile"
@@ -88,11 +89,11 @@ async function handleUpload(): Promise<void> {
           type="button"
           @click="handleUpload"
         >
-          Upload
+          {{ t('common.save') }}
         </AppButton>
       </div>
 
-      <p v-if="selectedFile" class="text-xs text-[#0F5132] font-medium">
+      <p v-if="selectedFile" class="text-xs text-[#0B5D3B] dark:text-[#75bd97] font-medium">
         {{ selectedFile.name }} selected
       </p>
     </div>

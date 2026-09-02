@@ -20,6 +20,7 @@ export function useAdminUsers() {
     pagination,
     fetchUsers:       store.fetchUsers,
     fetchUser:        store.fetchUser,
+    createUser:       store.createUser,
     updateUser:       store.updateUser,
     updateUserRole:   store.updateUserRole,
     toggleUserActive: store.toggleUserActive,

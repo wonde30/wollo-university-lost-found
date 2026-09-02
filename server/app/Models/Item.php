@@ -1,16 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Support\Enums\ItemHeldAt;
-use App\Support\Enums\ItemStatus;
-use App\Support\Enums\ItemType;
 use App\Support\Helpers\ReferenceCode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int         $id
+ * @property string      $reference_code
+ * @property int         $reporter_id
+ * @property int         $campus_id
+ * @property string      $type
+ * @property string      $title
+ * @property string|null $description
+ * @property int         $category_id
+ * @property int|null    $location_id
+ * @property string|null $location_detail
+ * @property string|null $brand
+ * @property string|null $color
+ * @property string|null $serial_number
+ * @property \Carbon\Carbon|null $incident_date
+ * @property string|null $incident_time
+ * @property string      $status
+ * @property string|null $held_at
+ * @property string|null $estimated_value
+ * @property bool        $is_high_value
+ * @property bool        $is_deleted
+ * @property int|null    $deleted_by
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property \Carbon\Carbon|null $last_activity_at
+ * @property \Carbon\Carbon|null $expires_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class Item extends Model
 {
     use HasFactory;
@@ -44,16 +71,18 @@ class Item extends Model
     protected function casts(): array
     {
         return [
-            'type' => ItemType::class,
-            'status' => ItemStatus::class,
-            'held_at' => ItemHeldAt::class,
-            'incident_date' => 'date',
-            'is_high_value' => 'boolean',
-            'is_deleted' => 'boolean',
-            'deleted_at' => 'datetime',
-            'last_activity_at' => 'datetime',
-            'expires_at' => 'datetime',
+            'reporter_id'     => 'integer',
+            'campus_id'       => 'integer',
+            'category_id'     => 'integer',
+            'location_id'     => 'integer',
+            'incident_date'   => 'date',
             'estimated_value' => 'decimal:2',
+            'is_high_value'   => 'boolean',
+            'is_deleted'      => 'boolean',
+            'deleted_by'      => 'integer',
+            'deleted_at'      => 'datetime',
+            'last_activity_at' => 'datetime',
+            'expires_at'      => 'datetime',
         ];
     }
 
@@ -67,13 +96,21 @@ class Item extends Model
                 $item->last_activity_at = now();
             }
         });
+
+        static::saved(fn () => \Illuminate\Support\Facades\Cache::forget('admin.statistics'));
+        static::deleted(fn () => \Illuminate\Support\Facades\Cache::forget('admin.statistics'));
     }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
+    /** Alias kept for backward compatibility. */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reporter_id');
@@ -92,6 +129,11 @@ class Item extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function deletedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 
     public function photos(): HasMany
@@ -122,5 +164,15 @@ class Item extends Model
     public function views(): HasMany
     {
         return $this->hasMany(ItemView::class);
+    }
+
+    public function matchSuggestionsAsFound(): HasMany
+    {
+        return $this->hasMany(MatchSuggestion::class, 'found_item_id');
+    }
+
+    public function matchSuggestionsAsLost(): HasMany
+    {
+        return $this->hasMany(MatchSuggestion::class, 'lost_item_id');
     }
 }

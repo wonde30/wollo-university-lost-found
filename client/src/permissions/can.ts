@@ -1,16 +1,16 @@
 import type { User } from '@/features/auth/types/auth.types'
 import type { UserRole } from '@/constants'
 import type { PermissionKey } from './permissions'
-import { usePermissionsStore } from './stores/permissions.store'
 
 /**
  * Check if the user has permission to perform an action.
- * Evaluates dynamically against the active permissions store.
+ * Evaluates against the authoritative user effective permissions from /me or login.
  */
 export function can(user: User | null | undefined, permission: PermissionKey | string): boolean {
-  if (!user || !user.role) return false
-  const permissionsStore = usePermissionsStore()
-  return permissionsStore.isPermissionAllowed(user.role as UserRole, permission)
+  if (!user) return false
+  if (user.role === 'admin') return true
+  const userPerms = user.permissions || []
+  return userPerms.includes(permission)
 }
 
 /**

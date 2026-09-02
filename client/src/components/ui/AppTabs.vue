@@ -28,12 +28,12 @@ function selectTab(tab: TabItem) {
 const variantNavClasses = computed(() => {
   switch (props.variant) {
     case 'pills':
-      return 'p-1 bg-slate-100/90 rounded-xl gap-1'
+      return 'p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl gap-1'
     case 'bordered':
-      return 'border border-slate-200 rounded-xl p-1 gap-1 bg-white'
+      return 'border border-slate-200 dark:border-slate-800 rounded-xl p-1 gap-1 bg-white dark:bg-slate-900'
     case 'underline':
     default:
-      return 'border-b border-slate-200 gap-6'
+      return 'border-b border-slate-200 dark:border-slate-800 gap-6'
   }
 })
 </script>
@@ -53,14 +53,14 @@ const variantNavClasses = computed(() => {
             ? [
                 'pb-3 pt-1 border-b-2 -mb-px',
                 modelValue === tab.id
-                  ? 'border-[#0F5132] text-[#0F5132]'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300',
+                  ? 'border-[#0B5D3B] dark:border-[#3e9e70] text-[#0B5D3B] dark:text-[#3e9e70]'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700',
               ]
             : [
                 'px-3.5 py-1.5 rounded-lg',
                 modelValue === tab.id
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50',
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50',
               ],
           tab.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : '',
         ]"
@@ -74,7 +74,7 @@ const variantNavClasses = computed(() => {
           v-if="tab.badge !== undefined"
           :class="[
             'px-1.5 py-0.2 rounded-full text-[10px] font-bold',
-            modelValue === tab.id ? 'bg-emerald-100 text-[#0F5132]' : 'bg-slate-200 text-slate-700',
+            modelValue === tab.id ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97]' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
           ]"
         >
           {{ tab.badge }}

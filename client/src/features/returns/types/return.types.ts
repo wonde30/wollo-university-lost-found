@@ -12,11 +12,15 @@ import type { PaginatedResponse, PaginationParams } from '@/types/common.types'
 export interface ReturnDocument {
   id: number
   return_record_id: number
-  document_type: string
-  file_path: string
-  file_url: string
-  file_size: number
-  mime_type: string
+  document_type?: string
+  path?: string
+  url?: string
+  file_path?: string
+  file_url?: string
+  file_size?: number
+  size_bytes?: number
+  mime_type?: string
+  original_name?: string
   created_at: string
 }
 
@@ -33,6 +37,8 @@ export interface ReturnRecord {
   notes: string | null
   recipient_confirmed: boolean
   confirmed_at: string | null
+  confirmation_token?: string | null
+  confirmation_token_expires_at?: string | null
   item?: Item
   claim?: Claim
   recipient?: User
@@ -61,7 +67,11 @@ export interface StoreReturnData {
 export interface ReturnListParams extends PaginationParams {
   item_id?: number
   claim_id?: number
+  recipient_id?: number
+  date_from?: string
+  date_to?: string
   recipient_confirmed?: boolean
+  search?: string
 }
 
 // ==========================================

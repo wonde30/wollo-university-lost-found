@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Matching\Services;
 
 use App\Models\Item;
 use App\Models\MatchSuggestion;
-use App\Support\Enums\ItemType;
-use App\Support\Enums\ItemStatus;
+use App\Models\SystemSetting;
 
 class ItemMatchingService
 {
@@ -16,8 +17,9 @@ class ItemMatchingService
 
     public function findMatchesFor(Item $item): array
     {
-        $targetType = $item->type === ItemType::FOUND ? ItemType::LOST : ItemType::FOUND;
-        $activeStatus = $targetType === ItemType::FOUND ? ItemStatus::FOUND_UNCLAIMED : ItemStatus::LOST;
+        $targetType = $item->type === 'found' ? 'lost' : 'found';
+        $activeStatus = $targetType === 'found' ? 'found_unclaimed' : 'lost';
+        $threshold = (float) SystemSetting::get('match_score_threshold', 35.00);
 
         $candidates = Item::where('type', $targetType)
             ->where('status', $activeStatus)
@@ -27,8 +29,8 @@ class ItemMatchingService
         $suggestions = [];
 
         foreach ($candidates as $candidate) {
-            $lostItem = $item->type === ItemType::LOST ? $item : $candidate;
-            $foundItem = $item->type === ItemType::FOUND ? $item : $candidate;
+            $lostItem = $item->type === 'lost' ? $item : $candidate;
+            $foundItem = $item->type === 'found' ? $item : $candidate;
 
             // Category match check (50 pts if exact match, 0 if not - FR-50)
             $categoryScore = ($lostItem->category_id === $foundItem->category_id) ? 50.00 : 0.00;
@@ -47,8 +49,8 @@ class ItemMatchingService
 
             $totalScore = min(100.00, $categoryScore + $textScore + $locationScore);
 
-            // Threshold filter (Score >= 35.00 triggers suggestion - FR-50)
-            if ($totalScore >= 35.00) {
+            // Dynamic threshold filter (FR-50)
+            if ($totalScore >= $threshold) {
                 $suggestion = MatchSuggestion::updateOrCreate(
                     [
                         'found_item_id' => $foundItem->id,

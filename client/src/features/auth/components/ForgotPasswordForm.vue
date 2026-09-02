@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth.store'
 import { validateForgotPasswordForm } from '../validation/auth.validation'
 import { getErrorMessage } from '@/utils/error-handler'
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
@@ -25,10 +26,10 @@ async function handleSubmit(): Promise<void> {
   loading.value = true
   try {
     await authStore.forgotPassword(form.email)
-    uiStore.success('Password reset OTP sent to your email.')
+    uiStore.success(t('auth.resetOtpSent'))
     router.push({ path: '/auth/reset-password', query: { email: form.email } })
   } catch (err) {
-    generalError.value = getErrorMessage(err, 'Failed to request password reset.')
+    generalError.value = getErrorMessage(err, t('common.errorOccurred'))
   } finally {
     loading.value = false
   }
@@ -37,17 +38,17 @@ async function handleSubmit(): Promise<void> {
 
 <template>
   <form class="space-y-4" @submit.prevent="handleSubmit">
-    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-400">
       {{ generalError }}
     </div>
 
-    <p class="text-xs text-slate-500">
-      Enter your university email address and we'll send you an OTP code to reset your password.
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      {{ t('auth.forgotPassword.subtitle') }}
     </p>
 
     <AppInput
       id="forgot-email"
-      label="University Email"
+      :label="t('auth.forgotPassword.email')"
       type="email"
       placeholder="student@wu.edu.et"
       :model-value="form.email"
@@ -63,12 +64,12 @@ async function handleSubmit(): Promise<void> {
       block
       :loading="loading"
     >
-      Send Reset OTP
+      {{ t('auth.forgotPassword.submit') }}
     </AppButton>
 
     <div class="text-center pt-2">
-      <RouterLink to="/auth/login" class="text-xs font-semibold text-[#0F5132] hover:underline">
-        &larr; Back to Login
+      <RouterLink to="/auth/login" class="text-xs font-semibold text-[#0B5D3B] dark:text-[#75bd97] hover:underline">
+        &larr; {{ t('auth.forgotPassword.signIn') }}
       </RouterLink>
     </div>
   </form>

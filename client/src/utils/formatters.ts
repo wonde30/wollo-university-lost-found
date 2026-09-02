@@ -1,9 +1,13 @@
-/**
- * Text, status, currency, and reference code formatting utilities
- */
+import { t } from '@/i18n'
 
 export function formatStatus(status: string | null | undefined): string {
-  if (!status) return 'Unknown'
+  if (!status) return t('common.none')
+  const itemKey = `items.statuses.${status}`
+  const trans = t(itemKey)
+  if (trans !== itemKey) return trans
+  const claimKey = `claims.status.${status}`
+  const claimTrans = t(claimKey)
+  if (claimTrans !== claimKey) return claimTrans
   return status
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())

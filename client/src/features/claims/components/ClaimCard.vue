@@ -2,6 +2,7 @@
 import type { Claim } from '../types/claim.types'
 import { formatDate } from '@/utils/date'
 import ClaimStatusBadge from './ClaimStatusBadge.vue'
+import { Paperclip, Calendar, User, FileText } from 'lucide-vue-next'
 
 interface Props {
   claim: Claim
@@ -11,40 +12,62 @@ defineProps<Props>()
 </script>
 
 <template>
-  <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:shadow-md transition-all space-y-4">
-    <div class="flex items-start justify-between gap-3">
+  <div class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] p-5 shadow-2xs hover:shadow-md dark:hover:border-slate-700 transition-all duration-150 space-y-4">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs font-mono text-slate-400">#CLM-{{ claim.id }}</span>
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="text-xs font-mono font-bold text-slate-400 dark:text-slate-500">#CLM-{{ claim.id }}</span>
           <ClaimStatusBadge :status="claim.status" />
+          <span v-if="claim.claimant?.full_name" class="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <User class="h-3 w-3 text-slate-400" />
+            {{ claim.claimant.full_name }}
+          </span>
         </div>
-        <h4 class="text-base font-bold text-slate-900">
+        <h4 class="text-base font-bold text-slate-900 dark:text-white">
           {{ claim.item?.title || `Item #${claim.item_id}` }}
         </h4>
       </div>
 
-      <span class="text-xs text-slate-400">
-        {{ formatDate(claim.created_at, 'short') }}
-      </span>
+      <div class="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+        <span class="inline-flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 font-medium">
+          <Calendar class="h-3.5 w-3.5 text-slate-400" />
+          {{ formatDate(claim.created_at, 'short') }}
+        </span>
+        <slot name="header-actions" :claim="claim" />
+      </div>
     </div>
 
-    <div class="rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
-      <p class="font-semibold text-slate-700 mb-1">Proof & Explanation:</p>
-      <p class="line-clamp-3 leading-relaxed">{{ claim.explanation }}</p>
+    <!-- Proof / Explanation -->
+    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-3.5 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+      <div class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
+        <FileText class="h-3.5 w-3.5 text-slate-400" />
+        <span>Proof & Explanation:</span>
+      </div>
+      <p class="leading-relaxed whitespace-pre-line">{{ claim.explanation }}</p>
     </div>
 
     <!-- Reviewer Note if any -->
-    <div v-if="claim.review_note" class="rounded-xl bg-amber-50/70 border border-amber-200/60 p-3 text-xs text-amber-900">
-      <p class="font-semibold mb-0.5">Staff Review Note:</p>
+    <div v-if="claim.review_note" class="rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 p-3 text-xs text-amber-900 dark:text-amber-200">
+      <p class="font-bold mb-0.5">Staff Review Note:</p>
       <p>{{ claim.review_note }}</p>
     </div>
 
-    <!-- Evidence summary -->
-    <div v-if="claim.evidence && claim.evidence.length > 0" class="flex items-center gap-2 text-xs text-slate-500">
-      <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-      </svg>
-      <span>{{ claim.evidence.length }} evidence file(s) attached</span>
+    <!-- Bottom: Evidence files & Slot for Action Buttons -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+      <!-- Evidence summary -->
+      <div v-if="claim.evidence && claim.evidence.length > 0" class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <Paperclip class="h-3.5 w-3.5 text-slate-400" />
+        <span>{{ claim.evidence.length }} evidence file(s) attached</span>
+      </div>
+      <div v-else class="text-[11px] text-slate-400 dark:text-slate-500 italic">
+        No evidence attachments
+      </div>
+
+      <!-- Action buttons slot -->
+      <div v-if="$slots.actions" class="flex items-center gap-2 self-end sm:self-auto">
+        <slot name="actions" :claim="claim" />
+      </div>
     </div>
   </div>
 </template>

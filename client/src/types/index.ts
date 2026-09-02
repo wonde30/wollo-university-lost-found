@@ -21,7 +21,7 @@ export type { ApiResponse } from '@/lib/api/response'
 export * from './common.types'
 
 // Platform administration types
-export * from './admin.types'
+export * from '@/features/admin/types/admin.types'
 
 // User profile management types
 export * from './profile.types'

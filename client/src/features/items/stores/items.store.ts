@@ -171,6 +171,26 @@ export const useItemsStore = defineStore('items', () => {
     }
   }
 
+  async function withdrawItem(id: number, reason?: string): Promise<void> {
+    updating.value = true
+    loading.value = true
+    try {
+      const updatedItem = await itemsApi.withdrawItem(id, reason)
+      
+      const index = items.value.findIndex(i => i.id === id)
+      if (index !== -1) {
+        items.value[index] = updatedItem
+      }
+
+      if (currentItem.value?.id === id) {
+        currentItem.value = { ...currentItem.value, ...updatedItem } as ItemDetail
+      }
+    } finally {
+      updating.value = false
+      loading.value = false
+    }
+  }
+
   async function uploadPhoto(id: number, photos: File[]): Promise<void> {
     updating.value = true
     loading.value = true
@@ -237,6 +257,7 @@ export const useItemsStore = defineStore('items', () => {
     updateItemStatus,
     updateStatus,
     deleteItem,
+    withdrawItem,
     uploadPhoto,
     addItemPhotos,
     deletePhoto,

@@ -27,7 +27,7 @@ defineEmits<{
 
 <template>
   <div class="w-full">
-    <label v-if="label" class="block text-xs font-semibold text-slate-700 mb-2 select-none">
+    <label v-if="label" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 select-none">
       {{ label }}
     </label>
 
@@ -43,8 +43,8 @@ defineEmits<{
         :class="[
           'inline-flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer',
           modelValue === opt.value
-            ? 'border-[#0F5132] bg-emerald-50/40 text-slate-900 shadow-xs'
-            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50',
+            ? 'border-[#0B5D3B] bg-[#E8F4EE]/60 dark:bg-[#153C2D]/40 text-slate-900 dark:text-white shadow-2xs'
+            : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50',
           opt.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : '',
         ]"
       >
@@ -55,7 +55,7 @@ defineEmits<{
             :value="opt.value"
             :checked="modelValue === opt.value"
             :disabled="opt.disabled"
-            class="h-4 w-4 border-slate-300 text-[#0F5132] focus:ring-[#0F5132] cursor-pointer"
+            class="h-4 w-4 border-slate-300 dark:border-slate-700 text-[#0B5D3B] focus:ring-[#0B5D3B] cursor-pointer"
             @change="$emit('update:modelValue', opt.value); $emit('change', opt.value)"
           />
         </div>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Security;
 
 use App\Models\AuditLog;
@@ -8,8 +10,8 @@ use App\Models\Category;
 use App\Models\Claim;
 use App\Models\Item;
 use App\Models\Location;
+use App\Models\Role;
 use App\Models\User;
-use App\Support\Enums\UserRole;
 use App\Support\Services\AuditLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,7 +25,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
         $admin = User::factory()->admin()->create();
         $student = User::factory()->create();
 
-        $this->assertEquals(UserRole::STUDENT, $student->role);
+        $this->assertEquals('student', $student->getRoleName());
 
         // Student cannot change own or other's role (FR-13 / FR-09)
         $this->actingAs($student);
@@ -32,7 +34,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
         // Admin can change user role (FR-09, FR-12)
         $this->actingAs($admin);
         $this->patchJson("/api/v1/admin/users/{$student->id}/role", ['role' => 'staff'])->assertOk();
-        $this->assertEquals(UserRole::STAFF, $student->fresh()->role);
+        $this->assertEquals('staff', $student->fresh()->getRoleName());
     }
 
     public function test_fr09_role_snapshot_stored_in_audit_logs_at_event_time(): void
@@ -69,7 +71,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
 
         $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
         $location = Location::create(['campus_id' => $campus->id, 'name' => 'Library', 'code' => 'LOC-LIB-02', 'zone' => 'library']);
-        $category = Category::firstOrCreate(['name' => 'Electronics'], ['name_am' => 'ኤሌክትሮኒክስ']);
+        $category = Category::firstOrCreate(['name' => 'Electronics'], ['display_name' => 'Electronics', 'icon' => 'laptop']);
 
         $item = Item::create([
             'reference_code' => 'WU-LAP01234',
@@ -101,7 +103,7 @@ class RoleAndPermissionEnforcementTest extends TestCase
 
         $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
         $location = Location::create(['campus_id' => $campus->id, 'name' => 'Hall', 'code' => 'LOC-HALL-01', 'zone' => 'administrative']);
-        $category = Category::create(['name' => 'Bags', 'name_am' => 'ቦርሳ']);
+        $category = Category::create(['name' => 'Bags', 'display_name' => 'Bags', 'icon' => 'bag']);
 
         $item = Item::create([
             'reference_code' => 'WU-BAG01234',
@@ -130,8 +132,8 @@ class RoleAndPermissionEnforcementTest extends TestCase
             'review_note' => 'Ownership verified with notebook student name match',
         ]);
         $response->assertOk();
-        $this->assertEquals('approved', $claim->fresh()->status->value);
-        $this->assertEquals('claimed', $item->fresh()->status->value);
+        $this->assertEquals('approved', (string) $claim->fresh()->status);
+        $this->assertEquals('claimed', (string) $item->fresh()->status);
     }
 
     public function test_fr12_admin_can_access_audit_logs_and_export_csv(): void

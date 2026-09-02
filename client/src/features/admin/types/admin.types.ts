@@ -3,24 +3,39 @@
  * Admin-only functionality.
  */
 
-import type { User, UserRole } from '@/features/auth/types/auth.types'
-import type { Campus, Category, Location, Department, StorageLocation } from '@/types/common.types'
+import type { User } from '@/features/auth/types/auth.types'
+import type { Campus, Category, Location, OrganizationalUnit, OrganizationalUnitType, StorageLocation } from '@/types/common.types'
 import type { PaginatedResponse, PaginationParams } from '@/types/common.types'
 
 // ==========================================
 // Dashboard Statistics
 // ==========================================
 
+export interface DashboardCategoryStat {
+  id: number
+  name: string
+  total: number
+}
+
 export interface DashboardStatistics {
   summary: {
     total_items: number
     lost_items: number
+    active_lost: number
     found_items: number
+    found_unclaimed: number
     in_storage: number
     returned_items: number
+    returned_this_month?: number
     pending_claims: number
+    pending_matches: number
+    expiring_items: number
+    unconfirmed_returns: number
     total_users: number
     recovery_rate_percentage: number
+    avg_resolution_days: number | null
+    top_3_categories: DashboardCategoryStat[]
+    search_fail_rate_percentage: number
   }
   recent_activity: {
     recent_items: RecentItem[]
@@ -44,6 +59,11 @@ export interface RecentClaim {
   claimant_id: number
   status: string
   created_at: string
+  item?: {
+    id: number
+    title: string
+    reference_code: string
+  }
 }
 
 export interface RecentReturn {
@@ -54,26 +74,46 @@ export interface RecentReturn {
   handed_over_by: number
   return_date: string
   created_at: string
+  item?: {
+    id: number
+    title: string
+    reference_code: string
+  }
 }
 
 // ==========================================
 // User Management
 // ==========================================
 
+export interface StoreUserData {
+  full_name: string
+  university_id: string
+  email: string
+  password: string
+  role_id: number
+  phone?: string | null
+  is_active?: boolean
+  organizational_unit_id?: number | null
+}
+
 export interface UpdateUserData {
   full_name?: string
-  email?: string
-  phone?: string
+  name?: string
   university_id?: string
+  email?: string
+  phone?: string | null
+  role?: string
+  language?: 'en' | 'am'
   is_active?: boolean
 }
 
 export interface UpdateUserRoleData {
-  role: UserRole
+  role?: string
+  role_id?: number
 }
 
 export interface UserListParams extends PaginationParams {
-  role?: UserRole
+  role?: string
   is_active?: boolean
   search?: string
 }
@@ -87,15 +127,17 @@ export interface SystemSetting {
   key: string
   value: string | number | boolean | null
   type: string
-  group: string
+  display_name?: string | null
   description: string | null
   is_public: boolean
-  created_at: string
-  updated_at: string
+  is_editable?: boolean
+  created_at?: string
+  updated_at?: string
 }
 
+
 export interface UpdateSystemSettingData {
-  value: string | number | boolean
+  value: string | number | boolean | null
 }
 
 // ==========================================
@@ -114,24 +156,37 @@ export interface Announcement {
   ends_at: string | null
   creator?: User
   created_by_user?: User
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
 export interface StoreAnnouncementData {
   title: string
   body: string
-  type: 'info' | 'warning' | 'urgent' | 'maintenance'
-  audience: 'all' | 'students' | 'staff' | 'admins'
+  type: 'info' | 'warning' | 'urgent' | 'maintenance' | 'success' | string
+  audience: 'all' | 'students' | 'staff' | 'admin' | string
   is_active?: boolean
-  starts_at?: string
-  ends_at?: string
+  starts_at?: string | null
+  ends_at?: string | null
+}
+
+export interface UpdateAnnouncementData {
+  title?: string
+  body?: string
+  type?: 'info' | 'warning' | 'urgent' | 'maintenance' | 'success' | string
+  audience?: 'all' | 'students' | 'staff' | 'admin' | string
+  is_active?: boolean
+  starts_at?: string | null
+  ends_at?: string | null
 }
 
 export interface AnnouncementListParams extends PaginationParams {
   is_active?: boolean
   type?: string
   audience?: string
+  target_role?: string
+  search?: string
+  all?: boolean
 }
 
 // ==========================================
@@ -140,8 +195,8 @@ export interface AnnouncementListParams extends PaginationParams {
 
 export interface AuditLog {
   id: number
-  actor_id: number
-  actor_role: string
+  actor_id: number | null
+  actor_role: string | null
   action: string
   auditable_type: string
   auditable_id: number | null
@@ -151,15 +206,17 @@ export interface AuditLog {
   user_agent: string | null
   actor?: User
   user?: User
-  created_at: string
+  created_at?: string
 }
 
 export interface AuditLogListParams extends PaginationParams {
   actor_id?: number
+  user_id?: number
   action?: string
-  auditable_type?: string
-  start_date?: string
-  end_date?: string
+  actor_role?: string
+  date_from?: string
+  date_to?: string
+  search?: string
 }
 
 // ==========================================
@@ -171,8 +228,8 @@ export interface Report {
   requested_by: number
   report_type: string
   filters: Record<string, unknown> | null
-  format: 'csv' | 'pdf' | 'excel'
-  status: 'pending' | 'processing' | 'completed' | 'failed'
+  format: 'csv' | 'pdf' | string
+  status: 'queued' | 'processing' | 'ready' | 'failed' | string
   file_url: string | null
   file_size_bytes: number | null
   row_count: number | null
@@ -183,21 +240,142 @@ export interface Report {
   expires_at: string | null
   requested_by_user?: User
   generated_by?: User
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
 export interface GenerateReportData {
-  report_type: 'items' | 'claims' | 'returns' | 'users' | 'audit_logs'
-  format: 'csv' | 'pdf' | 'excel'
-  filters?: Record<string, unknown>
-  start_date?: string
-  end_date?: string
+  report_type: 'items' | 'claims' | 'returns' | 'users' | 'audit_logs' | string
+  format?: 'csv' | 'pdf'
+  campus_id?: number
+  category_id?: number
+  status?: string
+  date_from?: string
+  date_to?: string
+  [key: string]: unknown
 }
 
 export interface ReportListParams extends PaginationParams {
   report_type?: string
+  format?: string
   status?: string
+  search?: string
+}
+
+// ==========================================
+// Roles & Permissions (Dynamic RBAC)
+// ==========================================
+
+export interface PermissionGroup {
+  id: number
+  name: string
+  display_name: string
+  display_name_am?: string | null
+  description?: string | null
+  description_am?: string | null
+  is_system: boolean
+  is_active: boolean
+  permissions_count?: number
+  permissions?: Permission[]
+  active_permissions?: Permission[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface Permission {
+  id: number
+  permission_group_id?: number | null
+  name: string
+  key: string
+  display_name: string
+  label: string
+  display_name_am?: string | null
+  description?: string | null
+  description_am?: string | null
+  category: 'items' | 'claims' | 'custody' | 'admin' | string
+  is_system: boolean
+  is_active: boolean
+  permission_group?: PermissionGroup | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface Role {
+  id: number
+  name: string
+  slug: string
+  display_name: string
+  display_name_am?: string | null
+  description?: string | null
+  description_am?: string | null
+  is_system: boolean
+  is_active: boolean
+  users_count?: number
+  permissions?: Permission[]
+  permission_ids?: number[]
+  permission_keys?: string[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface CreatePermissionGroupPayload {
+  name: string
+  display_name: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  is_active?: boolean
+}
+
+export interface UpdatePermissionGroupPayload {
+  name?: string
+  display_name?: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  is_active?: boolean
+}
+
+export interface CreateRolePayload {
+  name: string
+  display_name: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  is_active?: boolean
+  permission_ids?: number[]
+}
+
+export interface UpdateRolePayload {
+  name?: string
+  display_name?: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  is_active?: boolean
+  permission_ids?: number[]
+}
+
+export interface CreatePermissionPayload {
+  permission_group_id?: number | null
+  name: string
+  display_name: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  category: 'items' | 'claims' | 'custody' | 'admin' | string
+  is_active?: boolean
+}
+
+export interface UpdatePermissionPayload {
+  permission_group_id?: number | null
+  name?: string
+  display_name?: string
+  display_name_am?: string
+  description?: string
+  description_am?: string
+  category?: 'items' | 'claims' | 'custody' | 'admin' | string
+  is_active?: boolean
 }
 
 // ==========================================
@@ -205,11 +383,15 @@ export interface ReportListParams extends PaginationParams {
 // ==========================================
 
 export type UserListResponse = PaginatedResponse<User>
-export type CampusListResponse = ResourceResponse<Campus[]>
-export type DepartmentListResponse = ResourceResponse<Department[]>
-export type CategoryListResponse = ResourceResponse<Category[]>
-export type LocationListResponse = ResourceResponse<Location[]>
-export type StorageLocationListResponse = ResourceResponse<StorageLocation[]>
+export type RoleListResponse = PaginatedResponse<Role>
+export type PermissionListResponse = PaginatedResponse<Permission>
+export type PermissionGroupListResponse = PaginatedResponse<PermissionGroup>
+export type CampusListResponse = PaginatedResponse<Campus> | ResourceResponse<Campus[]>
+export type OrganizationalUnitListResponse = PaginatedResponse<OrganizationalUnit> | ResourceResponse<OrganizationalUnit[]>
+export type OrganizationalUnitTypeListResponse = PaginatedResponse<OrganizationalUnitType> | ResourceResponse<OrganizationalUnitType[]>
+export type CategoryListResponse = PaginatedResponse<Category> | ResourceResponse<Category[]>
+export type LocationListResponse = PaginatedResponse<Location> | ResourceResponse<Location[]>
+export type StorageLocationListResponse = PaginatedResponse<StorageLocation> | ResourceResponse<StorageLocation[]>
 export type AnnouncementListResponse = PaginatedResponse<Announcement>
 export type AuditLogListResponse = PaginatedResponse<AuditLog>
 export type ReportListResponse = PaginatedResponse<Report>

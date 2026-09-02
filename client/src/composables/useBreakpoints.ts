@@ -1,5 +1,5 @@
-/**
- * Responsive viewport breakpoints composable.
+/*
+ Responsive viewport breakpoints composable.
  */
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'

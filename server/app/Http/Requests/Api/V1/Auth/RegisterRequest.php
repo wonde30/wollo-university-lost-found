@@ -20,7 +20,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:191', 'unique:users,email'],
             'password' => ['required', 'string', new StrongPassword()],
             'phone' => ['nullable', 'string', 'max:20'],
-            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
+            'organizational_unit_id' => ['nullable', 'integer', 'exists:organizational_units,id'],
         ];
     }
 }

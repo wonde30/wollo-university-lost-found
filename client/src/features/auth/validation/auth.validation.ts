@@ -36,7 +36,7 @@ export function validateRegisterForm(data: RegisterData): Record<string, string>
   const passReq = required(data.password, 'Password')
   if (passReq) errors.password = passReq
   else {
-    const passMin = minLength(8, data.password, 'Password')
+    const passMin = minLength(12, data.password, 'Password')
     if (passMin) errors.password = passMin
   }
 
@@ -70,7 +70,7 @@ export function validateResetPasswordForm(data: ResetPasswordData & { password_c
   const passReq = required(data.password, 'Password')
   if (passReq) errors.password = passReq
   else {
-    const passMin = minLength(8, data.password, 'Password')
+    const passMin = minLength(12, data.password, 'Password')
     if (passMin) errors.password = passMin
   }
 

@@ -8,7 +8,7 @@ class StoreFoundItemRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasPermission('REPORT_FOUND') ?? false;
     }
 
     public function rules(): array

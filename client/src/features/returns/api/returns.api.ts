@@ -78,3 +78,47 @@ export async function createReturn(returnData: StoreReturnData): Promise<ReturnR
   })
   return data.data!
 }
+
+/**
+ * Recipient confirms physical collection of their item (FR-44).
+ */
+export async function confirmReturn(id: number): Promise<ReturnRecord> {
+  const { data } = await apiClient.post<ApiResponse<ReturnRecord>>(RETURNS.CONFIRM(id))
+  return data.data!
+}
+
+/**
+ * Preview return details by secure confirmation token (FR-44).
+ */
+export async function getReturnByToken(token: string): Promise<ReturnRecord> {
+  const { data } = await apiClient.get<ApiResponse<ReturnRecord>>(RETURNS.CONFIRM_TOKEN(token))
+  return data.data!
+}
+
+/**
+ * Confirm return receipt by secure confirmation token (FR-44).
+ */
+export async function confirmReturnByToken(token: string): Promise<ReturnRecord> {
+  const { data } = await apiClient.post<ApiResponse<ReturnRecord>>(RETURNS.CONFIRM_TOKEN(token))
+  return data.data!
+}
+
+/**
+ * Export returns as CSV file (FR-46).
+ */
+export async function exportReturnsCsv(filters?: { date_from?: string; date_to?: string }): Promise<void> {
+  const response = await apiClient.get(RETURNS.EXPORT_CSV, {
+    params: filters,
+    responseType: 'blob',
+  })
+
+  const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', `returns_export_${new Date().toISOString().slice(0, 10)}.csv`)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}

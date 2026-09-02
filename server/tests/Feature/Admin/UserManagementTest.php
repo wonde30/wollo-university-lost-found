@@ -37,7 +37,7 @@ class UserManagementTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertEquals('staff', $user->fresh()->role->value);
+        $this->assertEquals('staff', $user->fresh()->getRoleName());
     }
 
     public function test_admin_can_toggle_user_active_status(): void

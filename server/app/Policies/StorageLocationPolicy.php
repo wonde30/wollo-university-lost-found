@@ -29,6 +29,6 @@ class StorageLocationPolicy
 
     public function delete(User $user, StorageLocation $location): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_LOCATIONS');
     }
 }

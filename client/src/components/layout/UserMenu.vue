@@ -2,15 +2,41 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
+import { usePermissionsStore } from '@/permissions/stores/permissions.store'
 import { resolveStorageUrl } from '@/utils/url'
+import { currentLocale, t } from '@/i18n'
 import AppAvatar from '@/components/ui/AppAvatar.vue'
+import {
+  User as UserIcon,
+  LayoutDashboard,
+  ShieldCheck,
+  LogOut,
+  ChevronDown,
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const permissionsStore = usePermissionsStore()
 const isOpen = ref(false)
+
+function closeDropdown() {
+  isOpen.value = false
+}
 
 const userAvatarUrl = computed(() => {
   return resolveStorageUrl(authStore.user?.profile_photo_url || authStore.user?.profile_photo || null)
+})
+
+const userRoleLabel = computed(() => {
+  const roleKey = authStore.user?.role
+  if (!roleKey) return 'STUDENT'
+  const matchedRole = permissionsStore.roles.find(r => r.name === roleKey)
+  if (matchedRole) {
+    return (currentLocale.value === 'am' && matchedRole.display_name_am)
+      ? matchedRole.display_name_am
+      : (matchedRole.display_name || matchedRole.name)
+  }
+  return roleKey.replace('_', ' ').toUpperCase()
 })
 
 async function handleLogout(): Promise<void> {
@@ -21,10 +47,12 @@ async function handleLogout(): Promise<void> {
 </script>
 
 <template>
-  <div v-if="authStore.user" class="relative">
+  <div v-if="authStore.user" v-click-outside="closeDropdown" class="relative">
     <button
       type="button"
-      class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+      class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+      :aria-label="t('common.userMenu')"
+      :aria-expanded="isOpen"
       @click="isOpen = !isOpen"
     >
       <AppAvatar
@@ -33,89 +61,82 @@ async function handleLogout(): Promise<void> {
         size="sm"
       />
       <div class="hidden sm:flex flex-col text-left">
-        <span class="text-xs font-semibold text-slate-800 leading-tight">
+        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">
           {{ authStore.user.full_name }}
         </span>
-        <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">
-          {{ authStore.user.role }}
+        <span class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 tracking-wider">
+          {{ userRoleLabel }}
         </span>
       </div>
-      <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
+      <ChevronDown
+        class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200"
+        :class="isOpen ? 'rotate-180' : ''"
+      />
     </button>
 
     <!-- Dropdown -->
-    <div
-      v-if="isOpen"
-      class="absolute right-0 mt-2 w-56 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 p-1.5 z-50 border border-slate-100 divide-y divide-slate-100"
-    >
-      <div class="px-3 py-2.5">
-        <p class="text-xs font-semibold text-slate-900 truncate">{{ authStore.user.full_name }}</p>
-        <p class="text-[11px] text-slate-500 truncate">{{ authStore.user.email }}</p>
+    <Transition name="fade">
+      <div
+        v-if="isOpen"
+        class="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#111827] shadow-xl ring-1 ring-black/5 dark:ring-white/10 p-1.5 z-50 border border-slate-100 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 animate-scale-in"
+      >
+        <div class="px-3 py-2.5">
+          <p class="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">{{ authStore.user.full_name }}</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ authStore.user.email }}</p>
+        </div>
+
+        <div class="py-1">
+          <RouterLink
+            to="/profile"
+            class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors"
+            @click="isOpen = false"
+          >
+            <UserIcon class="h-4 w-4 text-slate-400" />
+            {{ t('nav.profile') }}
+          </RouterLink>
+
+          <RouterLink
+            v-if="authStore.canAccessAdminPortal"
+            to="/admin/dashboard"
+            class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors"
+            @click="isOpen = false"
+          >
+            <LayoutDashboard class="h-4 w-4 text-[#0B5D3B] dark:text-[#3e9e70]" />
+            {{ t('nav.adminPortal') }}
+          </RouterLink>
+
+          <RouterLink
+            v-else-if="authStore.canAccessStaffPortal"
+            to="/staff/dashboard"
+            class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors"
+            @click="isOpen = false"
+          >
+            <ShieldCheck class="h-4 w-4 text-[#0B5D3B] dark:text-[#3e9e70]" />
+            {{ t('nav.staffPortal') }}
+          </RouterLink>
+
+          <RouterLink
+            v-else
+            to="/student/dashboard"
+            class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors"
+            @click="isOpen = false"
+          >
+            <LayoutDashboard class="h-4 w-4 text-[#0B5D3B] dark:text-[#3e9e70]" />
+            {{ t('nav.studentPortal') }}
+          </RouterLink>
+        </div>
+
+        <div class="py-1">
+          <button
+            type="button"
+            class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors text-left cursor-pointer"
+            @click="handleLogout"
+          >
+            <LogOut class="h-4 w-4 text-rose-500" />
+            {{ t('nav.signOut') }}
+          </button>
+        </div>
       </div>
-
-      <div class="py-1">
-        <RouterLink
-          to="/profile"
-          class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
-          @click="isOpen = false"
-        >
-          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          Account Profile
-        </RouterLink>
-
-        <RouterLink
-          v-if="authStore.isAdmin"
-          to="/admin/dashboard"
-          class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
-          @click="isOpen = false"
-        >
-          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          Admin Portal
-        </RouterLink>
-
-        <RouterLink
-          v-else-if="authStore.isStaff"
-          to="/staff/dashboard"
-          class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
-          @click="isOpen = false"
-        >
-          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-          Staff Portal
-        </RouterLink>
-
-        <RouterLink
-          v-else
-          to="/student/dashboard"
-          class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
-          @click="isOpen = false"
-        >
-          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          Student Portal
-        </RouterLink>
-      </div>
-
-      <div class="py-1">
-        <button
-          type="button"
-          class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors text-left cursor-pointer"
-          @click="handleLogout"
-        >
-          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          Sign out
-        </button>
-      </div>
-    </div>
+    </Transition>
   </div>
 </template>

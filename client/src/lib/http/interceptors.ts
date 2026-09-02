@@ -15,7 +15,11 @@ const retryAttempts = new WeakMap<InternalAxiosRequestConfig, number>()
  */
 apiClient.interceptors.request.use(
   (config) => {
-    // No modifications needed - credentials are automatic via withCredentials: true
+    // Set Accept-Language from localStorage or default 'en'
+    if (typeof localStorage !== 'undefined') {
+      const locale = localStorage.getItem('wu_locale') || 'en'
+      config.headers['Accept-Language'] = locale
+    }
     return config
   },
   (error) => {

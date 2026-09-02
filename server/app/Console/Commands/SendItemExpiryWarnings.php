@@ -17,15 +17,13 @@ class SendItemExpiryWarnings extends Command
     {
         $this->info('Sending item expiry warnings...');
 
-        $expiryDaysSetting = SystemSetting::where('key', 'item_expiry_days')->value('value');
-        $expiryDays        = $expiryDaysSetting ? (int) $expiryDaysSetting : 30;
-        $warningDay        = max(1, $expiryDays - 5);
+        $expiryDays  = (int) SystemSetting::get('item_expiry_days', 90);
+        $warningDays = (int) SystemSetting::get('expiry_warning_days', 7);
+        $warningDay  = max(1, $expiryDays - $warningDays);
 
-        // Fix: use real status enum values ('lost', 'found_unclaimed')
-        // Fix: use reporter_id — items have no user_id column
         $nearingExpiry = Item::whereIn('status', ['lost', 'found_unclaimed'])
             ->where('is_deleted', false)
-            ->whereBetween('created_at', [
+            ->whereBetween('last_activity_at', [
                 now()->subDays($warningDay)->startOfDay(),
                 now()->subDays($warningDay)->endOfDay(),
             ])
@@ -44,8 +42,8 @@ class SendItemExpiryWarnings extends Command
                     'item_id'        => $item->id,
                     'reference_code' => $item->reference_code,
                     'title'          => $item->title,
-                    'days_remaining' => 5,
-                    'message'        => "Your reported item \"{$item->title}\" (Ref: {$item->reference_code}) will expire in 5 days if unclaimed.",
+                    'days_remaining' => 7,
+                    'message'        => "Your reported item \"{$item->title}\" (Ref: {$item->reference_code}) will expire in 7 days if unclaimed.",
                 ]
             ));
             $count++;
@@ -55,3 +53,4 @@ class SendItemExpiryWarnings extends Command
         return Command::SUCCESS;
     }
 }
+

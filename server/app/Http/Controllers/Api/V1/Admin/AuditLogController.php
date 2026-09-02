@@ -17,24 +17,36 @@ class AuditLogController extends Controller
     {
         $this->authorize('viewAny', AuditLog::class);
 
-        $query = AuditLog::with('actor');
+        $perPage = min(100, max(1, $request->integer('per_page', 10)));
+        $actorId = $request->input('actor_id') ?? $request->input('user_id');
 
-        if ($action = $request->query('action')) {
-            $query->where('action', $action);
-        }
-
-        if ($actorId = $request->query('actor_id') ?? $request->query('user_id')) {
-            $query->where('actor_id', $actorId);
-        }
-
-        $logs = $query->orderByDesc('created_at')->paginate($request->integer('per_page', 25));
+        $logs = AuditLog::with('actor')
+            ->when($request->filled('action'), fn ($q) => $q->where('action', $request->string('action')->toString()))
+            ->when($actorId !== null, fn ($q) => $q->where('actor_id', (int) $actorId))
+            ->when($request->filled('actor_role'), fn ($q) => $q->where('actor_role', $request->string('actor_role')->toString()))
+            ->when($request->filled('date_from'), fn ($q) => $q->whereDate('created_at', '>=', $request->string('date_from')->toString()))
+            ->when($request->filled('date_to'), fn ($q) => $q->whereDate('created_at', '<=', $request->string('date_to')->toString()))
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = trim($request->string('search')->toString());
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('action', 'like', "%{$search}%")
+                        ->orWhere('auditable_type', 'like', "%{$search}%")
+                        ->orWhere('ip_address', 'like', "%{$search}%")
+                        ->orWhereHas('actor', fn ($aq) => $aq->where('full_name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => AuditLogResource::collection($logs),
             'meta' => [
                 'current_page' => $logs->currentPage(),
-                'last_page' => $logs->lastPage(),
-                'total' => $logs->total(),
+                'last_page'    => $logs->lastPage(),
+                'per_page'     => $logs->perPage(),
+                'total'        => $logs->total(),
+                'from'         => $logs->firstItem(),
+                'to'           => $logs->lastItem(),
             ],
         ]);
     }

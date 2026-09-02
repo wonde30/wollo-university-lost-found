@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppToast from '@/components/ui/AppToast.vue'
 import AppConfirmDialog from '@/components/ui/AppConfirmDialog.vue'
 import LoadingOverlay from '@/components/feedback/LoadingOverlay.vue'
 import NetworkStatus from '@/components/feedback/NetworkStatus.vue'
+import SystemAnnouncementBanner from '@/components/common/SystemAnnouncementBanner.vue'
 
 const uiStore = useUiStore()
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-100/70 text-slate-900 flex">
+  <div class="min-h-screen bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 flex transition-colors duration-150">
     <!-- Sidebar -->
     <AppSidebar />
 
@@ -27,24 +29,28 @@ const uiStore = useUiStore()
     <!-- Main Content Area -->
     <div
       :class="[
-        'flex-1 flex flex-col min-w-0 transition-all duration-200 ease-in-out',
+        'flex-1 flex flex-col min-w-0 transition-all duration-150 ease-in-out',
         uiStore.sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64',
       ]"
     >
       <NetworkStatus />
       <AppHeader />
+      <SystemAnnouncementBanner />
 
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto animate-fade-in">
-        <slot />
+      <main class="flex-1 p-4 sm:p-5 lg:p-6 max-w-[1600px] w-full mx-auto animate-fade-in">
+        <RouterView v-slot="{ Component }">
+          <component :is="Component" v-if="Component" />
+          <slot v-else />
+        </RouterView>
       </main>
 
-      <footer class="py-4 px-6 border-t border-slate-200/80 bg-white text-xs text-slate-400 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-2">
+      <footer class="py-3 px-6 border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] text-xs text-slate-400 dark:text-slate-500 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-2">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-700">Wollo University</span>
+          <span class="font-bold text-slate-700 dark:text-slate-300">{{ t('common.wolloUniversity') }}</span>
           <span>&bull;</span>
-          <span>Lost & Found Operations</span>
+          <span>{{ t('common.portalTitle') }}</span>
         </div>
-        <span class="font-medium text-slate-400">Powered by WONDATIR (IT)</span>
+        <span class="font-semibold text-slate-400 dark:text-slate-500">Powered by WONDATIR (IT)</span>
       </footer>
     </div>
 

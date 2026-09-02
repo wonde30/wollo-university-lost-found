@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useReferenceData } from '@/features/lookups/composables/useReferenceData'
 import type { ItemFilterState } from '../composables/useItemFilters'
+import { currentLocale, t } from '@/i18n'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import { Search } from 'lucide-vue-next'
 
 interface Props {
   filters: ItemFilterState
@@ -18,40 +21,51 @@ const emit = defineEmits<{
 
 const { categories } = useReferenceData()
 
-const typeOptions = [
-  { label: 'All Item Types', value: '' },
-  { label: 'Lost Items', value: 'lost' },
-  { label: 'Found Items', value: 'found' },
-]
+const typeOptions = computed(() => [
+  { label: t('items.myItems.all'), value: '' },
+  { label: t('items.types.lost'), value: 'lost' },
+  { label: t('items.types.found'), value: 'found' },
+])
 
-const statusOptions = [
-  { label: 'All Statuses', value: '' },
-  { label: 'Reported Lost', value: 'lost' },
-  { label: 'Found (Unclaimed)', value: 'found_unclaimed' },
-  { label: 'Found (Claimed)', value: 'found_claimed' },
-  { label: 'Returned to Owner', value: 'returned' },
-]
+const categoryOptions = computed(() => [
+  { label: t('items.myItems.all'), value: '' },
+  ...categories.value.map(c => ({
+    label: (currentLocale.value === 'am' && c.display_name_am) ? c.display_name_am : (c.display_name || c.name),
+    value: c.id,
+  })),
+])
+
+const statusOptions = computed(() => [
+  { label: t('common.all'), value: '' },
+  { label: t('items.status.lost'), value: 'lost' },
+  { label: t('items.status.found_unclaimed'), value: 'found_unclaimed' },
+  { label: t('items.status.found_claimed'), value: 'found_claimed' },
+  { label: t('items.status.returned'), value: 'returned' },
+])
 </script>
 
 <template>
-  <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+  <div class="bg-white dark:bg-[#111827] p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-4 transition-colors duration-150">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       <!-- Search Input -->
-      <AppInput
-        placeholder="Search keywords..."
-        :model-value="filters.search"
-        @update:model-value="filters.search = $event; emit('filter-change')"
-      >
-        <template #prefix>
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </template>
-      </AppInput>
+      <div>
+        <div class="relative">
+          <AppInput
+            :placeholder="t('browse.searchPlaceholder')"
+            :model-value="filters.search"
+            class="pl-8"
+            @update:model-value="filters.search = $event; emit('filter-change')"
+          />
+          <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500 pointer-events-none" />
+        </div>
+        <p v-if="filters.search && filters.search.length > 0 && filters.search.length < 3" class="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5 ml-1">
+          {{ t('common.searchMinLength') }}
+        </p>
+      </div>
 
       <!-- Type Select -->
       <AppSelect
-        placeholder="Filter by Type"
+        :placeholder="t('items.myItems.type')"
         :options="typeOptions"
         :model-value="filters.type"
         @update:model-value="filters.type = $event as any; emit('filter-change')"
@@ -59,15 +73,15 @@ const statusOptions = [
 
       <!-- Category Select -->
       <AppSelect
-        placeholder="All Categories"
-        :options="[{ label: 'All Categories', value: '' }, ...categories.map(c => ({ label: c.name, value: c.id }))]"
+        :placeholder="t('items.myItems.category')"
+        :options="categoryOptions"
         :model-value="filters.category_id"
         @update:model-value="filters.category_id = $event ? Number($event) : ''; emit('filter-change')"
       />
 
       <!-- Status Select -->
       <AppSelect
-        placeholder="Filter by Status"
+        :placeholder="t('items.myItems.status')"
         :options="statusOptions"
         :model-value="filters.status"
         @update:model-value="filters.status = $event as any; emit('filter-change')"
@@ -75,10 +89,10 @@ const statusOptions = [
     </div>
 
     <!-- Clear filters action -->
-    <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-      <span class="text-slate-400">Filter and refine items</span>
+    <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+      <span class="text-slate-400 dark:text-slate-500">{{ t('browse.subtitle') }}</span>
       <AppButton variant="ghost" size="sm" @click="emit('reset')">
-        Reset All Filters
+        {{ t('common.reset') }}
       </AppButton>
     </div>
   </div>

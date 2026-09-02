@@ -10,6 +10,7 @@ use App\Http\Resources\Api\V1\ItemPhotoResource;
 use App\Models\Item;
 use App\Models\ItemPhoto;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class ItemPhotoController extends Controller
 {
@@ -20,15 +21,22 @@ class ItemPhotoController extends Controller
 
         $file = $request->file('photo');
         $path = $file->store('item-photos', 'public');
+        $isPrimary = $request->boolean('is_primary', false);
 
-        $photo = ItemPhoto::create([
-            'item_id' => $item->id,
-            'path' => $path,
-            'original_name' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
-            'size_bytes' => $file->getSize(),
-            'is_primary' => $request->boolean('is_primary', false),
-        ]);
+        $photo = DB::transaction(function () use ($item, $path, $file, $isPrimary) {
+            if ($isPrimary) {
+                ItemPhoto::where('item_id', $item->id)->update(['is_primary' => false]);
+            }
+
+            return ItemPhoto::create([
+                'item_id' => $item->id,
+                'path' => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size_bytes' => $file->getSize(),
+                'is_primary' => $isPrimary,
+            ]);
+        });
 
         return response()->json([
             'message' => 'Photo uploaded successfully',

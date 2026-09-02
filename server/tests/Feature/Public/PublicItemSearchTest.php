@@ -52,7 +52,7 @@ class PublicItemSearchTest extends TestCase
     {
         $reporter = User::factory()->create();
         $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
-        $category = Category::create(['name' => 'Calculators', 'name_am' => 'ካልኩሌተር']);
+        $category = Category::firstOrCreate(['name' => 'Calculators'], ['name_am' => 'ካልኩሌተር']);
 
         Item::create([
             'reference_code' => 'WU-CALC1234',
@@ -75,5 +75,55 @@ class PublicItemSearchTest extends TestCase
                 'category' => 'Calculators',
                 'status' => 'lost',
             ]);
+    }
+
+    public function test_guest_can_browse_lost_and_found_items_and_filter_by_type(): void
+    {
+        $reporter = User::factory()->create();
+        $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
+        $category = Category::firstOrCreate(['name' => 'Electronics'], ['name_am' => 'ኤሌክትሮኒክስ']);
+
+        // Create Lost Item
+        Item::create([
+            'reference_code' => 'WU-LOST9999',
+            'reporter_id' => $reporter->id,
+            'campus_id' => $campus->id,
+            'category_id' => $category->id,
+            'type' => 'lost',
+            'status' => 'lost',
+            'title' => 'Lost Black Wallet',
+            'description' => 'Leather wallet lost in cafeteria',
+            'incident_date' => now(),
+        ]);
+
+        // Create Found Item
+        Item::create([
+            'reference_code' => 'WU-FND9999',
+            'reporter_id' => $reporter->id,
+            'campus_id' => $campus->id,
+            'category_id' => $category->id,
+            'type' => 'found',
+            'status' => 'found_unclaimed',
+            'title' => 'Found Blue Umbrella',
+            'description' => 'Umbrella found near gate',
+            'incident_date' => now(),
+        ]);
+
+        // Browse all
+        $allResponse = $this->getJson('/api/v1/public/items');
+        $allResponse->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+
+        // Filter lost
+        $lostResponse = $this->getJson('/api/v1/public/items?type=lost');
+        $lostResponse->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.reference_code', 'WU-LOST9999');
+
+        // Filter found
+        $foundResponse = $this->getJson('/api/v1/public/items?type=found');
+        $foundResponse->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.reference_code', 'WU-FND9999');
     }
 }

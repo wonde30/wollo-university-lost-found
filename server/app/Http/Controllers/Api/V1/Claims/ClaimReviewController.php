@@ -12,8 +12,6 @@ use App\Http\Resources\Api\V1\ClaimResource;
 use App\Models\Claim;
 use App\Models\ClaimStatusHistory;
 use App\Models\ItemStatusHistory;
-use App\Support\Enums\ClaimStatus;
-use App\Support\Enums\ItemStatus;
 use App\Support\Services\AuditLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,22 +21,11 @@ use Illuminate\Validation\ValidationException;
 /**
  * Handles staff review decisions on pending claims
  * and admin dispute reversals.
- *
- * Security/correctness fixes applied:
- *  - Fix #3: lockForUpdate() added on claim approval to prevent
- *    concurrent double-approval race conditions.
- *  - Fix #4: reverse() method implemented (was a missing route handler).
  */
 class ClaimReviewController extends Controller
 {
     /**
      * Staff: Approve or reject a pending claim.
-     *
-     * On approval:
-     *  - claim row is row-locked before update (lockForUpdate)
-     *  - item transitions to `claimed`
-     *  - competing pending claims are auto-rejected
-     *  - full audit and history recorded
      */
     public function review(ClaimReviewRequest $request, int $id): JsonResponse
     {
@@ -47,8 +34,6 @@ class ClaimReviewController extends Controller
         $reviewNote = $request->input('review_note');
 
         DB::transaction(function () use ($id, $user, $status, $reviewNote, $request) {
-            // Fix #3: Lock the claim row before reading to prevent
-            // two concurrent approvals from racing each other.
             $claim = Claim::with('item')
                 ->lockForUpdate()
                 ->findOrFail($id);
@@ -56,15 +41,15 @@ class ClaimReviewController extends Controller
             $this->authorize('review', $claim);
 
             // Guard: only pending claims can be reviewed
-            if ($claim->status !== ClaimStatus::PENDING) {
+            if ($claim->status !== 'pending') {
                 throw ValidationException::withMessages([
-                    'claim' => ["This claim is already {$claim->status->value} and cannot be reviewed again."],
+                    'claim' => ["This claim is already {$claim->status} and cannot be reviewed again."],
                 ]);
             }
 
-            $fromStatus = $claim->status->value;
+            $fromStatus = (string) $claim->status;
 
-            $claim->status      = $status === 'approved' ? ClaimStatus::APPROVED : ClaimStatus::REJECTED;
+            $claim->status      = $status === 'approved' ? 'approved' : 'rejected';
             $claim->reviewed_by = $user->id;
             $claim->review_note = $reviewNote;
             $claim->reviewed_at = now();
@@ -74,8 +59,8 @@ class ClaimReviewController extends Controller
                 'claim_id'        => $claim->id,
                 'changed_by'      => $user->id,
                 'from_status'     => $fromStatus,
-                'to_status'       => $claim->status->value,
-                'changed_by_role' => $user->role->value,
+                'to_status'       => (string) $claim->status,
+                'changed_by_role' => $user->getRoleName(),
                 'note'            => $reviewNote,
                 'ip_address'      => $request->ip(),
             ]);
@@ -84,31 +69,29 @@ class ClaimReviewController extends Controller
                 $item = $claim->item;
 
                 // Transition item to claimed
-                $item->status           = ItemStatus::CLAIMED;
+                $item->status           = 'claimed';
                 $item->last_activity_at = now();
                 $item->save();
 
                 ItemStatusHistory::create([
                     'item_id'         => $item->id,
                     'changed_by'      => $user->id,
-                    'from_status'     => ItemStatus::FOUND_UNCLAIMED->value,
-                    'to_status'       => ItemStatus::CLAIMED->value,
-                    'changed_by_role' => $user->role->value,
+                    'from_status'     => 'found_unclaimed',
+                    'to_status'       => 'claimed',
+                    'changed_by_role' => $user->getRoleName(),
                     'note'            => "Claim #{$claim->id} approved.",
                     'ip_address'      => $request->ip(),
                 ]);
 
                 // FR-39: Auto-reject all other pending claims for the same item
-                // Uses lockForUpdate to prevent a race where a second claim
-                // could also be marked approved by another concurrent request.
                 $competing = Claim::where('item_id', $item->id)
                     ->where('id', '!=', $claim->id)
-                    ->where('status', ClaimStatus::PENDING)
+                    ->where('status', 'pending')
                     ->lockForUpdate()
                     ->get();
 
                 foreach ($competing as $other) {
-                    $other->status      = ClaimStatus::REJECTED;
+                    $other->status      = 'rejected';
                     $other->auto_rejected = true;
                     $other->review_note = 'Automatically rejected because another claim was verified and approved.';
                     $other->reviewed_at = now();
@@ -118,8 +101,8 @@ class ClaimReviewController extends Controller
                     ClaimStatusHistory::create([
                         'claim_id'        => $other->id,
                         'changed_by'      => $user->id,
-                        'from_status'     => ClaimStatus::PENDING->value,
-                        'to_status'       => ClaimStatus::REJECTED->value,
+                        'from_status'     => 'pending',
+                        'to_status'       => 'rejected',
                         'changed_by_role' => 'system',
                         'was_auto_rejected' => true,
                         'note'            => 'Auto-rejected due to competing claim approval.',
@@ -132,7 +115,7 @@ class ClaimReviewController extends Controller
                 "claim.{$status}",
                 $claim,
                 ['status' => $fromStatus],
-                ['status' => $claim->status->value],
+                ['status' => (string) $claim->status],
                 $user
             );
         });
@@ -154,14 +137,6 @@ class ClaimReviewController extends Controller
 
     /**
      * Admin: Reverse a previously approved claim (dispute resolution).
-     *
-     * Fix #4: This method was entirely missing. The route existed but had no handler.
-     *
-     * Reversal resets:
-     *  - claim → rejected
-     *  - item  → found_unclaimed (available for new claims)
-     *  - All competing auto-rejected claims → pending again (reopened)
-     *  - Full history and audit recorded
      */
     public function reverse(Request $request, int $id): JsonResponse
     {
@@ -180,7 +155,7 @@ class ClaimReviewController extends Controller
             $this->authorize('reverse', $claim);
 
             // Only approved claims can be reversed
-            if ($claim->status !== ClaimStatus::APPROVED) {
+            if ($claim->status !== 'approved') {
                 throw ValidationException::withMessages([
                     'claim' => ['Only approved claims can be reversed.'],
                 ]);
@@ -193,10 +168,10 @@ class ClaimReviewController extends Controller
                 ]);
             }
 
-            $fromStatus = $claim->status->value;
+            $fromStatus = (string) $claim->status;
 
             // Reset claim to rejected
-            $claim->status      = ClaimStatus::REJECTED;
+            $claim->status      = 'rejected';
             $claim->review_note = $reviewNote;
             $claim->reviewed_at = now();
             $claim->reviewed_by = $user->id;
@@ -206,24 +181,24 @@ class ClaimReviewController extends Controller
                 'claim_id'        => $claim->id,
                 'changed_by'      => $user->id,
                 'from_status'     => $fromStatus,
-                'to_status'       => ClaimStatus::REJECTED->value,
-                'changed_by_role' => $user->role->value,
+                'to_status'       => 'rejected',
+                'changed_by_role' => $user->getRoleName(),
                 'note'            => "Dispute reversal: {$reviewNote}",
                 'ip_address'      => $request->ip(),
             ]);
 
             // Reset item back to found_unclaimed
             $item = $claim->item;
-            $item->status           = ItemStatus::FOUND_UNCLAIMED;
+            $item->status           = 'found_unclaimed';
             $item->last_activity_at = now();
             $item->save();
 
             ItemStatusHistory::create([
                 'item_id'         => $item->id,
                 'changed_by'      => $user->id,
-                'from_status'     => ItemStatus::CLAIMED->value,
-                'to_status'       => ItemStatus::FOUND_UNCLAIMED->value,
-                'changed_by_role' => $user->role->value,
+                'from_status'     => 'claimed',
+                'to_status'       => 'found_unclaimed',
+                'changed_by_role' => $user->getRoleName(),
                 'note'            => "Claim #{$claim->id} reversed by admin dispute resolution.",
                 'ip_address'      => $request->ip(),
             ]);
@@ -231,13 +206,13 @@ class ClaimReviewController extends Controller
             // Reopen auto-rejected competing claims so they can be reviewed again
             $autoRejected = Claim::where('item_id', $item->id)
                 ->where('id', '!=', $claim->id)
-                ->where('status', ClaimStatus::REJECTED)
+                ->where('status', 'rejected')
                 ->where('auto_rejected', true)
                 ->lockForUpdate()
                 ->get();
 
             foreach ($autoRejected as $other) {
-                $other->status        = ClaimStatus::PENDING;
+                $other->status        = 'pending';
                 $other->auto_rejected = false;
                 $other->review_note   = null;
                 $other->reviewed_at   = null;
@@ -247,8 +222,8 @@ class ClaimReviewController extends Controller
                 ClaimStatusHistory::create([
                     'claim_id'        => $other->id,
                     'changed_by'      => $user->id,
-                    'from_status'     => ClaimStatus::REJECTED->value,
-                    'to_status'       => ClaimStatus::PENDING->value,
+                    'from_status'     => 'rejected',
+                    'to_status'       => 'pending',
                     'changed_by_role' => 'system',
                     'note'            => 'Reopened after original approval was reversed.',
                     'ip_address'      => $request->ip(),
@@ -259,7 +234,7 @@ class ClaimReviewController extends Controller
                 'claim.reversed',
                 $claim,
                 ['status' => $fromStatus],
-                ['status' => ClaimStatus::REJECTED->value],
+                ['status' => 'rejected'],
                 $user
             );
         });

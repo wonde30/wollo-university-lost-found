@@ -27,23 +27,23 @@ class ClaimPolicy
 
     public function review(User $user, Claim $claim): bool
     {
-        return $user->isAdmin() || $user->isOfficer();
+        return $user->isAdmin() || $user->hasPermission('REVIEW_CLAIMS');
     }
 
     public function reverse(User $user, Claim $claim): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('REVERSE_CLAIMS');
     }
 
     public function update(User $user, Claim $claim): bool
     {
-        $status = $claim->status instanceof \BackedEnum ? $claim->status->value : (string) $claim->status;
+        $status = (string) $claim->status;
         return $user->id === $claim->claimant_id && $status === 'pending';
     }
 
     public function delete(User $user, Claim $claim): bool
     {
-        $status = $claim->status instanceof \BackedEnum ? $claim->status->value : (string) $claim->status;
+        $status = (string) $claim->status;
         return ($user->id === $claim->claimant_id && $status === 'pending') || $user->isAdmin();
     }
 }

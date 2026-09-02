@@ -45,9 +45,11 @@ class SendClaimDecisionNotification implements ShouldQueue
             ]
         ));
 
-        // Email notification if claimant has email
-        $claimant = $claim->claimant ?? \App\Models\User::find($claim->claimant_id);
-        if ($claimant && $claimant->email) {
+        // Email notification if claimant has email and preference is enabled
+        $claimant = $claim->claimant ?? \App\Models\User::with('notificationPreference')->find($claim->claimant_id);
+        $emailEnabled = $claimant?->notificationPreference ? (bool) $claimant->notificationPreference->email_on_claim_decided : true;
+
+        if ($claimant && $claimant->email && $emailEnabled) {
             $mailable = $this->decision === 'approved'
                 ? new \App\Mail\Claims\ClaimApprovedMail($claim)
                 : new \App\Mail\Claims\ClaimRejectedMail($claim);

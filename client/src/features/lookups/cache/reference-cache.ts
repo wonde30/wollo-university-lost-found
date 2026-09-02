@@ -1,10 +1,11 @@
-import type { Category, Location, Campus, Department } from '@/types/common.types'
+import type { Category, Location, Campus, OrganizationalUnit, OrganizationalUnitType } from '@/types/common.types'
 
 export interface ReferenceDataCache {
   categories: Category[] | null
   locations: Location[] | null
   campuses: Campus[] | null
-  departments: Department[] | null
+  organizationalUnits: OrganizationalUnit[] | null
+  organizationalUnitTypes: OrganizationalUnitType[] | null
   timestamp: number
 }
 
@@ -14,7 +15,8 @@ let memoryCache: ReferenceDataCache = {
   categories: null,
   locations: null,
   campuses: null,
-  departments: null,
+  organizationalUnits: null,
+  organizationalUnitTypes: null,
   timestamp: 0,
 }
 
@@ -38,7 +40,8 @@ export function invalidateReferenceCache(): void {
     categories: null,
     locations: null,
     campuses: null,
-    departments: null,
+    organizationalUnits: null,
+    organizationalUnitTypes: null,
     timestamp: 0,
   }
 }

@@ -14,11 +14,11 @@ class ReturnPolicy
 
     public function view(User $user, ReturnRecord $return): bool
     {
-        return $user->id === $return->user_id || $user->isAdmin() || $user->isOfficer();
+        return $user->id === $return->returned_to || $user->isAdmin() || $user->isOfficer();
     }
 
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isOfficer();
+        return $user->isAdmin() || $user->hasPermission('PROCESS_RETURNS');
     }
 }

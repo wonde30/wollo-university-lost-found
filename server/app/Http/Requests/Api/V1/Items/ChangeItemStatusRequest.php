@@ -14,7 +14,7 @@ class ChangeItemStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'string', 'in:reported,in_storage,claim_pending,claim_approved,returned,expired,withdrawn,disposed,open'],
+            'status' => ['required', 'string', 'in:lost,found_unclaimed,claimed,returned,withdrawn,closed,expired,reported,in_storage,claim_pending,claim_approved,disposed,open'],
             'reason' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
         ];

@@ -13,7 +13,7 @@ class ApproveClaim
     public function execute(Claim $claim, ReviewClaimData $data): Claim
     {
         return DB::transaction(function () use ($claim, $data) {
-            $prev = $claim->status instanceof \BackedEnum ? $claim->status->value : (string) $claim->status;
+            $prev = (string) $claim->status;
             $claim->update([
                 'status' => 'approved',
                 'review_note' => $data->reviewerNotes,
@@ -31,7 +31,7 @@ class ApproveClaim
             ]);
 
             if ($claim->item) {
-                $itemPrev = $claim->item->status instanceof \BackedEnum ? $claim->item->status->value : (string) $claim->item->status;
+                $itemPrev = (string) $claim->item->status;
                 $claim->item->update([
                     'status' => 'claimed',
                     'last_activity_at' => now(),

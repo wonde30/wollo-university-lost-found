@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
-use App\Support\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -17,14 +19,19 @@ class UserFactory extends Factory
 
     public function definition(): array
     {
+        $studentRole = Role::firstOrCreate(
+            ['name' => 'student'],
+            ['display_name' => 'Student', 'is_system' => true, 'is_active' => true]
+        );
+
         return [
+            'role_id' => $studentRole->id,
             'full_name' => fake()->name(),
             'university_id' => 'WU/' . fake()->unique()->numerify('#####/##'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'phone' => '+2519' . fake()->numerify('########'),
-            'role' => UserRole::STUDENT,
             'language' => 'en',
             'is_active' => true,
             'failed_login_attempts' => 0,
@@ -41,22 +48,34 @@ class UserFactory extends Factory
 
     public function student(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::STUDENT,
-        ]);
+        return $this->state(function (array $attributes) {
+            $role = Role::firstOrCreate(
+                ['name' => 'student'],
+                ['display_name' => 'Student', 'is_system' => true, 'is_active' => true]
+            );
+            return ['role_id' => $role->id];
+        });
     }
 
     public function staff(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::STAFF,
-        ]);
+        return $this->state(function (array $attributes) {
+            $role = Role::firstOrCreate(
+                ['name' => 'staff'],
+                ['display_name' => 'Staff', 'is_system' => true, 'is_active' => true]
+            );
+            return ['role_id' => $role->id];
+        });
     }
 
     public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::ADMIN,
-        ]);
+        return $this->state(function (array $attributes) {
+            $role = Role::firstOrCreate(
+                ['name' => 'admin'],
+                ['display_name' => 'Administrator', 'is_system' => true, 'is_active' => true]
+            );
+            return ['role_id' => $role->id];
+        });
     }
 }

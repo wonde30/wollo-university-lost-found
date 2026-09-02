@@ -13,6 +13,7 @@ export function useNotifications(autoPoll = false) {
     notifications,
     preferences,
     loading,
+    isConnected,
     isPolling,
     pagination,
     unreadCount,
@@ -37,6 +38,7 @@ export function useNotifications(autoPoll = false) {
     notifications,
     preferences,
     loading,
+    isConnected,
     isPolling,
     pagination,
 
@@ -54,6 +56,8 @@ export function useNotifications(autoPoll = false) {
     markAllRead: store.markAllRead,
     fetchPreferences: store.fetchPreferences,
     updatePreferences: store.updatePreferences,
+    connectRealtime: store.connectRealtime,
+    disconnectRealtime: store.disconnectRealtime,
     startPolling: store.startPolling,
     stopPolling: store.stopPolling,
   }

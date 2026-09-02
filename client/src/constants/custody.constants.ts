@@ -1,6 +1,6 @@
-/**
- * Custody event types constants and derived types.
- * Authoritative single source of truth for physical custody tracking.
+/*
+  Custody event types constants and derived types.
+  Authoritative single source of truth for physical custody tracking.
  */
 
 export const CUSTODY_EVENT_TYPES = {

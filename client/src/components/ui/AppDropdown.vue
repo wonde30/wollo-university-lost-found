@@ -79,8 +79,8 @@ onUnmounted(() => {
               :class="[
                 'w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-xl transition-colors text-left cursor-pointer',
                 item.danger
-                  ? 'text-rose-600 hover:bg-rose-50'
-                  : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900',
+                  ? 'text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40'
+                  : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-white',
                 item.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : '',
               ]"
               @click="item.onClick && item.onClick()"

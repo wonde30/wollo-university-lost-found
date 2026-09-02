@@ -22,6 +22,8 @@ class ReturnResource extends JsonResource
             'notes' => $this->notes,
             'recipient_confirmed' => $this->recipient_confirmed,
             'confirmed_at' => $this->confirmed_at?->toISOString(),
+            'confirmation_token' => $this->confirmation_token,
+            'confirmation_token_expires_at' => $this->confirmation_token_expires_at?->toISOString(),
             'item' => new ItemResource($this->whenLoaded('item')),
             'claim' => new ClaimResource($this->whenLoaded('claim')),
             'recipient' => new UserResource($this->whenLoaded('recipient')),

@@ -32,38 +32,38 @@ function handleClick(event: MouseEvent) {
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-[#0F5132] hover:bg-[#0B3822] text-white shadow-sm hover:shadow focus:ring-2 focus:ring-[#0F5132]/30 active:scale-[0.99] border border-transparent'
+      return 'bg-[#0B5D3B] hover:bg-[#084C30] active:bg-[#063D27] text-white shadow-xs hover:shadow focus:ring-2 focus:ring-[#0B5D3B]/30 border border-transparent active:scale-[0.99]'
     case 'gold':
-      return 'bg-gradient-to-r from-[#D4AF37] to-[#B7791F] hover:from-[#c69500] hover:to-[#997404] text-white shadow-sm hover:shadow-gold focus:ring-2 focus:ring-[#D4AF37]/40 active:scale-[0.99] border border-transparent'
+      return 'bg-[#B7791F] hover:bg-[#996515] active:bg-[#7b4f10] text-white shadow-xs focus:ring-2 focus:ring-[#B7791F]/30 border border-transparent active:scale-[0.99]'
     case 'secondary':
-      return 'bg-slate-100 hover:bg-slate-200 text-slate-800 focus:ring-2 focus:ring-slate-300 border border-slate-200/70'
+      return 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-700 border border-slate-200 dark:border-slate-700 active:scale-[0.99]'
     case 'outline':
-      return 'border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-xs focus:ring-2 focus:ring-slate-200'
+      return 'border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-2xs focus:ring-2 focus:ring-[#0B5D3B]/20 active:scale-[0.99]'
     case 'outline-white':
-      return 'border border-white/60 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm focus:ring-2 focus:ring-white/30'
+      return 'border border-white/40 bg-white/10 hover:bg-white/20 text-white backdrop-blur-xs focus:ring-2 focus:ring-white/30 active:scale-[0.99]'
     case 'danger':
-      return 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm focus:ring-2 focus:ring-rose-500/30 border border-transparent active:scale-[0.99]'
+      return 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-xs focus:ring-2 focus:ring-rose-500/30 border border-transparent active:scale-[0.99]'
     case 'ghost':
-      return 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
+      return 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border border-transparent active:scale-[0.99]'
     case 'link':
-      return 'text-[#0F5132] hover:text-[#0B3822] underline-offset-4 hover:underline p-0 border-transparent bg-transparent shadow-none'
+      return 'text-[#0B5D3B] dark:text-[#3e9e70] hover:text-[#084C30] dark:hover:text-[#75bd97] underline-offset-4 hover:underline p-0 border-transparent bg-transparent shadow-none'
     default:
-      return 'bg-[#0F5132] text-white'
+      return 'bg-[#0B5D3B] text-white'
   }
 })
 
 const sizeClasses = computed(() => {
-  if (props.variant === 'link') return 'text-sm font-medium'
+  if (props.variant === 'link') return 'text-sm font-bold'
   switch (props.size) {
     case 'xs':
-      return 'px-2.5 py-1 text-xs font-medium rounded-md gap-1.5'
+      return 'px-2.5 py-1 text-xs font-bold rounded-lg gap-1.5'
     case 'sm':
-      return 'px-3 py-1.5 text-xs font-medium rounded-lg gap-2'
+      return 'px-3 py-1.5 text-xs font-bold rounded-lg gap-1.5'
     case 'lg':
-      return 'px-5 py-3 text-base font-semibold rounded-xl gap-2.5'
+      return 'px-5 py-2.5 text-sm sm:text-base font-extrabold rounded-xl gap-2.5'
     case 'md':
     default:
-      return 'px-4 py-2.5 text-sm font-medium rounded-lg gap-2'
+      return 'px-4 py-2 text-xs sm:text-sm font-bold rounded-xl gap-2'
   }
 })
 </script>
@@ -73,7 +73,7 @@ const sizeClasses = computed(() => {
     :type="type"
     :disabled="disabled || loading"
     :class="[
-      'inline-flex items-center justify-center font-medium transition-all duration-150 outline-none select-none cursor-pointer disabled:opacity-55 disabled:cursor-not-allowed disabled:pointer-events-none',
+      'inline-flex items-center justify-center font-bold tracking-tight transition-all duration-150 outline-none select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
       variantClasses,
       sizeClasses,
       block ? 'w-full' : '',
@@ -91,8 +91,12 @@ const sizeClasses = computed(() => {
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
     </svg>
 
-    <slot v-if="!loading" name="icon-left" />
+    <slot v-if="!loading" name="icon-left">
+      <slot v-if="!loading" name="prefix" />
+    </slot>
     <slot />
-    <slot name="icon-right" />
+    <slot name="icon-right">
+      <slot name="suffix" />
+    </slot>
   </button>
 </template>

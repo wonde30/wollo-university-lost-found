@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-
+import { ArrowUp, ArrowDown, ArrowUpDown, PackageSearch } from 'lucide-vue-next'
+import { t } from '@/i18n'
 import type { TableColumn } from './types'
 export type { TableColumn }
 
@@ -18,13 +19,16 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  emptyTitle: 'No records found',
-  emptyDescription: 'There is no data matching your criteria.',
+  emptyTitle: undefined,
+  emptyDescription: undefined,
   selectable: false,
   selectedKeys: () => [],
   rowKey: 'id',
   stickyHeader: false,
 })
+
+const effectiveEmptyTitle = computed(() => props.emptyTitle || t('common.noData'))
+const effectiveEmptyDescription = computed(() => props.emptyDescription || t('common.noDataMatching'))
 
 const emit = defineEmits<{
   (e: 'row-click', item: Record<string, any>): void
@@ -75,30 +79,30 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
 </script>
 
 <template>
-  <div class="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+  <div class="w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs transition-colors duration-200">
     <!-- Optional Bulk Actions Header Bar -->
-    <div v-if="selectable && selectedKeys.length > 0" class="px-4 py-2.5 bg-emerald-50 border-b border-emerald-200 flex items-center justify-between text-xs">
-      <span class="font-semibold text-emerald-800">
-        {{ selectedKeys.length }} item{{ selectedKeys.length > 1 ? 's' : '' }} selected
+    <div v-if="selectable && selectedKeys.length > 0" class="px-4 py-2.5 bg-[#E8F4EE] dark:bg-[#153C2D]/50 border-b border-[#0B5D3B]/20 dark:border-[#0B5D3B]/40 flex items-center justify-between text-xs">
+      <span class="font-semibold text-[#0B5D3B] dark:text-[#75bd97]">
+        {{ selectedKeys.length }} {{ t('common.items') }} selected
       </span>
       <slot name="bulk-actions" :selected-keys="selectedKeys" />
     </div>
 
     <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm text-slate-600">
+      <table class="w-full text-left text-sm text-slate-700 dark:text-slate-200">
         <thead
           :class="[
-            'bg-slate-50/90 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 select-none',
-            stickyHeader ? 'sticky top-0 z-10 backdrop-blur-sm' : '',
+            'bg-slate-50 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 select-none',
+            stickyHeader ? 'sticky top-0 z-10 backdrop-blur-xs' : '',
           ]"
         >
           <tr>
             <!-- Select all checkbox -->
-            <th v-if="selectable" class="w-10 px-4 py-3.5 text-center">
+            <th v-if="selectable" class="w-10 px-4 py-3 text-center">
               <input
                 type="checkbox"
                 :checked="allSelected"
-                class="rounded text-[#0F5132] focus:ring-[#0F5132] h-4 w-4 cursor-pointer"
+                class="rounded text-[#0B5D3B] focus:ring-[#0B5D3B] h-4 w-4 cursor-pointer bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700"
                 @change="toggleSelectAll"
               />
             </th>
@@ -108,8 +112,8 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
               :key="col.key"
               :style="{ width: col.width }"
               :class="[
-                'px-4 py-3.5',
-                col.sortable ? 'cursor-pointer hover:text-slate-800' : '',
+                'px-4 py-3 font-bold',
+                col.sortable ? 'cursor-pointer hover:text-slate-900 dark:hover:text-white transition-colors' : '',
                 col.align === 'center' ? 'text-center' : '',
                 col.align === 'right' ? 'text-right' : '',
               ]"
@@ -123,64 +127,47 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
                 ]"
               >
                 <span>{{ col.label }}</span>
-                <span v-if="col.sortable" class="text-slate-400">
-                  <svg
+                <span v-if="col.sortable" class="text-slate-400 dark:text-slate-500">
+                  <ArrowUp
                     v-if="sortKey === col.key && sortDirection === 'asc'"
-                    class="h-3.5 w-3.5 text-[#0F5132]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                  </svg>
-                  <svg
+                    class="h-3.5 w-3.5 text-[#0B5D3B] dark:text-[#3e9e70]"
+                  />
+                  <ArrowDown
                     v-else-if="sortKey === col.key && sortDirection === 'desc'"
-                    class="h-3.5 w-3.5 text-[#0F5132]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                  <svg
+                    class="h-3.5 w-3.5 text-[#0B5D3B] dark:text-[#3e9e70]"
+                  />
+                  <ArrowUpDown
                     v-else
-                    class="h-3 w-3 opacity-50"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                  </svg>
+                    class="h-3 w-3 opacity-40 hover:opacity-100"
+                  />
                 </span>
               </div>
             </th>
           </tr>
         </thead>
 
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
           <!-- Loading skeleton rows -->
           <template v-if="loading">
             <tr v-for="n in 5" :key="n" class="animate-pulse">
-              <td v-if="selectable" class="px-4 py-4 text-center">
-                <div class="h-4 w-4 bg-slate-200 rounded mx-auto" />
+              <td v-if="selectable" class="px-4 py-3.5 text-center">
+                <div class="h-4 w-4 bg-slate-200 dark:bg-slate-800 rounded mx-auto" />
               </td>
-              <td v-for="col in columns" :key="col.key" class="px-4 py-4">
-                <div class="h-4 bg-slate-200 rounded w-3/4" />
+              <td v-for="col in columns" :key="col.key" class="px-4 py-3.5">
+                <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
               </td>
             </tr>
           </template>
 
           <!-- Empty State -->
           <tr v-else-if="items.length === 0">
-            <td :colspan="columns.length + (selectable ? 1 : 0)" class="p-10 text-center text-slate-400">
+            <td :colspan="columns.length + (selectable ? 1 : 0)" class="p-10 text-center text-slate-400 dark:text-slate-500">
               <div class="max-w-xs mx-auto space-y-1">
-                <div class="h-10 w-10 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                  </svg>
+                <div class="h-10 w-10 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-2">
+                  <PackageSearch class="h-5 w-5" />
                 </div>
-                <p class="font-semibold text-slate-800 text-sm">{{ emptyTitle }}</p>
-                <p class="text-xs text-slate-500">{{ emptyDescription }}</p>
+                <p class="font-semibold text-slate-800 dark:text-slate-200 text-sm">{{ effectiveEmptyTitle }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ effectiveEmptyDescription }}</p>
               </div>
             </td>
           </tr>
@@ -191,17 +178,17 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
             v-else
             :key="item[rowKey] || index"
             :class="[
-              'hover:bg-slate-50/90 transition-colors cursor-pointer',
-              selectedKeys.includes(item[rowKey]) ? 'bg-emerald-50/50' : '',
+              'hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition-colors cursor-pointer',
+              selectedKeys.includes(item[rowKey]) ? 'bg-[#E8F4EE]/50 dark:bg-[#153C2D]/30' : '',
             ]"
             @click="emit('row-click', item)"
           >
             <!-- Checkbox row -->
-            <td v-if="selectable" class="px-4 py-3.5 text-center" @click.stop>
+            <td v-if="selectable" class="px-4 py-3 text-center" @click.stop>
               <input
                 type="checkbox"
                 :checked="selectedKeys.includes(item[rowKey])"
-                class="rounded text-[#0F5132] focus:ring-[#0F5132] h-4 w-4 cursor-pointer"
+                class="rounded text-[#0B5D3B] focus:ring-[#0B5D3B] h-4 w-4 cursor-pointer bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700"
                 @change="toggleRowSelect(item, $event)"
               />
             </td>
@@ -210,7 +197,7 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
               v-for="col in columns"
               :key="col.key"
               :class="[
-                'px-4 py-3.5 text-slate-700',
+                'px-4 py-2.5 sm:py-3 text-slate-800 dark:text-slate-200 text-xs sm:text-sm',
                 col.align === 'center' ? 'text-center' : '',
                 col.align === 'right' ? 'text-right' : '',
               ]"
@@ -225,7 +212,7 @@ function toggleRowSelect(item: Record<string, any>, event: Event) {
     </div>
 
     <!-- Optional pagination footer -->
-    <div v-if="$slots.pagination" class="border-t border-slate-100 bg-slate-50/50">
+    <div v-if="$slots.pagination" class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
       <slot name="pagination" />
     </div>
   </div>

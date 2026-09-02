@@ -8,7 +8,7 @@ class StoreClaimRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasPermission('SUBMIT_CLAIM') ?? false;
     }
 
     public function rules(): array

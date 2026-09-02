@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Items\Actions;
 
 use App\Domain\Items\DTOs\CreateItemData;
@@ -7,10 +9,6 @@ use App\Models\CustodyEvent;
 use App\Models\Item;
 use App\Models\ItemStatusHistory;
 use App\Models\ItemTag;
-use App\Support\Enums\CustodyEventType;
-use App\Support\Enums\ItemHeldAt;
-use App\Support\Enums\ItemStatus;
-use App\Support\Enums\ItemType;
 use App\Support\Helpers\ReferenceCode;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +17,7 @@ class CreateFoundItem
     public function execute(CreateItemData $data): Item
     {
         return DB::transaction(function () use ($data) {
-            $heldAt = $data->heldAt ?? ItemHeldAt::SECURITY_OFFICE->value;
+            $heldAt = $data->heldAt ?? 'security_office';
 
             $item = Item::create([
                 'reference_code' => ReferenceCode::generate('WU'),
@@ -28,8 +26,8 @@ class CreateFoundItem
                 'category_id' => $data->categoryId,
                 'location_id' => $data->locationId,
                 'location_detail' => $data->locationDetail,
-                'type' => ItemType::FOUND,
-                'status' => ItemStatus::FOUND_UNCLAIMED,
+                'type' => 'found',
+                'status' => 'found_unclaimed',
                 'held_at' => $heldAt,
                 'title' => $data->title,
                 'description' => $data->description,
@@ -55,7 +53,7 @@ class CreateFoundItem
                     'item_id' => $item->id,
                     'actor_id' => $data->userId,
                     'storage_location_id' => $data->storageLocationId,
-                    'event_type' => CustodyEventType::DEPOSITED,
+                    'event_type' => 'deposited',
                     'condition' => 'good',
                     'notes' => 'Initial found item storage intake',
                 ]);
@@ -65,7 +63,7 @@ class CreateFoundItem
                 'item_id' => $item->id,
                 'changed_by' => $data->userId,
                 'from_status' => null,
-                'to_status' => ItemStatus::FOUND_UNCLAIMED->value,
+                'to_status' => 'found_unclaimed',
                 'changed_by_role' => 'staff',
                 'note' => 'Found item registered and placed in custody',
             ]);

@@ -9,7 +9,7 @@ export const APP_INSTITUTION = 'Wollo University'
 
 export const DEFAULT_PAGINATION = {
   PAGE: 1,
-  PER_PAGE: 15,
+  PER_PAGE: 10,
   MAX_PER_PAGE: 50,
 } as const
 

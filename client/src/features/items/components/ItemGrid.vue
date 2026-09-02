@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Item } from '../types/item.types'
+import { t } from '@/i18n'
 import ItemCard from './ItemCard.vue'
 import AppSkeleton from '@/components/ui/AppSkeleton.vue'
 import AppEmptyState from '@/components/ui/AppEmptyState.vue'
@@ -18,8 +19,8 @@ withDefaults(defineProps<Props>(), {
   <div>
     <!-- Loading Grid Skeletons -->
     <div v-if="loading && items.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      <div v-for="n in 8" :key="n" class="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-        <AppSkeleton height="12rem" className="rounded-xl" />
+      <div v-for="n in 8" :key="n" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
+        <AppSkeleton height="12rem" class="rounded-xl" />
         <AppSkeleton height="1rem" width="40%" />
         <AppSkeleton height="1.25rem" width="80%" />
         <AppSkeleton height="0.875rem" width="100%" />
@@ -29,8 +30,8 @@ withDefaults(defineProps<Props>(), {
     <!-- Empty State -->
     <div v-else-if="items.length === 0">
       <AppEmptyState
-        title="No items found"
-        description="Try adjusting your search queries or filter categories."
+        :title="t('browse.noItems')"
+        :description="t('browse.noItemsDesc')"
       />
     </div>
 

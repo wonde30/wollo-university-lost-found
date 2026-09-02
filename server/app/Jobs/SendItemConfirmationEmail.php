@@ -21,8 +21,11 @@ class SendItemConfirmationEmail implements ShouldQueue
     {
         $item = $this->item->loadMissing(['reporter']);
 
-        if ($item->reporter && $item->reporter->email) {
-            Mail::to($item->reporter->email)->send(new ItemSubmittedMail($item));
+        $reporter = $item->reporter ?? \App\Models\User::with('notificationPreference')->find($item->reporter_id);
+        $emailEnabled = $reporter?->notificationPreference ? (bool) $reporter->notificationPreference->email_on_report_submitted : true;
+
+        if ($reporter && $reporter->email && $emailEnabled) {
+            Mail::to($reporter->email)->send(new ItemSubmittedMail($item));
         }
     }
 }

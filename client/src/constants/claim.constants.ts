@@ -1,6 +1,6 @@
-/**
- * Claim status constants and derived types.
- * Authoritative single source of truth for claim decisions.
+/*
+ Claim status constants and derived types.
+ Authoritative single source of truth for claim decisions.
  */
 
 export const CLAIM_STATUS = {

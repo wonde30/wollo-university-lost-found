@@ -53,17 +53,14 @@ export async function createLostItem(itemData: StoreLostItemData): Promise<Item>
   const formData = new FormData()
 
   Object.entries(itemData).forEach(([key, value]) => {
-    // Skip empty strings, undefined, null — let backend treat as nullable
     if (value === undefined || value === null || value === '') return
 
     if (key === 'photos' && Array.isArray(value)) {
-      // Files must be appended as raw File objects
       value.forEach((file) => formData.append('photos[]', file))
+    } else if (key === 'tags' && Array.isArray(value)) {
+      value.forEach((tag) => formData.append('tags[]', String(tag)))
     } else if (typeof value === 'boolean') {
-      // Laravel boolean rule accepts "1"/"0" — NOT "true"/"false"
       formData.append(key, value ? '1' : '0')
-    } else if (Array.isArray(value)) {
-      value.forEach((v) => formData.append(`${key}[]`, String(v)))
     } else {
       formData.append(key, String(value))
     }
@@ -83,16 +80,14 @@ export async function createFoundItem(itemData: StoreFoundItemData): Promise<Ite
   const formData = new FormData()
 
   Object.entries(itemData).forEach(([key, value]) => {
-    // Skip empty strings, undefined, null — let backend treat as nullable
     if (value === undefined || value === null || value === '') return
 
     if (key === 'photos' && Array.isArray(value)) {
       value.forEach((file) => formData.append('photos[]', file))
+    } else if (key === 'tags' && Array.isArray(value)) {
+      value.forEach((tag) => formData.append('tags[]', String(tag)))
     } else if (typeof value === 'boolean') {
-      // Laravel boolean rule accepts "1"/"0" — NOT "true"/"false"
       formData.append(key, value ? '1' : '0')
-    } else if (Array.isArray(value)) {
-      value.forEach((v) => formData.append(`${key}[]`, String(v)))
     } else {
       formData.append(key, String(value))
     }
@@ -121,6 +116,14 @@ export async function deleteItem(id: number): Promise<void> {
 }
 
 /**
+ * Withdraw item (FR-18).
+ */
+export async function withdrawItem(id: number, reason?: string): Promise<Item> {
+  const { data } = await apiClient.patch<ApiResponse<Item>>(ITEMS.WITHDRAW(id), { reason })
+  return data.data!
+}
+
+/**
  * Update item status.
  */
 export async function updateItemStatus(id: number, statusData: UpdateItemStatusData): Promise<Item> {
@@ -133,16 +136,16 @@ export async function updateItemStatus(id: number, statusData: UpdateItemStatusD
 // ==========================================
 
 /**
- * Add photos to an item.
+ * Add a photo to an item.
  */
-export async function addItemPhotos(id: number, photos: File[]): Promise<ItemPhoto[]> {
+export async function uploadItemPhoto(id: number, photo: File, isPrimary = false): Promise<ItemPhoto> {
   const formData = new FormData()
-  
-  photos.forEach((photo) => {
-    formData.append('photos[]', photo)
-  })
+  formData.append('photo', photo)
+  if (isPrimary) {
+    formData.append('is_primary', '1')
+  }
 
-  const { data } = await apiClient.post<ApiResponse<ItemPhoto[]>>(
+  const { data } = await apiClient.post<ApiResponse<ItemPhoto>>(
     ITEMS.ADD_PHOTOS(id),
     formData,
     {
@@ -151,6 +154,21 @@ export async function addItemPhotos(id: number, photos: File[]): Promise<ItemPho
   )
 
   return data.data!
+}
+
+/**
+ * Add multiple photos to an item (sequentially calling backend endpoint).
+ */
+export async function addItemPhotos(id: number, photos: File[]): Promise<ItemPhoto[]> {
+  const results: ItemPhoto[] = []
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i]
+    if (photo) {
+      const res = await uploadItemPhoto(id, photo, i === 0)
+      results.push(res)
+    }
+  }
+  return results
 }
 
 /**
@@ -168,4 +186,19 @@ export async function trackItem(referenceCode: string): Promise<TrackItemResult>
     PUBLIC.TRACK(referenceCode)
   )
   return (data?.data ?? data) as TrackItemResult
+}
+
+/**
+ * Check for duplicate reports before submission (FR-63).
+ */
+export async function checkDuplicate(payload: {
+  category_id: number
+  campus_id?: number
+  serial_number?: string
+}): Promise<{ duplicate_found: boolean; message?: string; similar_item_id?: number }> {
+  const { data } = await apiClient.post<any>(
+    ITEMS.CHECK_DUPLICATE,
+    payload
+  )
+  return data
 }

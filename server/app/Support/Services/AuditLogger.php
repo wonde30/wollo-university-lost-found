@@ -19,7 +19,7 @@ class AuditLogger
         $actor = $user ?? auth()->user();
         $actorRole = null;
         if ($actor) {
-            $actorRole = $actor->role instanceof \BackedEnum ? $actor->role->value : (string) $actor->role;
+            $actorRole = $actor->getRoleName();
         }
 
         return AuditLog::create([

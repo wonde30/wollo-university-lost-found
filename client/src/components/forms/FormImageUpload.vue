@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { isValidImage, readFileAsDataURL } from '@/utils/file'
+import { t } from '@/i18n'
 
 interface Props {
   label?: string
@@ -10,7 +11,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  label: 'Upload Image',
+  label: undefined,
   error: null,
   required: false,
   currentImage: null,
@@ -25,17 +26,20 @@ const previewUrl = ref<string | null>(props.currentImage)
 const localError = ref<string | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
 
-async function handleFileChange(event: Event): Promise<void> {
-  localError.value = null
+async function handleFileChange(event: Event) {
   const input = event.target as HTMLInputElement
-  if (!input.files || input.files.length === 0) return
+  const file = input.files?.[0]
+  localError.value = null
 
-  const file = input.files[0]
   if (!file) return
 
-  const check = isValidImage(file)
-  if (!check.valid) {
-    localError.value = check.error || 'Invalid image file'
+  if (!isValidImage(file)) {
+    localError.value = t('validation.invalidFileType')
+    return
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    localError.value = t('validation.fileTooLarge', { size: 5 })
     return
   }
 
@@ -43,26 +47,27 @@ async function handleFileChange(event: Event): Promise<void> {
     previewUrl.value = await readFileAsDataURL(file)
     emit('file-selected', file)
   } catch {
-    localError.value = 'Failed to load preview'
+    localError.value = t('common.errorOccurred')
   }
 }
 
-function handleRemove(): void {
+function handleRemove() {
   previewUrl.value = null
+  localError.value = null
   if (fileInput.value) fileInput.value.value = ''
   emit('remove')
 }
 </script>
 
 <template>
-  <div class="w-full space-y-1.5">
-    <label v-if="label" class="block text-sm font-medium text-slate-700">
-      {{ label }}
+  <div class="space-y-1.5">
+    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+      {{ label || t('common.addPhoto') }}
       <span v-if="required" class="text-rose-500">*</span>
     </label>
 
     <div
-      class="relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl transition-colors cursor-pointer bg-slate-50/50 hover:bg-slate-50 border-slate-300"
+      class="relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-[#0B5D3B] dark:hover:border-[#3e9e70] rounded-2xl p-4 transition-colors cursor-pointer bg-slate-50/50 dark:bg-slate-800/50 hover:bg-[#E8F4EE]/30 dark:hover:bg-[#153C2D]/20"
       @click="fileInput?.click()"
     >
       <input
@@ -76,7 +81,7 @@ function handleRemove(): void {
       <div v-if="previewUrl" class="relative group">
         <img
           :src="previewUrl"
-          alt="Uploaded preview"
+          :alt="t('common.uploadedPreview')"
           class="max-h-48 rounded-xl object-contain shadow-sm"
         />
         <button
@@ -94,8 +99,8 @@ function handleRemove(): void {
         <svg class="mx-auto h-10 w-10 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-        <p class="text-xs font-semibold text-slate-700">Click to upload photo</p>
-        <p class="text-[11px] text-slate-400 mt-1">PNG, JPG, WebP up to 5MB</p>
+        <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">{{ t('common.clickToUpload') }}</p>
+        <p class="text-[11px] text-slate-400 mt-1">{{ t('common.uploadHint') }}</p>
       </div>
     </div>
 

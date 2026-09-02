@@ -21,25 +21,36 @@ class CustodyController extends Controller
     {
         $this->authorize('viewAny', CustodyEvent::class);
 
-        $query = CustodyEvent::with(['item', 'actor', 'storageLocation']);
+        $perPage = min(100, max(1, $request->integer('per_page', 10)));
 
-        if ($itemId = $request->query('item_id')) {
-            $query->where('item_id', $itemId);
-        }
-
-        if ($eventType = $request->query('event_type')) {
-            $query->where('event_type', $eventType);
-        }
-
-        $events = $query->orderByDesc('created_at')->paginate($request->integer('per_page', 15));
+        $events = CustodyEvent::with(['item', 'actor', 'storageLocation'])
+            ->when($request->filled('item_id'), fn ($q) => $q->where('item_id', $request->integer('item_id')))
+            ->when($request->filled('event_type'), fn ($q) => $q->where('event_type', $request->string('event_type')->toString()))
+            ->when($request->filled('storage_location_id'), fn ($q) => $q->where('storage_location_id', $request->integer('storage_location_id')))
+            ->when($request->filled('actor_id'), fn ($q) => $q->where('actor_id', $request->integer('actor_id')))
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = trim($request->string('search')->toString());
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('notes', 'like', "%{$search}%")
+                        ->orWhere('id', 'like', "%{$search}%")
+                        ->orWhere('condition', 'like', "%{$search}%")
+                        ->orWhereHas('item', fn ($iq) => $iq->where('title', 'like', "%{$search}%")->orWhere('reference_code', 'like', "%{$search}%"))
+                        ->orWhereHas('actor', fn ($uq) => $uq->where('full_name', 'like', "%{$search}%"))
+                        ->orWhereHas('storageLocation', fn ($sq) => $sq->where('name', 'like', "%{$search}%")->orWhere('building', 'like', "%{$search}%")->orWhere('room', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => CustodyEventResource::collection($events),
             'meta' => [
                 'current_page' => $events->currentPage(),
-                'last_page' => $events->lastPage(),
-                'per_page' => $events->perPage(),
-                'total' => $events->total(),
+                'last_page'    => $events->lastPage(),
+                'per_page'     => $events->perPage(),
+                'total'        => $events->total(),
+                'from'         => $events->firstItem(),
+                'to'           => $events->lastItem(),
             ],
         ]);
     }

@@ -1,6 +1,9 @@
 /**
  * Application route definitions.
- * Using Page.vue files where they exist.
+ *
+ * PERFORMANCE: Dashboard routes use nested layout parents so that
+ * DashboardLayout (sidebar, header, NotificationBell, SSE connection)
+ * stays mounted across navigations instead of being destroyed & recreated.
  */
 
 import type { RouteRecordRaw } from 'vue-router'
@@ -42,6 +45,14 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/views/public/TrackItemPage.vue'),
     meta: {
       title: 'Track Item',
+    },
+  },
+  {
+    path: ROUTE_PATHS.CONFIRM_RETURN,
+    name: ROUTE_NAMES.CONFIRM_RETURN,
+    component: () => import('@/views/public/ConfirmReturnPage.vue'),
+    meta: {
+      title: 'Confirm Property Receipt',
     },
   },
 
@@ -99,231 +110,237 @@ export const routes: RouteRecordRaw[] = [
   },
 
   // ==========================================
-  // STUDENT ROUTES (requires auth + student role)
+  // TOP-LEVEL DASHBOARD SHORTCUTS & CONVENIENCE ALIASES (nested under DashboardLayout)
   // ==========================================
   {
-    path: ROUTE_PATHS.STUDENT_DASHBOARD,
-    name: ROUTE_NAMES.STUDENT_DASHBOARD,
-    component: () => import('@/views/student/DashboardPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'Student Dashboard',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STUDENT_MY_ITEMS,
-    name: ROUTE_NAMES.STUDENT_MY_ITEMS,
-    component: () => import('@/views/student/MyItemsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'My Items',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STUDENT_MY_CLAIMS,
-    name: ROUTE_NAMES.STUDENT_MY_CLAIMS,
-    component: () => import('@/views/student/MyClaimsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'My Claims',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STUDENT_REPORT_LOST,
-    name: ROUTE_NAMES.STUDENT_REPORT_LOST,
-    component: () => import('@/views/student/ReportLostPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'Report Lost Item',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STUDENT_REPORT_FOUND,
-    name: ROUTE_NAMES.STUDENT_REPORT_FOUND,
-    component: () => import('@/views/student/ReportFoundPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'Report Found Item',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STUDENT_SUBMIT_CLAIM,
-    name: ROUTE_NAMES.STUDENT_SUBMIT_CLAIM,
-    component: () => import('@/views/student/SubmitClaimPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['student'],
-      title: 'Submit Claim',
-    },
+    path: '/',
+    component: () => import('@/layouts/DashboardLayout.vue'),
+    children: [
+      {
+        path: 'report-lost',
+        alias: ['items/report', 'items/report/lost', 'student/report-lost'],
+        name: ROUTE_NAMES.STUDENT_REPORT_LOST,
+        component: () => import('@/views/student/ReportLostPage.vue'),
+        meta: { requiresAuth: true, title: 'Report Lost Item' },
+      },
+      {
+        path: 'report-found',
+        alias: ['items/report/found', 'student/report-found'],
+        name: ROUTE_NAMES.STUDENT_REPORT_FOUND,
+        component: () => import('@/views/student/ReportFoundPage.vue'),
+        meta: { requiresAuth: true, title: 'Report Found Item' },
+      },
+      {
+        path: 'my-items',
+        alias: ['student/my-items', 'student/items'],
+        name: ROUTE_NAMES.STUDENT_MY_ITEMS,
+        component: () => import('@/views/student/MyItemsPage.vue'),
+        meta: { requiresAuth: true, title: 'My Items' },
+      },
+      {
+        path: 'my-claims',
+        alias: ['student/my-claims', 'student/claims'],
+        name: ROUTE_NAMES.STUDENT_MY_CLAIMS,
+        component: () => import('@/views/student/MyClaimsPage.vue'),
+        meta: { requiresAuth: true, title: 'My Claims' },
+      },
+      {
+        path: 'claim/:id',
+        alias: ['submit-claim', 'submit-claim/:id', 'student/claim/:id', 'student/submit-claim', 'student/submit-claim/:id'],
+        name: ROUTE_NAMES.STUDENT_SUBMIT_CLAIM,
+        component: () => import('@/views/student/SubmitClaimPage.vue'),
+        meta: { requiresAuth: true, title: 'Submit Claim' },
+      },
+    ],
   },
 
   // ==========================================
-  // STAFF ROUTES (requires auth + staff role)
+  // STUDENT ROUTES (nested under shared DashboardLayout)
   // ==========================================
   {
-    path: ROUTE_PATHS.STAFF_DASHBOARD,
-    name: ROUTE_NAMES.STAFF_DASHBOARD,
-    component: () => import('@/views/staff/DashboardPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['staff', 'admin'],
-      title: 'Staff Dashboard',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STAFF_REVIEW_CLAIMS,
-    alias: '/staff/claims',
-    name: ROUTE_NAMES.STAFF_REVIEW_CLAIMS,
-    component: () => import('@/views/staff/ReviewClaimsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['staff', 'admin'],
-      title: 'Review Claims',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STAFF_MANAGE_CUSTODY,
-    alias: '/staff/custody',
-    name: ROUTE_NAMES.STAFF_MANAGE_CUSTODY,
-    component: () => import('@/views/staff/ManageCustodyPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['staff', 'admin'],
-      title: 'Manage Custody',
-    },
-  },
-  {
-    path: ROUTE_PATHS.STAFF_PROCESS_RETURN,
-    alias: '/staff/returns',
-    name: ROUTE_NAMES.STAFF_PROCESS_RETURN,
-    component: () => import('@/views/staff/ProcessReturnPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['staff', 'admin'],
-      title: 'Process Return',
-    },
+    path: '/student',
+    component: () => import('@/layouts/DashboardLayout.vue'),
+    redirect: '/student/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: ROUTE_NAMES.STUDENT_DASHBOARD,
+        component: () => import('@/views/student/DashboardPage.vue'),
+        meta: { requiresAuth: true, capability: 'student', title: 'Student Dashboard' },
+      },
+    ],
   },
 
   // ==========================================
-  // ADMIN ROUTES (requires auth + admin role)
+  // STAFF ROUTES (nested under shared DashboardLayout)
   // ==========================================
   {
-    path: ROUTE_PATHS.ADMIN_DASHBOARD,
-    name: ROUTE_NAMES.ADMIN_DASHBOARD,
-    component: () => import('@/views/admin/DashboardPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Admin Dashboard',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_USERS,
-    name: ROUTE_NAMES.ADMIN_USERS,
-    component: () => import('@/views/admin/UsersPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'User Management',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_USER_DETAIL,
-    name: ROUTE_NAMES.ADMIN_USER_DETAIL,
-    component: () => import('@/views/admin/UserDetailPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'User Details',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_CAMPUSES,
-    name: ROUTE_NAMES.ADMIN_CAMPUSES,
-    component: () => import('@/views/admin/CampusesPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Campus Management',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_CATEGORIES,
-    name: ROUTE_NAMES.ADMIN_CATEGORIES,
-    component: () => import('@/views/admin/CategoriesPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Category Management',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_LOCATIONS,
-    name: ROUTE_NAMES.ADMIN_LOCATIONS,
-    component: () => import('@/views/admin/LocationsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Location Management',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_REPORTS,
-    name: ROUTE_NAMES.ADMIN_REPORTS,
-    component: () => import('@/views/admin/ReportsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Reports',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_SETTINGS,
-    name: ROUTE_NAMES.ADMIN_SETTINGS,
-    component: () => import('@/views/admin/SettingsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'System Settings',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_AUDIT_LOGS,
-    name: ROUTE_NAMES.ADMIN_AUDIT_LOGS,
-    component: () => import('@/views/admin/AuditLogsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Audit Logs',
-    },
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_PERMISSIONS,
-    name: ROUTE_NAMES.ADMIN_PERMISSIONS,
-    component: () => import('@/views/admin/PermissionsPage.vue'),
-    meta: {
-      requiresAuth: true,
-      roles: ['admin'],
-      title: 'Role Permissions Matrix',
-    },
+    path: '/staff',
+    component: () => import('@/layouts/DashboardLayout.vue'),
+    redirect: '/staff/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: ROUTE_NAMES.STAFF_DASHBOARD,
+        component: () => import('@/views/staff/DashboardPage.vue'),
+        meta: { requiresAuth: true, capability: 'staff', title: 'Staff Dashboard' },
+      },
+      {
+        path: 'items',
+        alias: ['lost-items', 'found-items'],
+        name: ROUTE_NAMES.STAFF_ITEMS,
+        component: () => import('@/views/admin/ItemsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_ALL_ITEMS', title: 'Items Directory' },
+      },
+      {
+        path: 'review-claims',
+        alias: ['claims'],
+        name: ROUTE_NAMES.STAFF_REVIEW_CLAIMS,
+        component: () => import('@/views/staff/ReviewClaimsPage.vue'),
+        meta: { requiresAuth: true, permission: 'REVIEW_CLAIMS', title: 'Review Claims' },
+      },
+      {
+        path: 'manage-custody',
+        alias: ['custody'],
+        name: ROUTE_NAMES.STAFF_MANAGE_CUSTODY,
+        component: () => import('@/views/staff/ManageCustodyPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_CUSTODY', title: 'Manage Custody' },
+      },
+      {
+        path: 'process-return',
+        alias: ['returns'],
+        name: ROUTE_NAMES.STAFF_PROCESS_RETURN,
+        component: () => import('@/views/staff/ProcessReturnPage.vue'),
+        meta: { requiresAuth: true, permission: 'PROCESS_RETURNS', title: 'Process Return' },
+      },
+      {
+        path: 'match-suggestions',
+        alias: ['matches'],
+        name: ROUTE_NAMES.STAFF_MATCH_SUGGESTIONS,
+        component: () => import('@/views/staff/MatchSuggestionsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_ALL_ITEMS', title: 'Match Suggestions' },
+      },
+    ],
   },
 
   // ==========================================
-  // PROFILE ROUTE (requires auth, any role)
+  // ADMIN ROUTES (nested under shared DashboardLayout)
   // ==========================================
   {
-    path: ROUTE_PATHS.PROFILE,
-    name: ROUTE_NAMES.PROFILE,
-    component: () => import('@/views/profile/ProfilePage.vue'),
-    meta: {
-      requiresAuth: true,
-      title: 'Profile',
-    },
+    path: '/admin',
+    component: () => import('@/layouts/DashboardLayout.vue'),
+    redirect: '/admin/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: ROUTE_NAMES.ADMIN_DASHBOARD,
+        component: () => import('@/views/admin/DashboardPage.vue'),
+        meta: { requiresAuth: true, capability: 'admin', title: 'Admin Dashboard' },
+      },
+      {
+        path: 'items',
+        alias: ['lost-items', 'found-items'],
+        name: ROUTE_NAMES.ADMIN_ITEMS,
+        component: () => import('@/views/admin/ItemsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_ALL_ITEMS', title: 'Items Directory' },
+      },
+      {
+        path: 'users',
+        name: ROUTE_NAMES.ADMIN_USERS,
+        component: () => import('@/views/admin/UsersPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_USERS', title: 'User Management' },
+      },
+      {
+        path: 'users/:id',
+        name: ROUTE_NAMES.ADMIN_USER_DETAIL,
+        component: () => import('@/views/admin/UserDetailPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_USERS', title: 'User Details' },
+      },
+      {
+        path: 'campuses',
+        name: ROUTE_NAMES.ADMIN_CAMPUSES,
+        component: () => import('@/views/admin/CampusesPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_CAMPUSES', title: 'Campus Management' },
+      },
+      {
+        path: 'organizational-units',
+        alias: ['units'],
+        name: ROUTE_NAMES.ADMIN_ORGANIZATIONAL_UNITS,
+        component: () => import('@/views/admin/OrganizationalUnitsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_CAMPUSES', title: 'Organizational Units' },
+      },
+
+      {
+        path: 'categories',
+        name: ROUTE_NAMES.ADMIN_CATEGORIES,
+        component: () => import('@/views/admin/CategoriesPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_CATEGORIES', title: 'Category Management' },
+      },
+      {
+        path: 'locations',
+        name: ROUTE_NAMES.ADMIN_LOCATIONS,
+        component: () => import('@/views/admin/LocationsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_LOCATIONS', title: 'Location Management' },
+      },
+      {
+        path: 'storage-locations',
+        name: ROUTE_NAMES.ADMIN_STORAGE_LOCATIONS,
+        component: () => import('@/views/admin/StorageLocationsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_LOCATIONS', title: 'Storage Vault Management' },
+      },
+      {
+        path: 'reports',
+        name: ROUTE_NAMES.ADMIN_REPORTS,
+        component: () => import('@/views/admin/ReportsPage.vue'),
+        meta: { requiresAuth: true, permission: 'GENERATE_REPORTS', title: 'Reports' },
+      },
+      {
+        path: 'settings',
+        name: ROUTE_NAMES.ADMIN_SETTINGS,
+        component: () => import('@/views/admin/SettingsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_SETTINGS', title: 'System Settings' },
+      },
+      {
+        path: 'audit-logs',
+        name: ROUTE_NAMES.ADMIN_AUDIT_LOGS,
+        component: () => import('@/views/admin/AuditLogsPage.vue'),
+        meta: { requiresAuth: true, permission: 'VIEW_AUDIT_LOGS', title: 'Audit Logs' },
+      },
+      {
+        path: 'announcements',
+        name: ROUTE_NAMES.ADMIN_ANNOUNCEMENTS,
+        component: () => import('@/views/admin/AnnouncementsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_SETTINGS', title: 'System Announcements' },
+      },
+      {
+        path: 'roles',
+        name: ROUTE_NAMES.ADMIN_ROLES,
+        component: () => import('@/views/admin/RolesPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_PERMISSIONS', title: 'Role Management' },
+      },
+      {
+        path: 'permissions',
+        name: ROUTE_NAMES.ADMIN_PERMISSIONS,
+        component: () => import('@/views/admin/PermissionsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_PERMISSIONS', title: 'Role Permissions Matrix' },
+      },
+    ],
+  },
+
+  // ==========================================
+  // PROFILE ROUTE (requires auth, any role — nested under DashboardLayout)
+  // ==========================================
+  {
+    path: '/profile',
+    component: () => import('@/layouts/DashboardLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: ROUTE_NAMES.PROFILE,
+        component: () => import('@/views/profile/ProfilePage.vue'),
+        meta: { requiresAuth: true, title: 'Profile' },
+      },
+    ],
   },
 
   // ==========================================

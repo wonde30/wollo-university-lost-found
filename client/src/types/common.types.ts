@@ -8,71 +8,149 @@ export type { PaginationMeta, PaginationParams } from '@/lib/api/pagination'
 export type { ApiResponse, PaginatedResponse } from '@/lib/api/response'
 
 /**
- * Common domain types used across features
+ * Campus domain type matching CampusResource
  */
-
 export interface Campus {
   id: number
   name: string
-  code: string
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  short_code: string
+  code?: string
+  city?: string | null
+  region?: string | null
   address: string | null
-  description: string | null
+  description?: string | null
+  phone?: string | null
+  email?: string | null
   is_active: boolean
-  departments?: Department[]
+  organizational_units?: OrganizationalUnit[]
   locations?: Location[]
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
+
+/**
+ * Category domain type matching CategoryResource
+ */
 export interface Category {
   id: number
   name: string
-  name_am: string | null
-  icon_slug: string | null
-  icon?: string | null  // Alias for icon_slug for backwards compatibility
-  sort_order: number
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  icon_slug?: string | null
+  icon?: string | null // Alias for backwards compatibility
+  sort_order?: number
   is_active: boolean
   items_count?: number
 }
 
+/**
+ * Location domain type matching LocationResource
+ */
 export interface Location {
   id: number
   campus_id: number
   name: string
-  code: string
-  building: string | null
-  floor: string | null
-  room_number: string | null
-  coordinates: string | null
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  code?: string
+  building?: string | null
+  floor?: string | null
+  room_number?: string | null
+  coordinates?: string | null
   is_active: boolean
   campus?: Campus
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }
 
-export interface Department {
+/**
+ * OrganizationalUnitType domain type matching database model & controller
+ */
+export interface OrganizationalUnitType {
+  id: number
+  code: string
+  name: string
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  description?: string | null
+  is_root?: boolean
+  is_active?: boolean
+  child_type_relations?: Array<{
+    id: number
+    parent_type_id: number
+    child_type_id: number
+    child_type?: OrganizationalUnitType
+  }>
+  parent_type_relations?: Array<{
+    id: number
+    parent_type_id: number
+    child_type_id: number
+    parent_type?: OrganizationalUnitType
+  }>
+  organizational_units?: OrganizationalUnit[]
+  created_at?: string
+  updated_at?: string
+}
+
+/**
+ * OrganizationalUnit domain type matching OrganizationalUnitResource
+ */
+export interface OrganizationalUnit {
   id: number
   campus_id: number
+  parent_id?: number | null
+  type_id: number
   name: string
-  code: string
-  description: string | null
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  short_code: string
+  description?: string | null
   is_active: boolean
   campus?: Campus
-  created_at: string
-  updated_at: string
+  type?: {
+    id: number
+    code: string
+    name: string
+    name_am?: string | null
+    display_name_am?: string | null
+  }
+  parent?: OrganizationalUnit | null
+
+  children?: OrganizationalUnit[]
+  is_primary?: boolean
+  enrolled_year?: number | string | null
+  created_at?: string
+  updated_at?: string
 }
 
+/**
+ * StorageLocation domain type matching StorageLocationResource
+ */
 export interface StorageLocation {
   id: number
   campus_id: number
   name: string
-  building: string | null
-  room_number: string | null
-  shelf_cabinet_code: string | null
-  capacity: number | null
-  current_occupancy: number
-  status: string
+  name_am?: string | null
+  display_name_am?: string | null
+  display_name?: string | null
+  code?: string
+  description?: string | null
+  building?: string | null
+  room_number?: string | null
+  shelf_cabinet_code?: string | null
+  capacity?: number | null
+  current_occupancy?: number
+  status?: string
+  is_active?: boolean
   campus?: Campus
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
 }

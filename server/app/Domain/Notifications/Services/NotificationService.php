@@ -3,23 +3,25 @@
 namespace App\Domain\Notifications\Services;
 
 use App\Domain\Notifications\DTOs\NotificationData;
+use App\Events\NotificationCreated;
 use App\Models\Notification;
 
 class NotificationService
 {
     /**
-     * Persist a notification row to the custom notifications table.
-     *
-     * The table uses a bigint auto-increment PK — do NOT pass an id;
-     * the database generates it automatically.
+     * Persist a notification row to the custom notifications table and broadcast it in real-time.
      */
     public function send(NotificationData $data): Notification
     {
-        return Notification::create([
+        $notification = Notification::create([
             'user_id' => $data->userId,
             'type'    => $data->type,
             'channel' => 'database',
             'data'    => $data->payload,
         ]);
+
+        NotificationCreated::dispatch($notification);
+
+        return $notification;
     }
 }

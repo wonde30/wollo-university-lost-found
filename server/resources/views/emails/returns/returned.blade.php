@@ -28,6 +28,17 @@
         </tr>
     </table>
 
+    @if($record->confirmation_token && !$record->recipient_confirmed)
+    <div style="margin: 24px 0; text-align: center;">
+        <p style="margin-bottom: 12px; font-weight: bold; color: #1e293b;">Please confirm that you have safely received your item:</p>
+        <a href="{{ config('app.frontend_url') }}/confirm-return/{{ $record->confirmation_token }}" 
+           style="background-color: #0F5132; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+            Confirm Collection Receipt
+        </a>
+        <p style="font-size: 11px; color: #64748b; margin-top: 8px;">This secure confirmation link is valid for 48 hours .</p>
+    </div>
+    @endif
+
     <p style="font-size: 13px; color: #475569;">
         Thank you for using the Wollo University Property Recovery System. We are glad your property has been safely returned to you!
     </p>

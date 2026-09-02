@@ -1,46 +1,26 @@
 /**
  * Composable for public item discovery.
- * For guest/unauthenticated access to browse lost & found items.
+ *
+ * Thin wrapper around usePublicItemsStore.
+ * Results survive navigation — return visits show cached data instantly
+ * (stale-while-revalidate) instead of a full loading spinner every time.
  */
 
-import { ref, type Ref } from 'vue'
-import type { Item, ItemListParams } from '@/features/items/types/item.types'
-import type { PaginatedResponse, PaginationParams } from '@/lib/api/pagination'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
+import type { Item } from '@/features/items/types/item.types'
+import { usePublicItemsStore } from '../stores/public-items.store'
 import * as publicApi from '../api/public.api'
 
 export function usePublicItems() {
-  const items: Ref<Item[]> = ref([])
-  const currentItem: Ref<Item | null> = ref(null)
-  const trackingInfo: Ref<any | null> = ref(null)
-  const loading = ref(false)
-  const error: Ref<Error | null> = ref(null)
-  const pagination: Ref<PaginatedResponse<Item>['meta'] | null> = ref(null)
+  const store = usePublicItemsStore()
+  const { items, pagination, loading, refreshing, error } = storeToRefs(store)
 
-  /**
-   * Fetch paginated public items with filters.
-   */
-  async function fetchItems(
-    filters?: ItemListParams,
-    paginationParams?: PaginationParams
-  ): Promise<void> {
-    loading.value = true
-    error.value = null
-    try {
-      const response = await publicApi.getPublicItems(filters, paginationParams)
-      items.value = response.data
-      pagination.value = response.meta
-    } catch (err) {
-      error.value = err as Error
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
+  // ── Single-item and tracking state (not shared — local to caller) ─
+  const currentItem = ref<Item | null>(null)
+  const trackingInfo = ref<any | null>(null)
 
-  /**
-   * Alias for fetchItems - for backward compatibility.
-   */
-  const loadPublicItems = fetchItems
+  const fetchItems = store.fetchItems
 
   /**
    * Fetch single public item detail.
@@ -52,8 +32,8 @@ export function usePublicItems() {
       const item = await publicApi.getPublicItemDetail(id)
       currentItem.value = item
       return item
-    } catch (err) {
-      error.value = err as Error
+    } catch (err: any) {
+      error.value = err.message ?? 'Failed to load item'
       throw err
     } finally {
       loading.value = false
@@ -70,17 +50,14 @@ export function usePublicItems() {
       const info = await publicApi.trackItem(referenceCode)
       trackingInfo.value = info
       return info
-    } catch (err) {
-      error.value = err as Error
+    } catch (err: any) {
+      error.value = err.message ?? 'Failed to track item'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Clear tracking info.
-   */
   function clearTracking(): void {
     trackingInfo.value = null
   }
@@ -91,12 +68,13 @@ export function usePublicItems() {
     currentItem,
     trackingInfo,
     loading,
+    refreshing,
     error,
     pagination,
 
     // Actions
     fetchItems,
-    loadPublicItems, // Alias
+    loadPublicItems: fetchItems, // Alias for backward compatibility
     fetchItemDetail,
     trackItem,
     clearTracking,

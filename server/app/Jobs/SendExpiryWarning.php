@@ -42,9 +42,12 @@ class SendExpiryWarning implements ShouldQueue
             ]
         ));
 
-        // Email notification if user has an email
-        if ($item->reporter && $item->reporter->email) {
-            Mail::to($item->reporter->email)->send(new ItemExpiryWarningMail($item, $this->daysRemaining));
+        // Email notification if user has an email and preference is enabled
+        $reporter = $item->reporter ?? \App\Models\User::with('notificationPreference')->find($item->reporter_id);
+        $emailEnabled = $reporter?->notificationPreference ? (bool) $reporter->notificationPreference->email_on_expiry_warning : true;
+
+        if ($reporter && $reporter->email && $emailEnabled) {
+            Mail::to($reporter->email)->send(new ItemExpiryWarningMail($item, $this->daysRemaining));
         }
     }
 }

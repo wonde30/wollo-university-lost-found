@@ -35,7 +35,7 @@ const initials = computed(() => {
 // Deterministic background colors based on name string hash
 const bgColor = computed(() => {
   const colors = [
-    'bg-[#0F5132] text-white',
+    'bg-[#0B5D3B] text-white',
     'bg-[#B7791F] text-white',
     'bg-slate-800 text-white',
     'bg-emerald-700 text-white',

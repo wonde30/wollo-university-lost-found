@@ -16,7 +16,7 @@ class StoreAnnouncementRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:100'],
             'body' => ['required', 'string', 'max:500'],
-            'type' => ['nullable', 'string', 'in:info,warning,maintenance,success'],
+            'type' => ['nullable', 'string', 'in:info,warning,urgent,maintenance,success'],
             'audience' => ['nullable', 'string', 'in:all,students,staff,admin'],
             'is_active' => ['nullable', 'boolean'],
             'starts_at' => ['nullable', 'date'],

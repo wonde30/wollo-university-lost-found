@@ -20,7 +20,7 @@ class TrackingController extends Controller
             'reference_code' => $item->reference_code,
             'title' => $item->title,
             'category' => $item->category?->name,
-            'status' => $item->status instanceof \BackedEnum ? $item->status->value : (string) $item->status,
+            'status' => (string) $item->status,
             'incident_date' => $item->incident_date?->format('Y-m-d'),
         ]);
     }

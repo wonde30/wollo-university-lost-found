@@ -8,11 +8,21 @@ import type { User } from '@/features/auth/types/auth.types'
 import type { StorageLocation } from '@/types/common.types'
 import type { PaginatedResponse, PaginationParams } from '@/types/common.types'
 
-export type CustodyEventType = 'deposited' | 'transferred' | 'inspected' | 'withdrawn' | 'returned'
+export type CustodyEventType =
+  | 'deposited'
+  | 'transferred'
+  | 'released'
+  | 'disposed'
+  | 'inventoried'
+  | 'inspected'
+  | 'withdrawn'
+  | 'returned'
+  | string
 
 export interface CustodyEvent {
   id: number
   item_id: number
+  storage_location_id?: number | null
   event_type: CustodyEventType
   condition: string | null
   notes: string | null
@@ -50,6 +60,8 @@ export interface CustodyListParams extends PaginationParams {
   item_id?: number
   event_type?: CustodyEventType
   storage_location_id?: number
+  actor_id?: number
+  search?: string
 }
 
 // ==========================================

@@ -14,6 +14,6 @@ class SystemSettingPolicy
 
     public function update(User $user, ?SystemSetting $setting = null): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_SETTINGS');
     }
 }

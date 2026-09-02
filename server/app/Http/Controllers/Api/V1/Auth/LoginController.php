@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Resources\Api\V1\AuthUserResource;
+use App\Models\SystemSetting;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,22 +20,19 @@ use Illuminate\Validation\ValidationException;
  *
  * Security measures implemented (FR-03):
  *  - Failed-attempt counter incremented on every bad password.
- *  - Account locked for 30 minutes after 5 consecutive failures.
+ *  - Account locked for configurable duration (default 30 min) after max consecutive failures (default 5).
  *  - Counter reset to 0 on successful login.
  *  - Inactive accounts rejected with 403.
  */
 class LoginController extends Controller
 {
-    /** Maximum consecutive failures before lockout (FR-03). */
-    private const MAX_ATTEMPTS = 5;
-
-    /** Lockout duration in minutes (FR-03). */
-    private const LOCKOUT_MINUTES = 30;
-
     public function login(LoginRequest $request): JsonResponse
     {
+        $maxAttempts = (int) SystemSetting::get('login_lockout_attempts', 5);
+        $lockoutMinutes = (int) SystemSetting::get('login_lockout_minutes', 30);
+
         /** @var User|null $user */
-        $user = User::with(['profile', 'departments'])
+        $user = User::with(['profile', 'organizationalUnits'])
             ->where('email', $request->email)
             ->first();
 
@@ -55,8 +53,8 @@ class LoginController extends Controller
 
                 $updatePayload = ['failed_login_attempts' => $attempts];
 
-                if ($attempts >= self::MAX_ATTEMPTS) {
-                    $updatePayload['locked_until'] = now()->addMinutes(self::LOCKOUT_MINUTES);
+                if ($attempts >= $maxAttempts) {
+                    $updatePayload['locked_until'] = now()->addMinutes($lockoutMinutes);
                 }
 
                 $user->update($updatePayload);
@@ -82,7 +80,7 @@ class LoginController extends Controller
             ]);
         }
 
-        Auth::guard('web')->login($user);
+        Auth::guard('web')->login($user, $request->boolean('remember'));
 
         if ($request->hasSession()) {
             $request->session()->regenerate();
@@ -96,7 +94,7 @@ class LoginController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->load(['profile', 'departments']);
+        $user = $request->user()->load(['profile', 'organizationalUnits']);
 
         return response()->json([
             'user' => new AuthUserResource($user),

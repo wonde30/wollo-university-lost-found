@@ -12,9 +12,6 @@ use App\Models\Claim;
 use App\Models\ClaimEvidence;
 use App\Models\ClaimStatusHistory;
 use App\Models\Item;
-use App\Support\Enums\ClaimStatus;
-use App\Support\Enums\ItemStatus;
-use App\Support\Enums\ItemType;
 use App\Support\Services\AuditLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,24 +23,33 @@ class ClaimController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = Claim::with(['item', 'claimant', 'evidence']);
+        $perPage = min(100, max(1, $request->integer('per_page', 10)));
 
-        if (! $user->isAdmin() && ! $user->isOfficer()) {
-            $query->where('claimant_id', $user->id);
-        }
-
-        if ($status = $request->query('status')) {
-            $query->where('status', $status);
-        }
-
-        $claims = $query->orderByDesc('created_at')->paginate($request->integer('per_page', 20));
+        $claims = Claim::with(['item', 'claimant', 'evidence', 'returnRecord'])
+            ->when(! $user->isAdmin() && ! $user->isOfficer(), fn ($q) => $q->where('claimant_id', $user->id))
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')->toString()))
+            ->when($request->filled('item_id'), fn ($q) => $q->where('item_id', $request->integer('item_id')))
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = trim($request->string('search')->toString());
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('explanation', 'like', "%{$search}%")
+                        ->orWhere('id', 'like', "%{$search}%")
+                        ->orWhereHas('item', fn ($iq) => $iq->where('title', 'like', "%{$search}%")->orWhere('reference_code', 'like', "%{$search}%"))
+                        ->orWhereHas('claimant', fn ($cq) => $cq->where('full_name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%")->orWhere('university_id', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => ClaimResource::collection($claims),
             'meta' => [
                 'current_page' => $claims->currentPage(),
-                'last_page' => $claims->lastPage(),
-                'total' => $claims->total(),
+                'last_page'    => $claims->lastPage(),
+                'per_page'     => $claims->perPage(),
+                'total'        => $claims->total(),
+                'from'         => $claims->firstItem(),
+                'to'           => $claims->lastItem(),
             ],
         ]);
     }
@@ -58,7 +64,7 @@ class ClaimController extends Controller
                 $item = Item::lockForUpdate()->findOrFail($itemId);
 
                 // FR-34: Cannot claim lost items or own found items
-                if ($item->type !== ItemType::FOUND || $item->status !== ItemStatus::FOUND_UNCLAIMED) {
+                if ($item->type !== 'found' || $item->status !== 'found_unclaimed') {
                     throw ValidationException::withMessages([
                         'item_id' => ['Claims can only be submitted for unclaimed found items.'],
                     ]);
@@ -81,20 +87,29 @@ class ClaimController extends Controller
                     'item_id' => $item->id,
                     'claimant_id' => $user->id,
                     'explanation' => $request->input('explanation'),
-                    'status' => ClaimStatus::PENDING,
+                    'status' => 'pending',
                     'ip_address' => $request->ip(),
                 ]);
 
                 if ($request->hasFile('evidence')) {
                     foreach ($request->file('evidence') as $file) {
                         $path = $file->store('claim-evidence', 'local');
+                        
+                        $mime = $file->getMimeType();
+                        $evidenceType = 'document';
+                        if (str_starts_with($mime, 'image/')) {
+                            $evidenceType = 'photo';
+                        } elseif (str_starts_with($mime, 'video/')) {
+                            $evidenceType = 'video';
+                        }
+
                         ClaimEvidence::create([
                             'claim_id' => $claim->id,
                             'uploaded_by' => $user->id,
-                            'evidence_type' => 'photo',
+                            'evidence_type' => $evidenceType,
                             'path' => $path,
                             'original_name' => $file->getClientOriginalName(),
-                            'mime_type' => $file->getMimeType(),
+                            'mime_type' => $mime,
                             'size_bytes' => $file->getSize(),
                             'uploaded_at' => now(),
                         ]);
@@ -105,8 +120,8 @@ class ClaimController extends Controller
                     'claim_id' => $claim->id,
                     'changed_by' => $user->id,
                     'from_status' => null,
-                    'to_status' => ClaimStatus::PENDING->value,
-                    'changed_by_role' => $user->role->value,
+                    'to_status' => 'pending',
+                    'changed_by_role' => $user->getRoleName(),
                     'note' => 'Claim submitted by student',
                     'ip_address' => $request->ip(),
                 ]);

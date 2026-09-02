@@ -3,6 +3,8 @@ import type { ItemType, ItemStatus } from '../types/item.types'
 
 export interface ItemFilterState {
   search: string
+  tags: string
+  sort: string
   type: ItemType | ''
   status: ItemStatus | ''
   category_id: number | ''
@@ -14,6 +16,8 @@ export interface ItemFilterState {
 export function useItemFilters(initialState: Partial<ItemFilterState> = {}) {
   const filters = reactive<ItemFilterState>({
     search: '',
+    tags: '',
+    sort: 'newest',
     type: '',
     status: '',
     category_id: '',
@@ -25,6 +29,8 @@ export function useItemFilters(initialState: Partial<ItemFilterState> = {}) {
 
   function resetFilters(): void {
     filters.search = ''
+    filters.tags = ''
+    filters.sort = 'newest'
     filters.type = ''
     filters.status = ''
     filters.category_id = ''

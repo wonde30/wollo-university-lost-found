@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import type { Claim } from '../types/claim.types'
 import { useClaims } from '../composables/useClaims'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
+import { t } from '@/i18n'
 import AppModal from '@/components/ui/AppModal.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppTextarea from '@/components/ui/AppTextarea.vue'
@@ -16,8 +17,8 @@ interface Props {
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
-  (e: 'close'): void
-  (e: 'reviewed'): void
+  close: []
+  reviewed: []
 }>()
 
 const { reviewClaim, loading } = useClaims()
@@ -27,6 +28,11 @@ const form = reactive({
   status: 'approved' as 'approved' | 'rejected',
   review_note: '',
 })
+
+const decisionOptions = computed(() => [
+  { label: t('claims.approveClaim'), value: 'approved' },
+  { label: t('claims.rejectClaim'), value: 'rejected' },
+])
 
 const errors = ref<Record<string, string>>({})
 const generalError = ref<string | null>(null)
@@ -44,10 +50,10 @@ async function handleSubmit(): Promise<void> {
   errors.value = {}
 
   if (!form.status) {
-    errors.value.status = 'Please select a review decision.'
+    errors.value.status = t('validation.required')
   }
   if (form.status === 'rejected' && !form.review_note.trim()) {
-    errors.value.review_note = 'A review note is required when rejecting a claim.'
+    errors.value.review_note = t('validation.required')
   }
 
   if (Object.keys(errors.value).length > 0) return
@@ -57,11 +63,11 @@ async function handleSubmit(): Promise<void> {
       status: form.status,
       review_note: form.review_note,
     })
-    uiStore.success(`Claim #${props.claim.id} decision updated to ${form.status}.`)
+    uiStore.success(t('claims.decisionUpdated', { id: props.claim.id, status: form.status }))
     emit('reviewed')
     emit('close')
   } catch (err) {
-    generalError.value = getErrorMessage(err, 'Failed to review claim.')
+    generalError.value = getErrorMessage(err, t('common.errorOccurred'))
   }
 }
 </script>
@@ -69,28 +75,25 @@ async function handleSubmit(): Promise<void> {
 <template>
   <AppModal
     :open="open"
-    title="Review Ownership Claim"
+    :title="t('claims.review.title')"
     size="md"
     @close="$emit('close')"
   >
     <div v-if="claim" class="space-y-4">
-      <div v-if="generalError" class="p-3 rounded-xl bg-rose-50 text-xs text-rose-700">
+      <div v-if="generalError" class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-xs text-rose-700 dark:text-rose-400">
         {{ generalError }}
       </div>
 
-      <div class="rounded-xl bg-slate-50 p-3 text-xs space-y-1.5 border border-slate-200/80">
-        <p><span class="font-semibold text-slate-700">Item:</span> {{ claim.item?.title || `#${claim.item_id}` }}</p>
-        <p><span class="font-semibold text-slate-700">Claimant:</span> {{ claim.claimant?.full_name || claim.claimant?.email }}</p>
-        <p><span class="font-semibold text-slate-700">Explanation:</span> {{ claim.explanation }}</p>
+      <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-3 text-xs space-y-1.5 border border-slate-200/80 dark:border-slate-700">
+        <p><span class="font-semibold text-slate-700 dark:text-slate-300">{{ t('items.myItems.item') }}:</span> {{ claim.item?.title || `#${claim.item_id}` }}</p>
+        <p><span class="font-semibold text-slate-700 dark:text-slate-300">{{ t('claims.review.ownership') }}:</span> {{ claim.claimant?.full_name || claim.claimant?.email }}</p>
+        <p><span class="font-semibold text-slate-700 dark:text-slate-300">{{ t('items.form.description') }}:</span> {{ claim.explanation }}</p>
       </div>
 
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <AppSelect
-          label="Review Decision"
-          :options="[
-            { label: 'Approve Claim (Verified Owner)', value: 'approved' },
-            { label: 'Reject Claim (Insufficient Proof)', value: 'rejected' },
-          ]"
+          :label="t('claims.review.verificationStatus')"
+          :options="decisionOptions"
           :model-value="form.status"
           :error="errors.status"
           required
@@ -98,18 +101,18 @@ async function handleSubmit(): Promise<void> {
         />
 
         <AppTextarea
-          label="Review Notes / Instructions for Claimant"
-          :placeholder="form.status === 'rejected' ? 'Required: explain why the claim was rejected...' : 'Provide verification details or instructions for item pickup...'"
+          :label="t('admin.auditLogs.details')"
+          :placeholder="t('claims.reviewerNotePlaceholder')"
           :model-value="form.review_note"
           :error="errors.review_note"
-          :hint="form.status === 'rejected' ? 'Required when rejecting a claim' : undefined"
+          :hint="form.status === 'rejected' ? t('validation.required') : undefined"
           :rows="3"
           @update:model-value="form.review_note = $event; clearError('review_note')"
         />
 
-        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           <AppButton variant="outline" size="sm" type="button" @click="$emit('close')">
-            Cancel
+            {{ t('common.cancel') }}
           </AppButton>
           <AppButton
             :variant="form.status === 'approved' ? 'primary' : 'danger'"
@@ -117,7 +120,7 @@ async function handleSubmit(): Promise<void> {
             type="submit"
             :loading="loading"
           >
-            Submit Decision
+            {{ t('common.confirm') }}
           </AppButton>
         </div>
       </form>

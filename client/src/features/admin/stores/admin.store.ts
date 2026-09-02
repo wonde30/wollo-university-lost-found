@@ -15,11 +15,19 @@ export interface AdminStats {
   total_returns: number
   total_users: number
   pending_claims: number
+  pending_matches?: number
+  expiring_items?: number
+  unconfirmed_returns?: number
   found_items: number
+  found_unclaimed?: number
   lost_items: number
+  active_lost?: number
   returned_items: number
   in_storage: number
   recovery_rate_percentage: number
+  avg_resolution_days?: number | null
+  top_3_categories?: { id: number; name: string; total: number }[]
+  search_fail_rate_percentage?: number
 }
 
 const STATS_CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
@@ -83,15 +91,23 @@ export const useAdminStore = defineStore('admin', () => {
       stats.value = {
         total_items:               data.summary?.total_items               ?? 0,
         lost_items:                data.summary?.lost_items                ?? 0,
+        active_lost:               data.summary?.active_lost               ?? data.summary?.lost_items ?? 0,
         found_items:               data.summary?.found_items               ?? 0,
+        found_unclaimed:           data.summary?.found_unclaimed           ?? 0,
         returned_items:            data.summary?.returned_items            ?? 0,
         in_storage:                data.summary?.in_storage                ?? 0,
         pending_claims:            data.summary?.pending_claims            ?? 0,
+        pending_matches:           data.summary?.pending_matches           ?? 0,
+        expiring_items:            data.summary?.expiring_items            ?? 0,
+        unconfirmed_returns:       data.summary?.unconfirmed_returns       ?? 0,
         total_claims:              (data.summary?.pending_claims ?? 0) +
                                    (data.recent_activity?.recent_claims?.length ?? 0),
         total_returns:             data.summary?.returned_items            ?? 0,
         total_users:               data.summary?.total_users               ?? 0,
         recovery_rate_percentage:  data.summary?.recovery_rate_percentage  ?? 0,
+        avg_resolution_days:       data.summary?.avg_resolution_days       !== undefined ? data.summary.avg_resolution_days : null,
+        top_3_categories:          data.summary?.top_3_categories          ?? [],
+        search_fail_rate_percentage: data.summary?.search_fail_rate_percentage ?? 0,
       }
       recentActivity.value = data.recent_activity
       initialized.value = true

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import AppModal from './AppModal.vue'
 import AppButton from './AppButton.vue'
 
@@ -20,12 +21,12 @@ const variantConfirmType = computed(() => {
   <AppModal
     :open="uiStore.isConfirmDialogOpen"
     size="sm"
-    :title="uiStore.confirmDialog?.title || 'Confirm Action'"
+    :title="uiStore.confirmDialog?.title || t('common.confirm')"
     :closable="!uiStore.confirmDialogLoading"
     @close="uiStore.handleCancel"
   >
     <div class="space-y-3">
-      <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
         {{ uiStore.confirmDialog?.message }}
       </p>
     </div>
@@ -38,7 +39,7 @@ const variantConfirmType = computed(() => {
           :disabled="uiStore.confirmDialogLoading"
           @click="uiStore.handleCancel"
         >
-          {{ uiStore.confirmDialog?.cancelText || 'Cancel' }}
+          {{ uiStore.confirmDialog?.cancelText || t('common.cancel') }}
         </AppButton>
         <AppButton
           :variant="variantConfirmType"
@@ -46,7 +47,7 @@ const variantConfirmType = computed(() => {
           :loading="uiStore.confirmDialogLoading"
           @click="uiStore.handleConfirm"
         >
-          {{ uiStore.confirmDialog?.confirmText || 'Confirm' }}
+          {{ uiStore.confirmDialog?.confirmText || t('common.confirm') }}
         </AppButton>
       </div>
     </template>

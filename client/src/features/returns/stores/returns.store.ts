@@ -109,6 +109,34 @@ export const useReturnsStore = defineStore('returns', () => {
     }
   }
 
+  /**
+   * Recipient confirms physical collection (FR-44).
+   */
+  async function confirmReturn(id: number): Promise<ReturnRecord> {
+    loading.value = true
+    error.value = null
+    try {
+      const updated = await returnsApi.confirmReturn(id)
+      if (currentReturn.value?.id === id) {
+        currentReturn.value = updated
+      }
+      const idx = returns.value.findIndex(r => r.id === id)
+      if (idx !== -1) {
+        returns.value[idx] = updated
+      }
+      return updated
+    } catch (err) {
+      error.value = err as Error
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function exportCsv(filters?: { date_from?: string; date_to?: string }): Promise<void> {
+    return returnsApi.exportReturnsCsv(filters)
+  }
+
   function clearCurrentReturn(): void {
     currentReturn.value = null
   }
@@ -125,6 +153,8 @@ export const useReturnsStore = defineStore('returns', () => {
     fetchReturns,
     fetchReturn,
     createReturn,
+    confirmReturn,
+    exportCsv,
     /** Alias kept for backward compatibility. */
     processReturn: createReturn,
     clearCurrentReturn,

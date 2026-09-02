@@ -1,28 +1,26 @@
 /* src/assets/styles/glass.css */
 :root {
-    --wu-primary: #0F5132;       /* Institutional Forest Green */
-    --wu-gold: #D4AF37;          /* Heritage Gold */
-    --wu-bg-dark: #0B130E;       /* Deep obsidian surface */
-    --wu-surface: rgba(18, 30, 23, 0.7);
-    --wu-border: rgba(212, 175, 55, 0.15);
+    --wu-primary: #0B5D3B;       /* Wollo Green */
+    --wu-gold: #D4AF37;          /* Accent Gold */
+    --wu-bg-dark: #0F172A;       /* Deep Slate / Navy */
+    --wu-surface: rgba(255, 255, 255, 0.85);
+    --wu-border: rgba(226, 232, 240, 0.8);
+}
+
+.dark {
+    --wu-surface: rgba(17, 24, 39, 0.85);
+    --wu-border: rgba(30, 41, 59, 0.8);
 }
 
 .glass-card {
     background: var(--wu-surface);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
     border: 1px solid var(--wu-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .glass-dropdown {
-    background: rgba(15, 25, 20, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.gold-gradient-text {
-    background: linear-gradient(135deg, #F6E05E 0%, #D4AF37 50%, #B7791F 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: var(--wu-surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--wu-border);
 }

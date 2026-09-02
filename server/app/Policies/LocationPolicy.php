@@ -29,6 +29,6 @@ class LocationPolicy
 
     public function delete(User $user, Location $location): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_LOCATIONS');
     }
 }

@@ -1,16 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int         $id
+ * @property int|null    $user_id
+ * @property string      $query
+ * @property int|null    $category_id
+ * @property int|null    $campus_id
+ * @property int         $results_count
+ * @property bool        $found_match
+ * @property string|null $ip_address
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class SearchLog extends Model
 {
     use HasFactory;
-
-    const UPDATED_AT = null;
 
     protected $fillable = [
         'user_id',
@@ -22,10 +34,20 @@ class SearchLog extends Model
         'ip_address',
     ];
 
-    protected $casts = [
-        'results_count' => 'integer',
-        'found_match' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'user_id'       => 'integer',
+            'category_id'   => 'integer',
+            'campus_id'     => 'integer',
+            'results_count' => 'integer',
+            'found_match'   => 'boolean',
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function user(): BelongsTo
     {

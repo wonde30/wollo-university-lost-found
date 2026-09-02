@@ -29,7 +29,7 @@ const colorClasses = computed(() => {
     case 'white': return 'border-white/30 border-t-white'
     case 'current': return 'border-current/30 border-t-current'
     case 'primary':
-    default: return 'border-[#0F5132]/20 border-t-[#0F5132]'
+    default: return 'border-[#0B5D3B]/20 border-t-[#0B5D3B]'
   }
 })
 </script>

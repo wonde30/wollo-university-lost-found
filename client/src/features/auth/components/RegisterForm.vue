@@ -6,12 +6,17 @@ import { validateRegisterForm } from '../validation/auth.validation'
 import type { RegisterData } from '../types/auth.types'
 import { getErrorMessage, getValidationErrors } from '@/utils/error-handler'
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+
+import { useReferencesStore } from '@/features/lookups/stores/references.store'
+import { onMounted } from 'vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
+const referencesStore = useReferencesStore()
 
 const form = reactive<RegisterData & { password_confirmation: string }>({
   full_name: '',
@@ -20,6 +25,13 @@ const form = reactive<RegisterData & { password_confirmation: string }>({
   password: '',
   password_confirmation: '',
   phone: '',
+  organizational_unit_id: null,
+})
+
+onMounted(() => {
+  if (!referencesStore.organizationalUnitsLoaded) {
+    referencesStore.fetchOrganizationalUnits()
+  }
 })
 
 const errors = ref<Record<string, string>>({})
@@ -34,7 +46,7 @@ async function handleSubmit(): Promise<void> {
   loading.value = true
   try {
     await authStore.register(form)
-    uiStore.success('Account registered successfully! Please verify your email.')
+    uiStore.success(t('auth.registerSuccessOtp'))
     router.push({ path: '/auth/verify-otp', query: { email: form.email } })
   } catch (err) {
     const fieldErrors = getValidationErrors(err)
@@ -44,7 +56,7 @@ async function handleSubmit(): Promise<void> {
         return acc
       }, {} as Record<string, string>)
     } else {
-      generalError.value = getErrorMessage(err, 'Failed to create account. Please try again.')
+      generalError.value = getErrorMessage(err, t('common.errorOccurred'))
     }
   } finally {
     loading.value = false
@@ -54,14 +66,14 @@ async function handleSubmit(): Promise<void> {
 
 <template>
   <form class="space-y-3.5" @submit.prevent="handleSubmit">
-    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-400">
       {{ generalError }}
     </div>
 
     <AppInput
       id="reg-name"
-      label="Full Name"
-      placeholder="e.g. Abebe Kebede"
+      :label="t('auth.register.fullName')"
+      :placeholder="t('auth.placeholders.fullName')"
       :model-value="form.full_name"
       :error="errors.full_name"
       required
@@ -70,7 +82,7 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reg-id"
-      label="University ID"
+      :label="t('auth.register.idNumber')"
       placeholder="e.g. WU123456"
       :model-value="form.university_id"
       :error="errors.university_id"
@@ -80,7 +92,7 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reg-email"
-      label="University Email"
+      :label="t('auth.register.email')"
       type="email"
       placeholder="e.g. abebe@wu.edu.et"
       :model-value="form.email"
@@ -91,7 +103,7 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reg-phone"
-      label="Phone Number (Optional)"
+      :label="t('auth.register.phone')"
       type="tel"
       placeholder="e.g. +251 911 234 567"
       :model-value="form.phone || ''"
@@ -99,12 +111,29 @@ async function handleSubmit(): Promise<void> {
       @update:model-value="form.phone = $event"
     />
 
+    <div v-if="referencesStore.organizationalUnits.length > 0">
+      <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+        Academic Unit / College (Optional)
+      </label>
+      <select
+        :value="form.organizational_unit_id || ''"
+        class="w-full h-10 px-3 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B5D3B]"
+        @change="form.organizational_unit_id = ($event.target as HTMLSelectElement).value ? Number(($event.target as HTMLSelectElement).value) : null"
+      >
+        <option value="">Select College / Unit...</option>
+        <option v-for="u in referencesStore.organizationalUnits" :key="u.id" :value="u.id">
+          {{ u.name }} ({{ u.short_code }})
+        </option>
+      </select>
+    </div>
+
+
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <AppInput
         id="reg-password"
-        label="Password"
+        :label="t('auth.register.password')"
         type="password"
-        placeholder="Min. 8 characters"
+        :placeholder="t('validation.minLength', { min: 8 })"
         :model-value="form.password"
         :error="errors.password"
         required
@@ -113,9 +142,9 @@ async function handleSubmit(): Promise<void> {
 
       <AppInput
         id="reg-password-confirm"
-        label="Confirm Password"
+        :label="t('auth.register.confirmPassword')"
         type="password"
-        placeholder="Repeat password"
+        :placeholder="t('auth.placeholders.repeatPassword')"
         :model-value="form.password_confirmation"
         :error="errors.password_confirmation"
         required
@@ -130,14 +159,7 @@ async function handleSubmit(): Promise<void> {
       block
       :loading="loading"
     >
-      Create Student Account
+      {{ t('auth.register.submit') }}
     </AppButton>
-
-    <div class="text-center pt-2">
-      <span class="text-xs text-slate-500">Already registered? </span>
-      <RouterLink to="/auth/login" class="text-xs font-semibold text-[#0F5132] hover:underline">
-        Sign in here
-      </RouterLink>
-    </div>
   </form>
 </template>

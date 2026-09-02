@@ -37,9 +37,12 @@ class SendClaimSubmittedNotification implements ShouldQueue
             ]
         ));
 
-        // Email notification to claimant
-        if ($claim->claimant && $claim->claimant->email) {
-            \Illuminate\Support\Facades\Mail::to($claim->claimant->email)->send(new \App\Mail\Claims\ClaimSubmittedMail($claim));
+        // Email notification to claimant if enabled
+        $claimant = $claim->claimant ?? \App\Models\User::with('notificationPreference')->find($claim->claimant_id);
+        $emailEnabled = $claimant?->notificationPreference ? (bool) $claimant->notificationPreference->email_on_claim_received : true;
+
+        if ($claimant && $claimant->email && $emailEnabled) {
+            \Illuminate\Support\Facades\Mail::to($claimant->email)->send(new \App\Mail\Claims\ClaimSubmittedMail($claim));
         }
 
         // 2. Notify the item reporter (finder) that someone claimed their report
@@ -55,6 +58,24 @@ class SendClaimSubmittedNotification implements ShouldQueue
                     'message'        => "A new claim has been submitted for your reported item \"{$item->title}\" (Ref: {$item->reference_code}).",
                 ]
             ));
+        }
+
+        // 3. Notify Staff and Custodians about the incoming claim for review
+        $staffUsers = \App\Models\User::whereHas('role', fn ($q) => $q->whereIn('name', ['staff', 'admin']))->get();
+        foreach ($staffUsers as $staff) {
+            if ($staff->id !== $claim->claimant_id) {
+                $notificationService->send(new NotificationData(
+                    userId:  $staff->id,
+                    type:    'claim_submitted',
+                    payload: [
+                        'claim_id'       => $claim->id,
+                        'item_id'        => $item->id,
+                        'reference_code' => $item->reference_code,
+                        'title'          => $item->title,
+                        'message'        => "New ownership claim submitted for item \"{$item->title}\" (Ref: {$item->reference_code}).",
+                    ]
+                ));
+            }
         }
     }
 }

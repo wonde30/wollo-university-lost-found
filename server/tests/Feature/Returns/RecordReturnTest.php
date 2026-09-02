@@ -67,7 +67,7 @@ class RecordReturnTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('returns', [
-            'item_id' => $item->id,
+            'claim_id' => $claim->id,
             'returned_to' => $owner->id,
             'handed_over_by' => $staff->id,
         ]);

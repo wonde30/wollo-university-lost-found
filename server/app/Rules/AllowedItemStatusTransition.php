@@ -12,16 +12,16 @@ class AllowedItemStatusTransition implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // FR-24: Seven-state lifecycle machine
+        // lost → found_unclaimed → claimed → returned → withdrawn / closed / expired
         $allowed = [
-            'open' => ['in_storage', 'claim_pending', 'withdrawn', 'expired'],
-            'reported' => ['in_storage', 'claim_pending', 'withdrawn', 'expired'],
-            'in_storage' => ['claim_pending', 'claim_approved', 'returned', 'disposed', 'withdrawn'],
-            'claim_pending' => ['in_storage', 'claim_approved', 'open'],
-            'claim_approved' => ['returned', 'in_storage', 'reversed'],
-            'returned' => [],
-            'expired' => ['open', 'disposed'],
-            'withdrawn' => ['open'],
-            'disposed' => [],
+            'lost'            => ['found_unclaimed', 'withdrawn', 'closed', 'expired'],
+            'found_unclaimed' => ['claimed', 'withdrawn', 'closed', 'expired'],
+            'claimed'         => ['returned', 'found_unclaimed', 'closed'],  // found_unclaimed = reversal
+            'returned'        => ['closed'],
+            'withdrawn'       => ['lost', 'found_unclaimed'],                // admin reopen
+            'closed'          => ['lost', 'found_unclaimed'],                // admin reopen
+            'expired'         => ['lost', 'found_unclaimed'],                // admin reopen
         ];
 
         if ($this->currentStatus && isset($allowed[$this->currentStatus])) {

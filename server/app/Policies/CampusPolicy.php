@@ -19,16 +19,16 @@ class CampusPolicy
 
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_CAMPUSES');
     }
 
     public function update(User $user, Campus $campus): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_CAMPUSES');
     }
 
     public function delete(User $user, Campus $campus): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->hasPermission('MANAGE_CAMPUSES');
     }
 }

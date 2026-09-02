@@ -12,7 +12,7 @@ class RejectClaim
     public function execute(Claim $claim, ReviewClaimData $data): Claim
     {
         return DB::transaction(function () use ($claim, $data) {
-            $prev = $claim->status instanceof \BackedEnum ? $claim->status->value : (string) $claim->status;
+            $prev = (string) $claim->status;
             $claim->update([
                 'status' => 'rejected',
                 'review_note' => $data->reviewerNotes,

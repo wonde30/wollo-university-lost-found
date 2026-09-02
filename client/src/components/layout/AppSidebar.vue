@@ -1,221 +1,716 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useUiStore } from '@/stores/ui.store'
-import { resolveStorageUrl } from '@/utils/url'
-import AppAvatar from '@/components/ui/AppAvatar.vue'
 import AppTooltip from '@/components/ui/AppTooltip.vue'
+import {
+  LayoutDashboard,
+  Users,
+  Shield,
+  ShieldCheck,
+  Package,
+  AlertCircle,
+  CheckCircle2,
+  PackageSearch,
+  ClipboardList,
+  ClipboardCheck,
+  Sparkles,
+  Handshake,
+  Building2,
+  Building,
+  MapPin,
+  Tag,
+  Archive,
+  FileText,
+  History,
+  Settings,
+  HelpCircle,
+  ChevronDown,
+  Megaphone,
+  X,
+} from 'lucide-vue-next'
+import { t } from '@/i18n'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
 
-const userAvatarUrl = computed(() => {
-  return resolveStorageUrl(authStore.user?.profile_photo_url || authStore.user?.profile_photo || null)
-})
+// ==========================================
+// Types
+// ==========================================
+interface NavBase {
+  id: string
+  titleKey: string
+  icon: any
+}
 
-const navigationItems = computed(() => {
-  if (authStore.isAdmin) {
-    return [
-      { name: 'Dashboard', path: '/admin/dashboard', icon: 'dashboard' },
-      { name: 'Users', path: '/admin/users', icon: 'users' },
-      { name: 'Campuses', path: '/admin/campuses', icon: 'campuses' },
-      { name: 'Categories', path: '/admin/categories', icon: 'categories' },
-      { name: 'Locations', path: '/admin/locations', icon: 'locations' },
-      { name: 'Reports', path: '/admin/reports', icon: 'reports' },
-      { name: 'Permissions', path: '/admin/permissions', icon: 'permissions' },
-      { name: 'Audit Logs', path: '/admin/audit-logs', icon: 'audit' },
-      { name: 'Settings', path: '/admin/settings', icon: 'settings' },
-    ]
+interface NavLinkItem extends NavBase {
+  type: 'link'
+  path: string | (() => string)
+  isAuthorized?: () => boolean
+}
+
+interface NavAccordionItem extends NavBase {
+  type: 'accordion'
+  children: NavLinkItem[]
+  isAuthorized?: () => boolean
+}
+
+type NavEntry = NavLinkItem | NavAccordionItem
+
+interface NavSection {
+  id: string
+  titleKey: string
+  items: NavEntry[]
+}
+
+// ==========================================
+// Navigation Structure Definition
+// ==========================================
+const rawNavigation: NavSection[] = [
+  // 1. MENU
+  {
+    id: 'menu',
+    titleKey: 'nav.menu',
+    items: [
+      {
+        id: 'dashboard',
+        type: 'link',
+        titleKey: 'nav.dashboard',
+        path: () => authStore.dashboardRoute,
+        icon: LayoutDashboard,
+      },
+    ],
+  },
+
+  // 2. ACCESS
+  {
+    id: 'access',
+    titleKey: 'nav.access',
+    items: [
+      {
+        id: 'userAndAccess',
+        type: 'accordion',
+        titleKey: 'nav.userAndAccess',
+        icon: Users,
+        children: [
+          {
+            id: 'users',
+            type: 'link',
+            titleKey: 'nav.users',
+            path: '/admin/users',
+            icon: Users,
+            isAuthorized: () => authStore.can('MANAGE_USERS'),
+          },
+          {
+            id: 'roles',
+            type: 'link',
+            titleKey: 'nav.roles',
+            path: '/admin/roles',
+            icon: Shield,
+            isAuthorized: () => authStore.can('MANAGE_PERMISSIONS'),
+          },
+          {
+            id: 'permissions',
+            type: 'link',
+            titleKey: 'nav.permissions',
+            path: '/admin/permissions',
+            icon: ShieldCheck,
+            isAuthorized: () => authStore.can('MANAGE_PERMISSIONS'),
+          },
+        ],
+      },
+    ],
+  },
+
+  // 3. LOST & FOUND
+  {
+    id: 'lostAndFound',
+    titleKey: 'nav.lostAndFound',
+    items: [
+      {
+        id: 'items',
+        type: 'accordion',
+        titleKey: 'nav.items',
+        icon: Package,
+        children: [
+          {
+            id: 'allItems',
+            type: 'link',
+            titleKey: 'nav.items',
+            path: () => (authStore.isAdmin ? '/admin/items' : '/staff/items'),
+            icon: Package,
+            isAuthorized: () => authStore.isAdmin || authStore.isStaff || authStore.can('MANAGE_ALL_ITEMS'),
+          },
+          {
+            id: 'lostItems',
+            type: 'link',
+            titleKey: 'nav.lostItems',
+            path: () => ((authStore.isAdmin || authStore.isStaff) ? '/admin/items?type=lost' : '/student/report-lost'),
+            icon: AlertCircle,
+            isAuthorized: () => authStore.can('REPORT_LOST') || authStore.isAdmin || authStore.isStaff,
+          },
+          {
+            id: 'foundItems',
+            type: 'link',
+            titleKey: 'nav.foundItems',
+            path: () => ((authStore.isAdmin || authStore.isStaff) ? '/admin/items?type=found' : '/student/report-found'),
+            icon: CheckCircle2,
+            isAuthorized: () => authStore.can('REPORT_FOUND') || authStore.isAdmin || authStore.isStaff,
+          },
+          {
+            id: 'myItems',
+            type: 'link',
+            titleKey: 'nav.myItems',
+            path: '/student/my-items',
+            icon: PackageSearch,
+            isAuthorized: () =>
+              !authStore.isAdmin &&
+              (authStore.can('REPORT_LOST') ||
+                authStore.can('REPORT_FOUND') ||
+                authStore.can('EDIT_OWN_ITEM') ||
+                authStore.isStudent),
+          },
+        ],
+      },
+      {
+        id: 'claims',
+        type: 'accordion',
+        titleKey: 'nav.claims',
+        icon: ClipboardList,
+        children: [
+          {
+            id: 'pendingClaims',
+            type: 'link',
+            titleKey: 'nav.pendingClaims',
+            path: '/staff/review-claims',
+            icon: ClipboardCheck,
+            isAuthorized: () => authStore.can('REVIEW_CLAIMS') || authStore.isAdmin || authStore.isStaff,
+          },
+          {
+            id: 'myClaims',
+            type: 'link',
+            titleKey: 'nav.myClaims',
+            path: '/student/my-claims',
+            icon: ClipboardList,
+            isAuthorized: () =>
+              !authStore.isAdmin &&
+              (authStore.can('SUBMIT_CLAIM') || authStore.isStudent),
+          },
+        ],
+      },
+    ],
+  },
+
+  // 4. OPERATIONS
+  {
+    id: 'operations',
+    titleKey: 'nav.operations',
+    items: [
+      {
+        id: 'matching',
+        type: 'link',
+        titleKey: 'nav.matching',
+        path: '/staff/match-suggestions',
+        icon: Sparkles,
+        isAuthorized: () => authStore.can('MANAGE_ALL_ITEMS') || authStore.isAdmin || authStore.isStaff,
+      },
+      {
+        id: 'custody',
+        type: 'link',
+        titleKey: 'nav.custody',
+        path: '/staff/manage-custody',
+        icon: Package,
+        isAuthorized: () => authStore.can('MANAGE_CUSTODY') || authStore.isAdmin || authStore.isStaff,
+      },
+      {
+        id: 'returns',
+        type: 'link',
+        titleKey: 'nav.returns',
+        path: '/staff/process-return',
+        icon: Handshake,
+        isAuthorized: () => authStore.can('PROCESS_RETURNS') || authStore.isAdmin || authStore.isStaff,
+      },
+    ],
+  },
+
+  // 5. ADMIN SETUP
+  {
+    id: 'adminSetup',
+    titleKey: 'nav.adminSetup',
+    items: [
+      {
+        id: 'announcements',
+        type: 'link',
+        titleKey: 'nav.announcements',
+        path: '/admin/announcements',
+        icon: Megaphone,
+        isAuthorized: () => authStore.can('MANAGE_SETTINGS') || authStore.isAdmin,
+      },
+      {
+        id: 'administrativeStructure',
+        type: 'accordion',
+        titleKey: 'nav.administrativeStructure',
+        icon: Building2,
+        children: [
+          {
+            id: 'campuses',
+            type: 'link',
+            titleKey: 'nav.campuses',
+            path: '/admin/campuses',
+            icon: Building2,
+            isAuthorized: () => authStore.can('MANAGE_CAMPUSES'),
+          },
+          {
+            id: 'organizationalUnits',
+            type: 'link',
+            titleKey: 'nav.organizationalUnits',
+            path: '/admin/organizational-units',
+            icon: Building,
+            isAuthorized: () => authStore.can('MANAGE_CAMPUSES'),
+          },
+          {
+            id: 'locations',
+            type: 'link',
+            titleKey: 'nav.locations',
+            path: '/admin/locations',
+            icon: MapPin,
+            isAuthorized: () => authStore.can('MANAGE_LOCATIONS'),
+          },
+          {
+            id: 'categories',
+            type: 'link',
+            titleKey: 'nav.categories',
+            path: '/admin/categories',
+            icon: Tag,
+            isAuthorized: () => authStore.can('MANAGE_CATEGORIES'),
+          },
+          {
+            id: 'storageLocations',
+            type: 'link',
+            titleKey: 'nav.storageLocations',
+            path: '/admin/storage-locations',
+            icon: Archive,
+            isAuthorized: () => authStore.can('MANAGE_LOCATIONS'),
+          },
+        ],
+      },
+    ],
+  },
+
+  // 6. REPORTING
+  {
+    id: 'reporting',
+    titleKey: 'nav.reporting',
+    items: [
+      {
+        id: 'reports',
+        type: 'link',
+        titleKey: 'nav.reports',
+        path: '/admin/reports',
+        icon: FileText,
+        isAuthorized: () => authStore.can('GENERATE_REPORTS'),
+      },
+      {
+        id: 'auditLogs',
+        type: 'link',
+        titleKey: 'nav.auditLogs',
+        path: '/admin/audit-logs',
+        icon: History,
+        isAuthorized: () => authStore.can('VIEW_AUDIT_LOGS'),
+      },
+    ],
+  },
+]
+
+// ==========================================
+// Bottom Fixed Links
+// ==========================================
+const bottomItems = computed<NavLinkItem[]>(() => [
+  {
+    id: 'settings',
+    type: 'link',
+    titleKey: 'nav.settings',
+    path: () => (authStore.can('MANAGE_SETTINGS') ? '/admin/settings' : '/profile'),
+    icon: Settings,
+  },
+  {
+    id: 'helpAndSupport',
+    type: 'link',
+    titleKey: 'nav.helpAndSupport',
+    path: '/track',
+    icon: HelpCircle,
+  },
+])
+
+// ==========================================
+// Path and Active State Helpers
+// ==========================================
+function resolvePath(path: string | (() => string)): string {
+  return typeof path === 'function' ? path() : path
+}
+
+function isRouteActive(pathOrFn: string | (() => string)): boolean {
+  const targetPath = resolvePath(pathOrFn)
+  if (targetPath === '/admin/dashboard' || targetPath === '/staff/dashboard' || targetPath === '/student/dashboard') {
+    return route.path === targetPath
+  }
+  return route.path === targetPath || (targetPath !== '/' && route.path.startsWith(targetPath + '/'))
+}
+
+function isLinkAuthorized(link: NavLinkItem): boolean {
+  if (link.isAuthorized) {
+    return link.isAuthorized()
+  }
+  return true
+}
+
+interface VisibleAccordionItem extends NavAccordionItem {
+  visibleChildren: NavLinkItem[]
+}
+
+type VisibleNavEntry = NavLinkItem | VisibleAccordionItem
+
+interface VisibleNavSection {
+  id: string
+  titleKey: string
+  items: VisibleNavEntry[]
+}
+
+const visibleSections = computed<VisibleNavSection[]>(() => {
+  const sections: VisibleNavSection[] = []
+
+  for (const section of rawNavigation) {
+    const visibleEntries: VisibleNavEntry[] = []
+
+    for (const item of section.items) {
+      if (item.type === 'link') {
+        if (isLinkAuthorized(item)) {
+          visibleEntries.push(item)
+        }
+      } else if (item.type === 'accordion') {
+        const allowedChildren = item.children.filter(isLinkAuthorized)
+        if (allowedChildren.length > 0) {
+          visibleEntries.push({
+            ...item,
+            visibleChildren: allowedChildren,
+          })
+        }
+      }
+    }
+
+    if (visibleEntries.length > 0) {
+      sections.push({
+        id: section.id,
+        titleKey: section.titleKey,
+        items: visibleEntries,
+      })
+    }
   }
 
-  if (authStore.isStaff) {
-    return [
-      { name: 'Dashboard', path: '/staff/dashboard', icon: 'dashboard' },
-      { name: 'Review Claims', path: '/staff/review-claims', icon: 'claims' },
-      { name: 'Manage Custody', path: '/staff/manage-custody', icon: 'custody' },
-      { name: 'Process Return', path: '/staff/process-return', icon: 'returns' },
-    ]
-  }
-
-  // Student default
-  return [
-    { name: 'Dashboard', path: '/student/dashboard', icon: 'dashboard' },
-    { name: 'Report Lost', path: '/student/report-lost', icon: 'lost' },
-    { name: 'Report Found', path: '/student/report-found', icon: 'found' },
-    { name: 'My Items', path: '/student/my-items', icon: 'items' },
-    { name: 'My Claims', path: '/student/my-claims', icon: 'claims' },
-    { name: 'Browse All', path: '/browse', icon: 'browse' },
-  ]
+  return sections
 })
+
+// ==========================================
+// Accordion State & Active-Route Auto-Expansion
+// ==========================================
+const openAccordions = ref<Record<string, boolean>>({})
+
+function isOpen(groupId: string): boolean {
+  return !!openAccordions.value[groupId]
+}
+
+function toggleAccordion(groupId: string): void {
+  const isCurrentlyOpen = !!openAccordions.value[groupId]
+  openAccordions.value = isCurrentlyOpen ? {} : { [groupId]: true }
+}
+
+function isGroupActive(group: NavAccordionItem | VisibleAccordionItem): boolean {
+  const children = 'visibleChildren' in group ? group.visibleChildren : group.children
+  return children.some(child => isRouteActive(child.path))
+}
+
+function autoExpandActiveGroup(): void {
+  for (const section of rawNavigation) {
+    for (const item of section.items) {
+      if (item.type === 'accordion') {
+        const hasActiveChild = item.children.some(child => isRouteActive(child.path))
+        if (hasActiveChild) {
+          openAccordions.value = { [item.id]: true }
+          return
+        }
+      }
+    }
+  }
+}
+
+watch(
+  () => route.path,
+  () => {
+    autoExpandActiveGroup()
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  autoExpandActiveGroup()
+})
+
+function handleNavClick(): void {
+  uiStore.setSidebarOpen(false)
+}
 </script>
 
 <template>
   <aside
     :class="[
-      'fixed inset-y-0 left-0 z-40 bg-slate-950 text-white flex flex-col transition-all duration-200 ease-in-out border-r border-slate-800/80',
+      'fixed inset-y-0 left-0 z-40 bg-white dark:bg-[#0F172A] text-slate-700 dark:text-slate-200 flex flex-col transition-all duration-150 ease-in-out border-r border-slate-200 dark:border-[#1E293B]',
       uiStore.sidebarCollapsed ? 'lg:w-20' : 'lg:w-64',
       uiStore.sidebarMobileOpen ? 'translate-x-0 w-64 shadow-2xl' : '-translate-x-full lg:translate-x-0',
     ]"
   >
     <!-- Brand Header -->
-    <div class="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 bg-slate-950/60 shrink-0">
-      <RouterLink to="/" class="flex items-center gap-3 overflow-hidden">
+    <div
+      class="h-16 flex items-center justify-between px-4 border-b border-slate-200 dark:border-[#1E293B] bg-white/95 dark:bg-[#0F172A]/95 shrink-0"
+    >
+      <RouterLink to="/" class="flex items-center gap-3 overflow-hidden" @click="handleNavClick">
         <img
           src="/images/wu-logo.png"
           alt="Wollo University Emblem"
-          class="h-9 w-9 shrink-0 object-contain rounded-full bg-white shadow-sm ring-1 ring-[#D4AF37]/60 p-0.5"
+          class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 ring-[#0B5D3B]/40 p-0.5"
         />
 
-        <div v-if="!uiStore.sidebarCollapsed" class="flex flex-col transition-opacity duration-200 min-w-0">
-          <span class="text-xs font-black tracking-tight text-white leading-tight truncate">WOLLO UNIVERSITY</span>
-          <span class="text-[10px] font-bold text-[#D4AF37] tracking-wider uppercase truncate">Lost & Found</span>
+        <div v-if="!uiStore.sidebarCollapsed" class="flex flex-col transition-opacity duration-150 min-w-0">
+          <span class="text-xs font-black tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+            WOLLO UNIVERSITY
+          </span>
+          <span class="text-[10px] font-bold text-[#0B5D3B] dark:text-[#75bd97] tracking-wider uppercase truncate">
+            Lost &amp; Found
+          </span>
         </div>
       </RouterLink>
 
       <!-- Mobile Close Button -->
       <button
         type="button"
-        class="lg:hidden text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+        class="lg:hidden text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer dark:text-slate-300"
+        aria-label="Close menu"
         @click="uiStore.setSidebarOpen(false)"
       >
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <X class="h-5 w-5" />
       </button>
     </div>
 
-    <!-- User Profile Summary Pill -->
-    <div class="p-3 border-b border-slate-800/80 bg-slate-900/40 shrink-0">
-      <div :class="['flex items-center gap-3', uiStore.sidebarCollapsed ? 'justify-center' : '']">
-        <AppAvatar
-          :src="userAvatarUrl"
-          :name="authStore.user?.full_name || 'User'"
-          size="sm"
-          status="online"
-        />
-        <div v-if="!uiStore.sidebarCollapsed" class="flex-1 min-w-0">
-          <p class="text-xs font-bold text-white truncate">{{ authStore.user?.full_name || 'User' }}</p>
-          <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/50">
-            {{ authStore.user?.role || 'Guest' }}
-          </span>
+    <!-- Scrollable Navigation Area -->
+    <nav class="flex-1 overflow-y-auto px-3 py-2 space-y-2.5 no-scrollbar">
+      <!-- Section Loop -->
+      <div v-for="section in visibleSections" :key="section.id" class="space-y-1">
+        <!-- Section Header (Hidden in collapsed mode) -->
+        <div
+          v-if="!uiStore.sidebarCollapsed"
+          class="px-3 pt-2 pb-1 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none"
+        >
+          {{ t(section.titleKey) }}
+        </div>
+
+        <!-- Section Items -->
+        <div class="space-y-0.5">
+          <template v-for="item in section.items" :key="item.id">
+            <!-- ========================================== -->
+            <!-- 1. DIRECT LINK                             -->
+            <!-- ========================================== -->
+            <template v-if="item.type === 'link'">
+              <!-- Collapsed Mode: Direct Link with Tooltip -->
+              <AppTooltip
+                v-if="uiStore.sidebarCollapsed"
+                :text="t(item.titleKey)"
+                position="right"
+                class="w-full"
+              >
+                <RouterLink
+                  :to="resolvePath(item.path)"
+                  :class="[
+                    'flex items-center justify-center h-10 w-full rounded-xl transition-colors duration-150 select-none',
+                    isRouteActive(item.path)
+                      ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] font-extrabold shadow-2xs'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                  ]"
+                  @click="handleNavClick"
+                >
+                  <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
+                </RouterLink>
+              </AppTooltip>
+
+              <!-- Expanded Mode: Direct Link -->
+              <RouterLink
+                v-else
+                :to="resolvePath(item.path)"
+                :class="[
+                  'flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold transition-colors duration-150 select-none group',
+                  isRouteActive(item.path)
+                    ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] shadow-2xs font-extrabold'
+                    : 'text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                ]"
+                @click="handleNavClick"
+              >
+                <component
+                  :is="item.icon"
+                  :class="[
+                    'h-4 w-4 shrink-0 transition-transform group-hover:scale-105',
+                    isRouteActive(item.path) ? 'text-[#0B5D3B] dark:text-[#75bd97]' : 'text-slate-500 dark:text-slate-400',
+                  ]"
+                />
+                <span class="truncate">{{ t(item.titleKey) }}</span>
+              </RouterLink>
+            </template>
+
+            <!-- ========================================== -->
+            <!-- 2. ACCORDION GROUP                         -->
+            <!-- ========================================== -->
+            <template v-else-if="item.type === 'accordion'">
+              <!-- Collapsed Mode: Accordion Root Icon with Tooltip linking to first child -->
+              <AppTooltip
+                v-if="uiStore.sidebarCollapsed"
+                :text="t(item.titleKey)"
+                position="right"
+                class="w-full"
+              >
+                <RouterLink
+                  :to="resolvePath(item.visibleChildren[0]?.path || '/')"
+                  :class="[
+                    'flex items-center justify-center h-10 w-full rounded-xl transition-colors duration-150 select-none',
+                    isGroupActive(item)
+                      ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] font-extrabold shadow-2xs'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                  ]"
+                  @click="handleNavClick"
+                >
+                  <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
+                </RouterLink>
+              </AppTooltip>
+
+              <!-- Expanded Mode: Accordion Toggle Button & Collapsible Submenu -->
+              <div v-else class="space-y-0.5">
+                <button
+                  type="button"
+                  :class="[
+                    'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-colors duration-150 select-none cursor-pointer group',
+                    isGroupActive(item)
+                      ? 'text-[#0B5D3B] dark:text-[#75bd97] font-extrabold'
+                      : 'text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                  ]"
+                  @click="toggleAccordion(item.id)"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <component
+                      :is="item.icon"
+                      :class="[
+                        'h-4 w-4 shrink-0 transition-transform group-hover:scale-105',
+                        isGroupActive(item) ? 'text-[#0B5D3B] dark:text-[#75bd97]' : 'text-slate-500 dark:text-slate-400',
+                      ]"
+                    />
+                    <span class="truncate">{{ t(item.titleKey) }}</span>
+                  </div>
+
+                  <ChevronDown
+                    :class="[
+                      'h-3.5 w-3.5 text-slate-400 dark:text-slate-500 transition-transform duration-200 ease-in-out shrink-0',
+                      isOpen(item.id) ? 'rotate-180 text-slate-600 dark:text-slate-300' : 'rotate-0',
+                    ]"
+                  />
+                </button>
+
+                <!-- Collapsible Children Container (Smooth CSS Grid Transition) -->
+                <div
+                  :class="[
+                    'grid transition-all duration-200 ease-in-out',
+                    isOpen(item.id) ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none',
+                  ]"
+                >
+                  <div class="overflow-hidden">
+                    <div class="ml-4 pl-3.5 border-l-2 border-slate-200 dark:border-slate-800 space-y-0.5 py-1">
+                      <RouterLink
+                        v-for="child in item.visibleChildren"
+                        :key="child.id"
+                        :to="resolvePath(child.path)"
+                        :class="[
+                          'flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150 select-none group',
+                          isRouteActive(child.path)
+                            ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] font-bold shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                        ]"
+                        @click="handleNavClick"
+                      >
+                        <component
+                          :is="child.icon"
+                          :class="[
+                            'h-3.5 w-3.5 shrink-0 transition-transform group-hover:scale-105',
+                            isRouteActive(child.path)
+                              ? 'text-[#0B5D3B] dark:text-[#75bd97]'
+                              : 'text-slate-400 dark:text-slate-500',
+                          ]"
+                        />
+                        <span class="truncate">{{ t(child.titleKey) }}</span>
+                      </RouterLink>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
         </div>
       </div>
-    </div>
+    </nav>
 
-    <!-- Navigation Items -->
-    <nav class="flex-1 overflow-y-auto p-3 space-y-1.5 no-scrollbar">
-      <template v-for="item in navigationItems" :key="item.path">
-        <!-- Collapsed Item with Tooltip -->
+    <!-- Bottom Actions Container (Anchored with Divider) -->
+    <div class="border-t border-slate-200 dark:border-[#1E293B] shrink-0 p-3 space-y-1 bg-white/95 dark:bg-[#0F172A]/95">
+      <template v-for="bottomItem in bottomItems" :key="bottomItem.id">
+        <!-- Collapsed Bottom Item -->
         <AppTooltip
           v-if="uiStore.sidebarCollapsed"
-          :text="item.name"
+          :text="t(bottomItem.titleKey)"
           position="right"
           class="w-full"
         >
           <RouterLink
-            :to="item.path"
+            :to="resolvePath(bottomItem.path)"
             :class="[
-              'flex items-center justify-center h-11 w-full rounded-xl transition-all select-none',
-              route.path === item.path
-                ? 'bg-[#0F5132] text-white shadow-sm font-bold'
-                : 'text-slate-400 hover:text-white hover:bg-slate-850',
+              'flex items-center justify-center h-10 w-full rounded-xl transition-colors duration-150 select-none',
+              isRouteActive(bottomItem.path)
+                ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] font-bold shadow-2xs'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
             ]"
-            @click="uiStore.setSidebarOpen(false)"
+            @click="handleNavClick"
           >
-            <!-- Navigation Icons -->
-            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path v-if="item.icon === 'dashboard'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              <path v-else-if="item.icon === 'users'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              <path v-else-if="item.icon === 'campuses'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              <path v-else-if="item.icon === 'categories'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              <path v-else-if="item.icon === 'locations'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path v-else-if="item.icon === 'reports'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              <path v-else-if="item.icon === 'lost'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              <path v-else-if="item.icon === 'found'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              <path v-else-if="item.icon === 'items'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              <path v-else-if="item.icon === 'claims'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              <path v-else-if="item.icon === 'custody'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              <path v-else-if="item.icon === 'returns'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H4m0 0l3-3m-3 3l3 3m5 4v1a3 3 0 003 3h4a3 3 0 003-3v-5a3 3 0 00-3-3h-2" />
-              <path v-else-if="item.icon === 'audit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              <path v-else-if="item.icon === 'settings'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path v-else-if="item.icon === 'permissions'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <component :is="bottomItem.icon" class="h-4.5 w-4.5 shrink-0" />
           </RouterLink>
         </AppTooltip>
 
-        <!-- Expanded Item -->
+        <!-- Expanded Bottom Item -->
         <RouterLink
           v-else
-          :to="item.path"
+          :to="resolvePath(bottomItem.path)"
           :class="[
-            'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all select-none group',
-            route.path === item.path
-              ? 'bg-[#0F5132] text-white shadow-sm'
-              : 'text-slate-400 hover:text-white hover:bg-slate-850',
+            'flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-colors duration-150 select-none group',
+            isRouteActive(bottomItem.path)
+              ? 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] shadow-2xs font-bold'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
           ]"
-          @click="uiStore.setSidebarOpen(false)"
+          @click="handleNavClick"
         >
-          <svg class="h-4 w-4 shrink-0 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path v-if="item.icon === 'dashboard'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            <path v-else-if="item.icon === 'users'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            <path v-else-if="item.icon === 'campuses'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            <path v-else-if="item.icon === 'categories'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            <path v-else-if="item.icon === 'locations'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path v-else-if="item.icon === 'reports'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            <path v-else-if="item.icon === 'lost'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            <path v-else-if="item.icon === 'found'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            <path v-else-if="item.icon === 'items'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            <path v-else-if="item.icon === 'claims'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            <path v-else-if="item.icon === 'custody'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            <path v-else-if="item.icon === 'returns'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H4m0 0l3-3m-3 3l3 3m5 4v1a3 3 0 003 3h4a3 3 0 003-3v-5a3 3 0 00-3-3h-2" />
-            <path v-else-if="item.icon === 'audit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            <path v-else-if="item.icon === 'settings'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path v-else-if="item.icon === 'permissions'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <span class="truncate">{{ item.name }}</span>
+          <component
+            :is="bottomItem.icon"
+            :class="[
+              'h-4 w-4 shrink-0 transition-transform group-hover:scale-105',
+              isRouteActive(bottomItem.path)
+                ? 'text-[#0B5D3B] dark:text-[#75bd97]'
+                : 'text-slate-500 dark:text-slate-400',
+            ]"
+          />
+          <span class="truncate">{{ t(bottomItem.titleKey) }}</span>
         </RouterLink>
       </template>
-    </nav>
-
-    <!-- Bottom Actions: Profile & Desktop Sidebar Collapse Button -->
-    <div class="p-3 border-t border-slate-800/80 shrink-0 space-y-1">
-      <RouterLink
-        to="/profile"
-        :class="[
-          'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors text-xs font-semibold',
-          uiStore.sidebarCollapsed ? 'justify-center' : '',
-        ]"
-      >
-        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        <span v-if="!uiStore.sidebarCollapsed">Profile Settings</span>
-      </RouterLink>
-
-      <!-- Desktop Collapse Toggle Button -->
-      <button
-        type="button"
-        :class="[
-          'hidden lg:flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors text-xs font-semibold w-full cursor-pointer',
-          uiStore.sidebarCollapsed ? 'justify-center' : '',
-        ]"
-        @click="uiStore.toggleSidebar"
-      >
-        <svg
-          class="h-4 w-4 shrink-0 transition-transform duration-200"
-          :class="uiStore.sidebarCollapsed ? 'rotate-180' : ''"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-        </svg>
-        <span v-if="!uiStore.sidebarCollapsed">Collapse Sidebar</span>
-      </button>
     </div>
   </aside>
 </template>

@@ -33,6 +33,37 @@ export const useAuthStore = defineStore('auth', () => {
     const roles = Array.isArray(role) ? role : [role]
     return roles.includes(user.value.role)
   })
+  const hasPermission = computed(() => (permission: string | string[]) => {
+    if (!user.value) return false
+    if (user.value.role === 'admin') return true
+    const required = Array.isArray(permission) ? permission : [permission]
+    const userPerms = user.value.permissions || []
+    return required.some(p => userPerms.includes(p))
+  })
+  const can = hasPermission
+
+  // Dynamic portal access based on authoritative role and permissions
+  const canAccessAdminPortal = computed(() => 
+    isAdmin.value || hasPermission.value('ACCESS_ADMIN_DASHBOARD') || hasPermission.value('MANAGE_USERS') || hasPermission.value('MANAGE_PERMISSIONS')
+  )
+  const canAccessStaffPortal = computed(() => 
+    isStaff.value || 
+    isAdmin.value || 
+    user.value?.role === 'security_supervisor' || 
+    user.value?.role === 'department_head' ||
+    hasPermission.value('REVIEW_CLAIMS') || 
+    hasPermission.value('MANAGE_CUSTODY') || 
+    hasPermission.value('PROCESS_RETURNS') || 
+    hasPermission.value('MANAGE_ALL_ITEMS')
+  )
+  const canAccessStudentPortal = computed(() => 
+    isAuthenticated.value
+  )
+  const dashboardRoute = computed(() => {
+    if (canAccessAdminPortal.value) return '/admin/dashboard'
+    if (canAccessStaffPortal.value) return '/staff/dashboard'
+    return '/student/dashboard'
+  })
 
   // ==========================================
   // Actions
@@ -65,7 +96,7 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function fetchUser(force = false): Promise<void> {
     // Already resolved — skip entirely unless forced
-    if (initialized.value && !force && user.value) return
+    if (initialized.value && !force) return
 
     // A request is already in flight — return the same promise
     if (_fetchUserPromise) return _fetchUserPromise
@@ -181,6 +212,12 @@ export const useAuthStore = defineStore('auth', () => {
     isStaff,
     isStudent,
     hasRole,
+    hasPermission,
+    can,
+    canAccessAdminPortal,
+    canAccessStaffPortal,
+    canAccessStudentPortal,
+    dashboardRoute,
 
     // Actions
     fetchUser,

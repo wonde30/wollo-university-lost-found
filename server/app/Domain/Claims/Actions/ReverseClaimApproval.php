@@ -11,7 +11,7 @@ class ReverseClaimApproval
     public function execute(Claim $claim, int $officerUserId, string $reason): Claim
     {
         return DB::transaction(function () use ($claim, $officerUserId, $reason) {
-            $prev = $claim->status instanceof \BackedEnum ? $claim->status->value : (string) $claim->status;
+            $prev = (string) $claim->status;
             $claim->update([
                 'status' => 'rejected',
                 'review_note' => $reason,
@@ -29,7 +29,7 @@ class ReverseClaimApproval
             ]);
 
             if ($claim->item) {
-                $itemPrev = $claim->item->status instanceof \BackedEnum ? $claim->item->status->value : (string) $claim->item->status;
+                $itemPrev = (string) $claim->item->status;
                 $claim->item->update([
                     'status' => 'found_unclaimed',
                     'last_activity_at' => now(),

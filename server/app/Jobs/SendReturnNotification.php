@@ -38,12 +38,17 @@ class SendReturnNotification implements ShouldQueue
                 'reference_code' => $item->reference_code,
                 'title'          => $item->title,
                 'return_date'    => $returnRecord->return_date,
-                'message'        => "Your item \"{$item->title}\" (Ref: {$item->reference_code}) has been successfully returned to you. Return recorded on {$returnRecord->return_date}.",
+                'confirmation_token' => $returnRecord->confirmation_token,
+                'confirmation_url'   => config('app.frontend_url') . '/confirm-return/' . $returnRecord->confirmation_token,
+                'message'        => "Your item \"{$item->title}\" (Ref: {$item->reference_code}) has been handed over to you. Please confirm receipt.",
             ]
         ));
 
-        $claimant = $claim->claimant ?? \App\Models\User::find($claim->claimant_id);
-        if ($claimant && $claimant->email) {
+        // Email notification if claimant has email and preference is enabled
+        $claimant = $claim->claimant ?? \App\Models\User::with('notificationPreference')->find($claim->claimant_id);
+        $emailEnabled = $claimant?->notificationPreference ? (bool) $claimant->notificationPreference->email_on_item_returned : true;
+
+        if ($claimant && $claimant->email && $emailEnabled) {
             \Illuminate\Support\Facades\Mail::to($claimant->email)->send(new \App\Mail\Returns\ItemReturnedMail($returnRecord));
         }
     }

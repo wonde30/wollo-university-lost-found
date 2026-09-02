@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Items\Actions;
 
 use App\Domain\Items\DTOs\CreateItemData;
 use App\Models\Item;
 use App\Models\ItemStatusHistory;
 use App\Models\ItemTag;
-use App\Support\Enums\ItemStatus;
-use App\Support\Enums\ItemType;
 use App\Support\Helpers\ReferenceCode;
 use Illuminate\Support\Facades\DB;
 
@@ -23,8 +23,8 @@ class CreateLostItem
                 'category_id' => $data->categoryId,
                 'location_id' => $data->locationId,
                 'location_detail' => $data->locationDetail,
-                'type' => ItemType::LOST,
-                'status' => ItemStatus::LOST,
+                'type' => 'lost',
+                'status' => 'lost',
                 'title' => $data->title,
                 'description' => $data->description,
                 'incident_date' => $data->incidentDate,
@@ -48,7 +48,7 @@ class CreateLostItem
                 'item_id' => $item->id,
                 'changed_by' => $data->userId,
                 'from_status' => null,
-                'to_status' => ItemStatus::LOST->value,
+                'to_status' => 'lost',
                 'changed_by_role' => 'student',
                 'note' => 'Lost item reported',
             ]);

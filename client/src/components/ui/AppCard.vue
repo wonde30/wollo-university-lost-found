@@ -26,14 +26,14 @@ defineEmits<{
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'flat':
-      return 'bg-slate-50 border border-slate-200/60'
+      return 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800 text-slate-800 dark:text-slate-200'
     case 'bordered':
-      return 'bg-white border-2 border-slate-200 shadow-none'
+      return 'bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 shadow-none text-slate-900 dark:text-slate-100'
     case 'elevated':
-      return 'bg-white border border-slate-100 shadow-lg'
+      return 'bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-md text-slate-900 dark:text-slate-100'
     case 'default':
     default:
-      return 'bg-white border border-slate-200/80 shadow-xs'
+      return 'bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-2xs text-slate-900 dark:text-slate-100'
   }
 })
 
@@ -42,12 +42,12 @@ const paddingClasses = computed(() => {
     case 'none':
       return 'p-0'
     case 'sm':
-      return 'p-3.5'
+      return 'p-3 sm:p-3.5'
     case 'lg':
-      return 'p-6 sm:p-8'
+      return 'p-5 sm:p-6'
     case 'md':
     default:
-      return 'p-5 sm:p-6'
+      return 'p-4 sm:p-5'
   }
 })
 </script>
@@ -66,12 +66,12 @@ const paddingClasses = computed(() => {
     <!-- Header -->
     <div
       v-if="title || subtitle || $slots.header || $slots.actions"
-      class="flex items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100"
+      class="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800"
     >
       <div>
         <slot name="header">
-          <h3 v-if="title" class="text-base font-bold text-slate-900 leading-snug">{{ title }}</h3>
-          <p v-if="subtitle" class="text-xs text-slate-500 mt-0.5">{{ subtitle }}</p>
+          <h3 v-if="title" class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-snug">{{ title }}</h3>
+          <p v-if="subtitle" class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">{{ subtitle }}</p>
         </slot>
       </div>
 
@@ -86,7 +86,7 @@ const paddingClasses = computed(() => {
     <!-- Footer -->
     <div
       v-if="$slots.footer"
-      class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between"
+      class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
     >
       <slot name="footer" />
     </div>

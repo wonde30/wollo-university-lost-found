@@ -1,42 +1,23 @@
 /**
  * Auth types based on Laravel backend contract.
- * Source: AuthUserResource, UserProfileResource, DepartmentResource
+ * Source: AuthUserResource, UserResource, UserProfileResource, OrganizationalUnitResource
  */
 
-export type UserRole = 'student' | 'staff' | 'admin'
+import type { OrganizationalUnit } from '@/types/common.types'
+
+export type UserRole = 'student' | 'staff' | 'admin' | string
 
 export interface UserProfile {
   id: number
   user_id: number
-  avatar_url: string | null
-  bio: string | null
-  phone_number: string | null
-  student_staff_id: string | null
-  gender: string | null
-  address: string | null
-  preferences: Record<string, unknown> | null
-}
-
-export interface Department {
-  id: number
-  campus_id: number
-  name: string
-  code: string
-  description: string | null
-  is_active: boolean
-  campus?: Campus
-  created_at: string
-  updated_at: string
-}
-
-export interface Campus {
-  id: number
-  name: string
-  code: string
-  location: string | null
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id_card_photo?: string | null
+  year_of_study?: number | null
+  gender?: string | null
+  emergency_contact_name?: string | null
+  emergency_contact_phone?: string | null
+  home_town?: string | null
+  bio?: string | null
+  last_seen_at?: string | null
 }
 
 export interface User {
@@ -48,14 +29,19 @@ export interface User {
   email_verified_at?: string | null
   phone: string | null
   role: UserRole
+  role_id: number
   language: string
   is_active: boolean
   profile_photo: string | null
   profile_photo_url?: string | null
+  avatar_url?: string | null
+  permissions?: string[]
+  direct_permissions?: string[]
+  role_permissions?: string[]
   created_at?: string
   updated_at?: string
   profile?: UserProfile
-  departments?: Department[]
+  organizational_units?: OrganizationalUnit[]
 }
 
 // ==========================================
@@ -65,7 +51,7 @@ export interface User {
 export interface LoginCredentials {
   email: string
   password: string
-  device_name?: string
+  remember?: boolean
 }
 
 export interface RegisterData {
@@ -75,7 +61,7 @@ export interface RegisterData {
   password: string
   password_confirmation?: string
   phone?: string
-  department_id?: number
+  organizational_unit_id?: number | null
 }
 
 export interface VerifyEmailData {

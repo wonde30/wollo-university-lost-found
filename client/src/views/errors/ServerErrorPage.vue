@@ -1,31 +1,32 @@
 <script setup lang="ts">
 import BlankLayout from '@/layouts/BlankLayout.vue'
+import { t } from '@/i18n'
 </script>
 
 <template>
   <BlankLayout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-[#0F172A] p-6 text-center transition-colors duration-150">
       <div class="max-w-md w-full space-y-6">
-        <div class="text-[7rem] font-black text-slate-300 leading-none select-none">500</div>
+        <div class="text-[7rem] font-black text-slate-300 dark:text-slate-700 leading-none select-none">500</div>
         <div>
-          <h1 class="text-2xl font-bold text-slate-900 mb-2">Server error</h1>
-          <p class="text-sm text-slate-500">
-            Something went wrong on our end. Our team has been notified. Please try again in a few moments.
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">{{ t('errors.500.title') }}</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            {{ t('errors.500.message') }}
           </p>
         </div>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             type="button"
-            class="inline-flex items-center gap-2 rounded-xl bg-[#0F5132] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#0a3d22] transition-colors"
+            class="inline-flex items-center gap-2 rounded-xl bg-[#0B5D3B] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#084C30] transition-colors cursor-pointer shadow-2xs"
             @click="$router.go(0)"
           >
-            Try again
+            {{ t('errors.500.tryAgain') }}
           </button>
           <RouterLink
             to="/"
-            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white text-slate-700 px-5 py-2.5 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-300 px-5 py-2.5 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
-            Return Home
+            {{ t('errors.404.backHome') }}
           </RouterLink>
         </div>
       </div>

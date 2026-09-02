@@ -1,16 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int         $id
+ * @property int         $claim_id
+ * @property int         $uploaded_by
+ * @property string      $evidence_type
+ * @property string      $path
+ * @property string|null $original_name
+ * @property string|null $mime_type
+ * @property int|null    $size_bytes
+ * @property string|null $description
+ * @property \Carbon\Carbon $uploaded_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class ClaimEvidence extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    protected $table = 'claim_evidence';
 
     protected $fillable = [
         'claim_id',
@@ -24,10 +40,15 @@ class ClaimEvidence extends Model
         'uploaded_at',
     ];
 
-    protected $casts = [
-        'size_bytes' => 'integer',
-        'uploaded_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'claim_id'    => 'integer',
+            'uploaded_by' => 'integer',
+            'size_bytes'  => 'integer',
+            'uploaded_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -37,6 +58,10 @@ class ClaimEvidence extends Model
             }
         });
     }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function claim(): BelongsTo
     {

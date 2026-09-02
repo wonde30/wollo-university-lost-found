@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { isValidImage, readFileAsDataURL } from '@/utils/file'
+import { t } from '@/i18n'
 
 interface Props {
   label?: string
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  label: 'Upload Photos',
+  label: undefined,
   error: null,
   maxFiles: 5,
 })
@@ -31,19 +32,31 @@ async function handleFileChange(event: Event): Promise<void> {
   const selected = Array.from(input.files)
 
   if (files.value.length + selected.length > props.maxFiles) {
-    localError.value = `You can upload up to ${props.maxFiles} photos maximum.`
+    localError.value = t('validation.maxLength', { max: props.maxFiles })
     return
   }
 
   for (const file of selected) {
     const check = isValidImage(file)
     if (!check.valid) {
-      localError.value = check.error || 'Invalid file format or size'
+      localError.value = t('validation.invalidFileType')
       return
     }
-    const dataUrl = await readFileAsDataURL(file)
-    files.value.push(file)
-    previews.value.push(dataUrl)
+
+    if (file.size > 5 * 1024 * 1024) {
+      localError.value = t('validation.fileTooLarge', { size: 5 })
+      return
+    }
+  }
+
+  for (const file of selected) {
+    try {
+      const url = await readFileAsDataURL(file)
+      files.value.push(file)
+      previews.value.push(url)
+    } catch {
+      localError.value = t('common.errorOccurred')
+    }
   }
 
   emit('files-updated', files.value)
@@ -58,17 +71,16 @@ function removeFile(index: number): void {
 </script>
 
 <template>
-  <div class="w-full space-y-2">
-    <label v-if="label" class="block text-sm font-medium text-slate-700">
-      {{ label }}
-      <span class="text-xs text-slate-400 font-normal ml-1">({{ files.length }}/{{ maxFiles }})</span>
+  <div class="space-y-2">
+    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+      {{ label || t('reportWizard.uploadPhotos') }}
     </label>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-      <!-- Upload Box -->
+    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+      <!-- Upload trigger box -->
       <div
         v-if="files.length < maxFiles"
-        class="h-28 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#0F5132] bg-slate-50 hover:bg-emerald-50/20 flex flex-col items-center justify-center cursor-pointer transition-colors p-2 text-center"
+        class="h-28 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-[#0B5D3B] dark:hover:border-[#3e9e70] bg-slate-50 dark:bg-slate-800/50 hover:bg-[#E8F4EE]/30 dark:hover:bg-[#153C2D]/20 flex flex-col items-center justify-center cursor-pointer transition-colors p-2 text-center"
         @click="fileInput?.click()"
       >
         <input
@@ -82,16 +94,16 @@ function removeFile(index: number): void {
         <svg class="h-6 w-6 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
-        <span class="text-[11px] font-medium text-slate-600">Add Photo</span>
+        <span class="text-[11px] font-medium text-slate-600 dark:text-slate-300">{{ t('common.addPhoto') }}</span>
       </div>
 
       <!-- Preview items -->
       <div
         v-for="(url, index) in previews"
         :key="index"
-        class="relative h-28 rounded-xl overflow-hidden border border-slate-200 group bg-slate-100"
+        class="relative h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group bg-slate-100 dark:bg-slate-800"
       >
-        <img :src="url" alt="Uploaded photo" class="h-full w-full object-cover" />
+        <img :src="url" :alt="t('common.uploadedPhoto')" class="h-full w-full object-cover" />
         <button
           type="button"
           class="absolute top-1.5 right-1.5 p-1 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors"

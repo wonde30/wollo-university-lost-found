@@ -115,3 +115,20 @@ export async function resetPassword(resetData: ResetPasswordData): Promise<Messa
   const { data } = await apiClient.post<MessageResponse>(AUTH.RESET_PASSWORD, resetData)
   return data
 }
+
+export interface UserSummaryData {
+  my_lost_count: number
+  my_found_count: number
+  my_claims_count: number
+  active_claims_count: number
+  resolved_claims_count: number
+  returned_items_count: number
+}
+
+/**
+ * Get personal statistical summary for authenticated user.
+ */
+export async function getUserSummary(): Promise<UserSummaryData> {
+  const { data } = await apiClient.get<{ data: UserSummaryData }>('/profile/summary')
+  return data.data
+}

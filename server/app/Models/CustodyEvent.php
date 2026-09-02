@@ -1,12 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Support\Enums\CustodyEventType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int         $id
+ * @property int         $item_id
+ * @property int         $actor_id
+ * @property int|null    $storage_location_id
+ * @property string      $event_type
+ * @property string|null $condition
+ * @property string|null $notes
+ * @property string|null $reference_photo
+ * @property \Carbon\Carbon|null $created_at
+ */
 class CustodyEvent extends Model
 {
     use HasFactory;
@@ -23,9 +35,18 @@ class CustodyEvent extends Model
         'reference_photo',
     ];
 
-    protected $casts = [
-        'event_type' => CustodyEventType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'item_id'             => 'integer',
+            'actor_id'            => 'integer',
+            'storage_location_id' => 'integer',
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function item(): BelongsTo
     {

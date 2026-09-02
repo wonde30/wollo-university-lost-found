@@ -1,5 +1,8 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import "./design-tokens.css";
 @import "./transitions.css";
 @import "./glass.css";
 @import "./utilities.css";
+

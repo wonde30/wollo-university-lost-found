@@ -68,20 +68,20 @@ function handleChange(event: Event) {
           :checked="modelValue"
           :disabled="disabled"
           :class="[
-            'h-4 w-4 rounded-md border text-[#0F5132] transition-colors focus:ring-2 focus:ring-[#0F5132]/30 focus:ring-offset-0 cursor-pointer',
-            error ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300 bg-white hover:border-[#0F5132]',
+            'h-4 w-4 rounded-md border text-[#0B5D3B] dark:text-[#3e9e70] transition-colors focus:ring-2 focus:ring-[#0B5D3B]/30 dark:focus:ring-[#3e9e70]/30 focus:ring-offset-0 cursor-pointer',
+            error ? 'border-rose-400 dark:border-rose-500 bg-rose-50/20 dark:bg-rose-950/20' : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-[#111827] hover:border-[#0B5D3B] dark:hover:border-[#3e9e70]',
           ]"
           @change="handleChange"
         />
       </div>
 
       <div v-if="label || description" class="text-xs">
-        <span class="font-semibold text-slate-800">{{ label }}</span>
-        <p v-if="description" class="text-slate-500 mt-0.5">{{ description }}</p>
+        <span class="font-semibold text-slate-800 dark:text-slate-200">{{ label }}</span>
+        <p v-if="description" class="text-slate-500 dark:text-slate-400 mt-0.5">{{ description }}</p>
       </div>
     </label>
 
-    <p v-if="error" class="mt-1 text-xs text-rose-600 font-medium">
+    <p v-if="error" class="mt-1 text-xs text-rose-600 dark:text-rose-400 font-medium">
       {{ error }}
     </p>
   </div>

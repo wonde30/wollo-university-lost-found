@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -7,6 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int         $id
+ * @property int         $campus_id
+ * @property string      $name
+ * @property string      $code
+ * @property string|null $description
+ * @property int|null    $capacity
+ * @property bool        $is_active
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
 class StorageLocation extends Model
 {
     use HasFactory;
@@ -20,10 +33,18 @@ class StorageLocation extends Model
         'is_active',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'capacity' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'campus_id' => 'integer',
+            'capacity'  => 'integer',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Relationships                                                      */
+    /* ------------------------------------------------------------------ */
 
     public function campus(): BelongsTo
     {
@@ -33,5 +54,19 @@ class StorageLocation extends Model
     public function custodyEvents(): HasMany
     {
         return $this->hasMany(CustodyEvent::class);
+    }
+
+    public function returns(): HasMany
+    {
+        return $this->hasMany(ReturnRecord::class);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Scopes                                                             */
+    /* ------------------------------------------------------------------ */
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

@@ -27,39 +27,58 @@ export const useAdminUsersStore = defineStore('adminUsers', () => {
     total: 0,
   })
 
+  let _fetchUsersPromise: Promise<void> | null = null
+  let _fetchUserPromise: Promise<User | null> | null = null
+
   // ==========================================
   // Actions
   // ==========================================
 
   async function fetchUsers(params: UserListParams = {}): Promise<void> {
+    if (_fetchUsersPromise) return _fetchUsersPromise
+
     if (users.value.length === 0) {
       loading.value = true
     }
     error.value = null
-    try {
-      const response = await adminApi.getUsers(params)
-      users.value = response.data
-      pagination.value = response.meta
-    } catch (err: any) {
-      error.value = err.message ?? 'Failed to load users'
-    } finally {
-      loading.value = false
-    }
+
+    _fetchUsersPromise = (async () => {
+      try {
+        const response = await adminApi.getUsers(params)
+        users.value = response.data
+        pagination.value = response.meta
+      } catch (err: any) {
+        error.value = err.message ?? 'Failed to load users'
+      } finally {
+        loading.value = false
+        _fetchUsersPromise = null
+      }
+    })()
+
+    return _fetchUsersPromise
   }
 
   async function fetchUser(id: number): Promise<User | null> {
+    if (_fetchUserPromise && currentUser.value?.id === id) return _fetchUserPromise
+
     loading.value = true
     error.value = null
-    try {
-      const user = await adminApi.getUser(id)
-      currentUser.value = user
-      return user
-    } catch (err: any) {
-      error.value = err.message ?? 'Failed to load user'
-      return null
-    } finally {
-      loading.value = false
-    }
+
+    _fetchUserPromise = (async () => {
+      try {
+        const user = await adminApi.getUser(id)
+        currentUser.value = user
+        return user
+      } catch (err: any) {
+        error.value = err.message ?? 'Failed to load user'
+        return null
+      } finally {
+        loading.value = false
+        _fetchUserPromise = null
+      }
+    })()
+
+    return _fetchUserPromise
   }
 
   async function updateUser(id: number, data: UpdateUserData): Promise<User | null> {
@@ -109,6 +128,22 @@ export const useAdminUsersStore = defineStore('adminUsers', () => {
     }
   }
 
+  async function createUser(userData: any): Promise<User> {
+    loading.value = true
+    error.value = null
+    try {
+      const created = await adminApi.createUser(userData)
+      users.value.unshift(created)
+      pagination.value.total++
+      return created
+    } catch (err: any) {
+      error.value = err.message ?? 'Failed to create user'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   // ==========================================
   // Internal helpers
   // ==========================================
@@ -128,6 +163,7 @@ export const useAdminUsersStore = defineStore('adminUsers', () => {
     pagination,
     fetchUsers,
     fetchUser,
+    createUser,
     updateUser,
     updateUserRole,
     toggleUserActive,

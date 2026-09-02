@@ -17,8 +17,10 @@ class GenerateReturnAcknowledgement
 
         return ReturnDocument::create([
             'return_id' => $record->id,
-            'document_type' => 'acknowledgement_pdf',
-            'document_path' => $path,
+            'document_type' => 'confirmation_pdf',
+            'path' => $path,
+            'mime_type' => 'application/pdf',
+            'size_bytes' => 1024,
             'generated_at' => now(),
         ]);
     }

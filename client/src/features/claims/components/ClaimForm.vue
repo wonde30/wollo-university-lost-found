@@ -5,6 +5,7 @@ import { useClaims } from '../composables/useClaims'
 import { validateStoreClaimForm } from '../validation/claim.validation'
 import { getErrorMessage, getValidationErrors } from '@/utils/error-handler'
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import type { StoreClaimData } from '../types/claim.types'
 import AppTextarea from '@/components/ui/AppTextarea.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -44,7 +45,7 @@ async function handleSubmit(): Promise<void> {
 
   try {
     await submitClaim(form)
-    uiStore.success('Your ownership claim has been submitted for review.')
+    uiStore.success(t('claims.submittedSuccess'))
     router.push('/student/my-claims')
   } catch (err) {
     const fieldErrors = getValidationErrors(err)
@@ -54,27 +55,27 @@ async function handleSubmit(): Promise<void> {
         return acc
       }, {} as Record<string, string>)
     } else {
-      generalError.value = getErrorMessage(err, 'Failed to submit claim.')
+      generalError.value = getErrorMessage(err, t('common.errorOccurred'))
     }
   }
 }
 </script>
 
 <template>
-  <form class="space-y-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs" @submit.prevent="handleSubmit">
-    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+  <form class="space-y-5 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-200" @submit.prevent="handleSubmit">
+    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-400">
       {{ generalError }}
     </div>
 
-    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Claiming Item</span>
-      <h4 class="text-base font-bold text-slate-900">{{ itemTitle || `Item #${itemId}` }}</h4>
+    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+      <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">{{ t('items.myItems.item') }}</span>
+      <h4 class="text-base font-bold text-slate-900 dark:text-white">{{ itemTitle || `Item #${itemId}` }}</h4>
     </div>
 
     <AppTextarea
       id="claim-explanation"
-      label="Proof of Ownership & Distinctive Features"
-      placeholder="Describe specific markings, contents, serial numbers, purchase details, or unlock codes that prove this item belongs to you..."
+      :label="t('claims.review.ownership') + ' *'"
+      :placeholder="t('claims.placeholders.explanation')"
       :model-value="form.explanation"
       :error="errors.explanation"
       :hint="!errors.explanation ? `${form.explanation.length}/1000 — minimum 50 characters` : undefined"
@@ -84,17 +85,17 @@ async function handleSubmit(): Promise<void> {
     />
 
     <FormMultiImageUpload
-      label="Attach Proof Evidence (Photos, Receipts, ID, etc.)"
+      :label="t('reportWizard.uploadPhotos')"
       :max-files="4"
       @files-updated="form.evidence = $event"
     />
 
-    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
       <AppButton variant="outline" type="button" @click="router.back()">
-        Cancel
+        {{ t('common.cancel') }}
       </AppButton>
       <AppButton variant="primary" type="submit" :loading="loading">
-        Submit Ownership Claim
+        {{ t('claims.submitClaim') }}
       </AppButton>
     </div>
   </form>

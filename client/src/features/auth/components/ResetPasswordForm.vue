@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth.store'
 import { validateResetPasswordForm } from '../validation/auth.validation'
 import { getErrorMessage } from '@/utils/error-handler'
 import { useUiStore } from '@/stores/ui.store'
+import { t } from '@/i18n'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
@@ -32,10 +33,10 @@ async function handleSubmit(): Promise<void> {
   loading.value = true
   try {
     await authStore.resetPassword(form.email, form.otp, form.password, form.password_confirmation)
-    uiStore.success('Password reset successfully! Please sign in with your new password.')
+    uiStore.success(t('auth.resetSuccessSignIn'))
     router.push('/auth/login')
   } catch (err) {
-    generalError.value = getErrorMessage(err, 'Failed to reset password. Please check your OTP.')
+    generalError.value = getErrorMessage(err, t('common.errorOccurred'))
   } finally {
     loading.value = false
   }
@@ -44,13 +45,13 @@ async function handleSubmit(): Promise<void> {
 
 <template>
   <form class="space-y-4" @submit.prevent="handleSubmit">
-    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
+    <div v-if="generalError" class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-400">
       {{ generalError }}
     </div>
 
     <AppInput
       id="reset-email"
-      label="University Email"
+      :label="t('auth.forgotPassword.email')"
       type="email"
       placeholder="student@wu.edu.et"
       :model-value="form.email"
@@ -61,7 +62,7 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reset-otp"
-      label="6-Digit OTP Code"
+      :label="t('auth.verifyOtp.code')"
       placeholder="e.g. 123456"
       :model-value="form.otp"
       :error="errors.otp"
@@ -71,9 +72,9 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reset-password"
-      label="New Password"
+      :label="t('auth.resetPassword.newPassword')"
       type="password"
-      placeholder="Min. 8 characters"
+      :placeholder="t('validation.minLength', { min: 12 })"
       :model-value="form.password"
       :error="errors.password"
       required
@@ -82,9 +83,9 @@ async function handleSubmit(): Promise<void> {
 
     <AppInput
       id="reset-password-confirm"
-      label="Confirm New Password"
+      :label="t('auth.resetPassword.confirmNewPassword')"
       type="password"
-      placeholder="Repeat new password"
+      :placeholder="t('auth.placeholders.repeatNewPassword')"
       :model-value="form.password_confirmation"
       :error="errors.password_confirmation"
       required
@@ -98,7 +99,7 @@ async function handleSubmit(): Promise<void> {
       block
       :loading="loading"
     >
-      Reset Password
+      {{ t('auth.resetPassword.submit') }}
     </AppButton>
   </form>
 </template>
