@@ -23,7 +23,6 @@ class CategoryController extends Controller
                 $search = trim($request->string('search')->toString());
                 $q->where(function ($sub) use ($search) {
                     $sub->where('name', 'like', "%{$search}%")
-                        ->orWhere('display_name', 'like', "%{$search}%")
                         ->orWhere('name_am', 'like', "%{$search}%");
                 });
             })

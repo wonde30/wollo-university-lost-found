@@ -23,6 +23,7 @@ export interface AdminStats {
   lost_items: number
   active_lost?: number
   returned_items: number
+  claimed_items?: number
   in_storage: number
   recovery_rate_percentage: number
   avg_resolution_days?: number | null
@@ -36,7 +37,10 @@ export const useAdminStore = defineStore('admin', () => {
   // Statistics State
   const stats = ref<AdminStats | null>(null)
   const statistics = ref<DashboardStatistics | null>(null)
+  const sparklines = ref<DashboardStatistics['sparklines'] | null>(null)
+  const analytics = ref<DashboardStatistics['analytics'] | null>(null)
   const recentActivity = ref<DashboardStatistics['recent_activity'] | null>(null)
+  const currentPeriod = ref<string>('90d')
   const loading = ref(false)
   const error = ref<string | null>(null)
   const initialized = ref(false)
@@ -58,65 +62,83 @@ export const useAdminStore = defineStore('admin', () => {
   const settingsLoaded = ref(false)
   const settingsLoading = ref(false)
 
-  let _fetchPromise: Promise<void> | null = null
+  let _activeRequestId = 0
+  const _statsCache = new Map<string, { data: DashboardStatistics; timestamp: number }>()
 
-  // ==========================================
-  // Statistics Actions
-  // ==========================================
-
-  async function fetchStats(force = false): Promise<void> {
-    const isStale = !statisticsLoadedAt.value || (Date.now() - statisticsLoadedAt.value > STATS_CACHE_TTL_MS)
-    if (!force && initialized.value && !isStale) return
-
-    if (_fetchPromise) return _fetchPromise
-
-    _fetchPromise = _doFetchStats(force).finally(() => {
-      _fetchPromise = null
-    })
-
-    return _fetchPromise
+  function _applyStatsData(data: DashboardStatistics): void {
+    statistics.value = data
+    sparklines.value = data.sparklines ?? null
+    analytics.value = data.analytics ?? null
+    stats.value = {
+      total_items:               data.summary?.total_items               ?? 0,
+      lost_items:                data.summary?.lost_items                ?? 0,
+      active_lost:               data.summary?.active_lost               ?? data.summary?.lost_items ?? 0,
+      found_items:               data.summary?.found_items               ?? 0,
+      found_unclaimed:           data.summary?.found_unclaimed           ?? 0,
+      returned_items:            data.summary?.returned_items            ?? 0,
+      claimed_items:             data.summary?.claimed_items             ?? 0,
+      in_storage:                data.summary?.in_storage                ?? 0,
+      pending_claims:            data.summary?.pending_claims            ?? 0,
+      pending_matches:           data.summary?.pending_matches           ?? 0,
+      expiring_items:            data.summary?.expiring_items            ?? 0,
+      unconfirmed_returns:       data.summary?.unconfirmed_returns       ?? 0,
+      total_claims:              (data.summary?.pending_claims ?? 0) +
+                                 (data.recent_activity?.recent_claims?.length ?? 0),
+      total_returns:             data.summary?.returned_items            ?? 0,
+      total_users:               data.summary?.total_users               ?? 0,
+      recovery_rate_percentage:  data.summary?.recovery_rate_percentage  ?? 0,
+      avg_resolution_days:       data.summary?.avg_resolution_days       !== undefined ? data.summary.avg_resolution_days : null,
+      top_3_categories:          data.summary?.top_3_categories          ?? [],
+      search_fail_rate_percentage: data.summary?.search_fail_rate_percentage ?? 0,
+    }
+    recentActivity.value = data.recent_activity
+    initialized.value = true
+    statisticsLoaded.value = true
+    statisticsLoadedAt.value = Date.now()
   }
 
-  async function _doFetchStats(force: boolean): Promise<void> {
-    const isStale = !statisticsLoadedAt.value || (Date.now() - statisticsLoadedAt.value > STATS_CACHE_TTL_MS)
-    if (!force && initialized.value && !isStale) return
+  async function fetchStats(options: boolean | { force?: boolean; period?: string; date_from?: string; date_to?: string } = false): Promise<void> {
+    const opts = typeof options === 'boolean' ? { force: options } : options
+    const force = opts.force ?? false
+    const period = opts.period ?? currentPeriod.value
+    const dateFrom = opts.date_from
+    const dateTo = opts.date_to
+    const cacheKey = `${period}:${dateFrom ?? ''}:${dateTo ?? ''}`
 
-    if (!stats.value) {
-      loading.value = true
-    }
-    error.value = null
-    try {
-      const data = await adminApi.getDashboardStatistics()
-      statistics.value = data
-      stats.value = {
-        total_items:               data.summary?.total_items               ?? 0,
-        lost_items:                data.summary?.lost_items                ?? 0,
-        active_lost:               data.summary?.active_lost               ?? data.summary?.lost_items ?? 0,
-        found_items:               data.summary?.found_items               ?? 0,
-        found_unclaimed:           data.summary?.found_unclaimed           ?? 0,
-        returned_items:            data.summary?.returned_items            ?? 0,
-        in_storage:                data.summary?.in_storage                ?? 0,
-        pending_claims:            data.summary?.pending_claims            ?? 0,
-        pending_matches:           data.summary?.pending_matches           ?? 0,
-        expiring_items:            data.summary?.expiring_items            ?? 0,
-        unconfirmed_returns:       data.summary?.unconfirmed_returns       ?? 0,
-        total_claims:              (data.summary?.pending_claims ?? 0) +
-                                   (data.recent_activity?.recent_claims?.length ?? 0),
-        total_returns:             data.summary?.returned_items            ?? 0,
-        total_users:               data.summary?.total_users               ?? 0,
-        recovery_rate_percentage:  data.summary?.recovery_rate_percentage  ?? 0,
-        avg_resolution_days:       data.summary?.avg_resolution_days       !== undefined ? data.summary.avg_resolution_days : null,
-        top_3_categories:          data.summary?.top_3_categories          ?? [],
-        search_fail_rate_percentage: data.summary?.search_fail_rate_percentage ?? 0,
+    if (!force && _statsCache.has(cacheKey)) {
+      const cached = _statsCache.get(cacheKey)!
+      if (Date.now() - cached.timestamp < STATS_CACHE_TTL_MS) {
+        currentPeriod.value = period
+        _applyStatsData(cached.data)
+        return
       }
-      recentActivity.value = data.recent_activity
-      initialized.value = true
-      statisticsLoaded.value = true
-      statisticsLoadedAt.value = Date.now()
+    }
+
+    const currentRequestId = ++_activeRequestId
+    loading.value = true
+    error.value = null
+    currentPeriod.value = period
+
+    try {
+      const data = await adminApi.getDashboardStatistics({
+        period,
+        date_from: dateFrom,
+        date_to: dateTo,
+        force,
+      })
+
+      if (currentRequestId === _activeRequestId) {
+        _statsCache.set(cacheKey, { data, timestamp: Date.now() })
+        _applyStatsData(data)
+      }
     } catch (err: any) {
-      error.value = err.message ?? 'Failed to load statistics'
+      if (currentRequestId === _activeRequestId) {
+        error.value = err.message ?? 'Failed to load statistics'
+      }
     } finally {
-      loading.value = false
+      if (currentRequestId === _activeRequestId) {
+        loading.value = false
+      }
     }
   }
 
@@ -190,9 +212,12 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   return {
-    // Stats
+    // Stats & Analytics
     stats,
     statistics,
+    sparklines,
+    analytics,
+    currentPeriod,
     recentActivity,
     loading,
     error,

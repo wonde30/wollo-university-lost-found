@@ -11,8 +11,8 @@ import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppModal from '@/components/ui/AppModal.vue'
 import AppActionMenu from '@/components/ui/AppActionMenu.vue'
-import AppButton from '@/components/ui/AppButton.vue'
 import { formatDate } from '@/utils/date'
+import { claimStatusLabels } from '@/utils/formatters'
 import {
   ClipboardList,
   Search,
@@ -85,11 +85,15 @@ function toggleSelectClaim(id: number) {
   }
 }
 
+const statusLabels = claimStatusLabels
+
 const statusFilterOptions = computed(() => [
   { label: 'All Claim Statuses', value: 'all' },
-  { label: t('claims.status.pending') || 'Pending', value: 'pending' },
-  { label: t('claims.status.approved') || 'Approved', value: 'approved' },
-  { label: t('claims.status.rejected') || 'Rejected', value: 'rejected' },
+  { label: statusLabels.pending, value: 'pending' },
+  { label: statusLabels.under_review, value: 'under_review' },
+  { label: statusLabels.approved, value: 'approved' },
+  { label: statusLabels.rejected, value: 'rejected' },
+  { label: statusLabels.reversed, value: 'reversed' },
 ])
 
 async function load(page = 1) {
@@ -170,6 +174,8 @@ function getClaimBadgeClass(status: string): string {
   switch (status) {
     case 'approved':
       return 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800'
+    case 'under_review':
+      return 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200/60 dark:border-sky-800'
     case 'rejected':
     case 'reversed':
       return 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-800'
@@ -517,7 +523,7 @@ onMounted(() => load())
                   getClaimBadgeClass(claim.status),
                 ]"
               >
-                {{ claim.status }}
+                {{ statusLabels[claim.status] ?? claim.status }}
               </span>
             </td>
 
@@ -636,7 +642,7 @@ onMounted(() => load())
               getClaimBadgeClass(selectedClaim.status),
             ]"
           >
-            {{ selectedClaim.status }}
+            {{ statusLabels[selectedClaim.status] ?? selectedClaim.status }}
           </span>
         </div>
 

@@ -12,7 +12,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            // Factory attributes
+            'name' => fake()->unique()->word() . ' ' . fake()->unique()->numberBetween(100, 999),
+            'icon_slug' => 'box',
+            'sort_order' => 0,
+            'is_active' => true,
         ];
     }
 }

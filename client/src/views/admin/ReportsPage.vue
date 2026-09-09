@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useAdminDashboard as useAdminStats } from '@/features/admin/composables/useAdminDashboard'
 import * as reportsApi from '@/features/admin/api/reports.api'
 import type { GeneratedReport } from '@/features/admin/api/reports.api'
@@ -43,6 +43,9 @@ const pagination = ref<any>(null)
 const showFilters = ref(false)
 const searchQuery = ref('')
 const selectedFormat = ref<string>('all')
+const selectedReportType = ref<string>('all')
+const selectedStatus = ref<string>('all')
+const selectedDateRange = ref<string>('all')
 const perPage = ref(10)
 const currentPage = ref(1)
 
@@ -59,38 +62,65 @@ const form = ref({
 })
 
 // Metrics
-const totalReportsCount = computed(() => pagination.value?.total || reports.value.length)
+const totalReportsCount = computed(() => pagination.value?.total ?? reports.value.length)
 const readyReportsCount = computed(() => reports.value.filter(r => r.status === 'ready').length)
-const pendingReportsCount = computed(() => reports.value.filter(r => r.status === 'pending' || r.status === 'generating').length)
-const recoveryRate = computed(() => stats.value?.recovery_rate_percentage || 78)
+const pendingReportsCount = computed(() => reports.value.filter(r => r.status === 'pending' || r.status === 'generating' || r.status === 'processing').length)
+const recoveryRate = computed(() => stats.value?.recovery_rate_percentage ?? 0)
 
-// Filtered Reports
-const filteredReports = computed(() => {
-  let list = reports.value
+// Filter Options
+const formatFilterOptions = computed(() => [
+  { label: 'All Formats', value: 'all' },
+  { label: 'CSV Spreadsheet', value: 'csv' },
+  { label: 'PDF Document', value: 'pdf' },
+])
 
-  if (selectedFormat.value !== 'all') {
-    list = list.filter(r => r.format === selectedFormat.value)
-  }
+const reportTypeFilterOptions = computed(() => [
+  { label: 'All Report Types', value: 'all' },
+  { label: 'Item Inventory (item_list)', value: 'item_list' },
+  { label: 'Claim Summary (claim_summary)', value: 'claim_summary' },
+  { label: 'User Activity (user_activity)', value: 'user_activity' },
+  { label: 'Resolution Turnaround (resolution_time)', value: 'resolution_time' },
+  { label: 'Search Analytics (search_analytics)', value: 'search_analytics' },
+  { label: 'Audit Export (audit_export)', value: 'audit_export' },
+])
 
-  const query = searchQuery.value.trim().toLowerCase()
-  if (query) {
-    list = list.filter(
-      r =>
-        String(r.id).includes(query) ||
-        r.report_type.toLowerCase().includes(query) ||
-        (r.requester?.full_name && r.requester.full_name.toLowerCase().includes(query))
-    )
-  }
+const statusFilterOptions = computed(() => [
+  { label: 'All Statuses', value: 'all' },
+  { label: 'Ready for Download', value: 'ready' },
+  { label: 'Processing / Generating', value: 'generating' },
+  { label: 'Pending Queue', value: 'pending' },
+  { label: 'Failed', value: 'failed' },
+])
 
-  return list
+const dateRangeFilterOptions = computed(() => [
+  { label: 'All Time', value: 'all' },
+  { label: 'Today', value: 'today' },
+  { label: 'Last 7 Days', value: '7d' },
+  { label: 'Last 30 Days', value: '30d' },
+  { label: 'Last 90 Days', value: '90d' },
+])
+
+const hasActiveFilters = computed(() => {
+  return (
+    searchQuery.value.trim() !== '' ||
+    selectedFormat.value !== 'all' ||
+    selectedReportType.value !== 'all' ||
+    selectedStatus.value !== 'all' ||
+    selectedDateRange.value !== 'all'
+  )
 })
 
-const paginatedReports = computed(() => {
-  const start = (currentPage.value - 1) * perPage.value
-  return filteredReports.value.slice(start, start + perPage.value)
-})
+function clearFilters() {
+  searchQuery.value = ''
+  selectedFormat.value = 'all'
+  selectedReportType.value = 'all'
+  selectedStatus.value = 'all'
+  selectedDateRange.value = 'all'
+  loadReports(1)
+}
 
-const totalPages = computed(() => Math.ceil(filteredReports.value.length / perPage.value) || 1)
+const paginatedReports = computed(() => reports.value)
+const totalPages = computed(() => pagination.value?.last_page || 1)
 
 // Selection Helpers
 const isAllCurrentPageSelected = computed(() => {
@@ -118,12 +148,6 @@ function toggleSelectReport(id: number) {
   }
 }
 
-const formatFilterOptions = computed(() => [
-  { label: 'All Formats', value: 'all' },
-  { label: 'CSV Spreadsheet', value: 'csv' },
-  { label: 'PDF Document', value: 'pdf' },
-])
-
 const reportTypeOptions = computed(() => [
   { label: `${t('admin.reports.reportType')} - Item Inventory (item_list)`, value: 'item_list' },
   { label: `${t('claims.title')} Summary (claim_summary)`, value: 'claim_summary' },
@@ -140,8 +164,37 @@ const formatOptions = computed(() => [
 
 async function loadReports(page = 1) {
   reportsLoading.value = true
+  currentPage.value = page
   try {
-    const res = await reportsApi.getReports({ page })
+    const params: Record<string, any> = {
+      page,
+      per_page: perPage.value,
+    }
+    if (selectedReportType.value !== 'all') params.report_type = selectedReportType.value
+    if (selectedFormat.value !== 'all') params.format = selectedFormat.value
+    if (selectedStatus.value !== 'all') params.status = selectedStatus.value
+    if (searchQuery.value.trim()) params.search = searchQuery.value.trim()
+    if (selectedDateRange.value !== 'all') {
+      const now = new Date()
+      if (selectedDateRange.value === 'today') {
+        params.date_from = now.toISOString().slice(0, 10)
+        params.date_to = now.toISOString().slice(0, 10)
+      } else if (selectedDateRange.value === '7d') {
+        const past = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        params.date_from = past.toISOString().slice(0, 10)
+        params.date_to = now.toISOString().slice(0, 10)
+      } else if (selectedDateRange.value === '30d') {
+        const past = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        params.date_from = past.toISOString().slice(0, 10)
+        params.date_to = now.toISOString().slice(0, 10)
+      } else if (selectedDateRange.value === '90d') {
+        const past = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+        params.date_from = past.toISOString().slice(0, 10)
+        params.date_to = now.toISOString().slice(0, 10)
+      }
+    }
+
+    const res = await reportsApi.getReports(params)
     reports.value = res.data
     pagination.value = res.meta
   } catch {
@@ -150,6 +203,18 @@ async function loadReports(page = 1) {
     reportsLoading.value = false
   }
 }
+
+watch([selectedFormat, selectedReportType, selectedStatus, selectedDateRange], () => {
+  loadReports(1)
+})
+
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, () => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
+  searchDebounceTimer = setTimeout(() => {
+    loadReports(1)
+  }, 300)
+})
 
 async function handleRefresh() {
   isRefreshing.value = true
@@ -260,65 +325,97 @@ onUnmounted(() => {
       <span class="text-slate-900 dark:text-slate-100 font-extrabold">{{ t('admin.reports.title') }}</span>
     </div>
 
-    <!-- 4 Top Metric Cards Grid -->
+    <!-- 4 Top Metric Cards Grid (Benchmarked with Dashboard KPI Design) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       <!-- Card 1: Total Reports -->
-      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
-        <div>
-          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Generated Reports
-          </p>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ totalReportsCount }}
-          </h3>
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col justify-between h-28">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97]">
+              <FileText class="h-3.5 w-3.5" />
+            </div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
+              Total Reports
+            </h3>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/60">
+            Registry
+          </span>
         </div>
-        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-          <FileText class="h-5 w-5" />
+        <div>
+          <span class="text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">
+            {{ totalReportsCount }}
+          </span>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">All generated export documents</p>
         </div>
       </div>
 
       <!-- Card 2: Ready for Download -->
-      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
-        <div>
-          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Ready for Download
-          </p>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ readyReportsCount }}
-          </h3>
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col justify-between h-28">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 class="h-3.5 w-3.5" />
+            </div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
+              Ready to Download
+            </h3>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+            Available
+          </span>
         </div>
-        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-          <CheckCircle2 class="h-5 w-5" />
+        <div>
+          <span class="text-2xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400">
+            {{ readyReportsCount }}
+          </span>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Processed & ready for export</p>
         </div>
       </div>
 
       <!-- Card 3: In Progress Queue -->
-      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
-        <div>
-          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Generating Queue
-          </p>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ pendingReportsCount }}
-          </h3>
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col justify-between h-28">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
+              <Clock class="h-3.5 w-3.5" />
+            </div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
+              Processing Queue
+            </h3>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
+            Active
+          </span>
         </div>
-        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-          <Clock class="h-5 w-5" />
+        <div>
+          <span class="text-2xl font-black font-mono tracking-tight text-amber-600 dark:text-amber-400">
+            {{ pendingReportsCount }}
+          </span>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Queued background exports</p>
         </div>
       </div>
 
-      <!-- Card 4: System Recovery Rate -->
-      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
-        <div>
-          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Campus Recovery Rate
-          </p>
-          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ recoveryRate }}%
-          </h3>
+      <!-- Card 4: Campus Recovery Rate -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col justify-between h-28">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97]">
+              <Activity class="h-3.5 w-3.5" />
+            </div>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
+              Recovery Rate
+            </h3>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] border border-emerald-200/80 dark:border-emerald-800/60">
+            Institutional
+          </span>
         </div>
-        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
-          <Activity class="h-5 w-5" />
+        <div>
+          <span class="text-2xl font-black font-mono tracking-tight text-[#0B5D3B] dark:text-[#75bd97]">
+            {{ recoveryRate }}%
+          </span>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Verified return ratio</p>
         </div>
       </div>
     </div>
@@ -371,7 +468,7 @@ onUnmounted(() => {
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? 'Hide Filters' : 'Filter' }}</span>
         </button>
       </div>
 
@@ -398,21 +495,74 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Collapsible Filter Bar -->
+    <!-- Collapsible Filter Bar with 4 Distinct Filters -->
     <div
       v-if="showFilters"
-      class="p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-2xs grid grid-cols-1 sm:grid-cols-2 gap-3 transition-all duration-200"
+      class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3 transition-all duration-200"
     >
-      <div>
-        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-          File Format
-        </label>
-        <AppSelect
-          :options="formatFilterOptions"
-          :model-value="selectedFormat"
-          class="w-full text-xs"
-          @update:model-value="selectedFormat = String($event); currentPage = 1"
-        />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- 1. Report Type -->
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            Report Type
+          </label>
+          <AppSelect
+            :options="reportTypeFilterOptions"
+            :model-value="selectedReportType"
+            class="w-full text-xs"
+            @update:model-value="selectedReportType = String($event); currentPage = 1"
+          />
+        </div>
+
+        <!-- 2. Status -->
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            Status
+          </label>
+          <AppSelect
+            :options="statusFilterOptions"
+            :model-value="selectedStatus"
+            class="w-full text-xs"
+            @update:model-value="selectedStatus = String($event); currentPage = 1"
+          />
+        </div>
+
+        <!-- 3. Date Created -->
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            Date Created
+          </label>
+          <AppSelect
+            :options="dateRangeFilterOptions"
+            :model-value="selectedDateRange"
+            class="w-full text-xs"
+            @update:model-value="selectedDateRange = String($event); currentPage = 1"
+          />
+        </div>
+
+        <!-- 4. File Format -->
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+            File Format
+          </label>
+          <AppSelect
+            :options="formatFilterOptions"
+            :model-value="selectedFormat"
+            class="w-full text-xs"
+            @update:model-value="selectedFormat = String($event); currentPage = 1"
+          />
+        </div>
+      </div>
+
+      <div v-if="hasActiveFilters" class="flex justify-end pt-1">
+        <button
+          type="button"
+          class="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
+          @click="clearFilters"
+        >
+          <X class="h-3 w-3" />
+          <span>Reset All Filters</span>
+        </button>
       </div>
     </div>
 
@@ -450,7 +600,7 @@ onUnmounted(() => {
             <th class="px-4 py-3.5 text-left font-bold uppercase tracking-wider">
               {{ t('admin.auditLogs.time') }}
             </th>
-            <th class="w-16 px-4 py-3.5 text-center font-bold uppercase tracking-wider">
+            <th class="w-20 px-4 py-3.5 text-center font-bold uppercase tracking-wider">
               {{ t('common.actions') }}
             </th>
           </tr>
@@ -491,12 +641,12 @@ onUnmounted(() => {
                   <PackageSearch class="h-6 w-6 text-slate-400 dark:text-slate-500" />
                 </div>
                 <p class="font-bold text-slate-800 dark:text-slate-200 text-sm">
-                  {{ searchQuery || selectedFormat !== 'all' ? 'No reports match your filters' : 'No export reports generated yet' }}
+                  {{ hasActiveFilters ? 'No reports match your filters' : 'No export reports generated yet' }}
                 </p>
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  {{ searchQuery || selectedFormat !== 'all' ? 'Try adjusting your search query or filter options.' : 'Generate exportable PDF, CSV, and audit reports for property and resolution analytics.' }}
+                  {{ hasActiveFilters ? 'Try adjusting your search query or filter options.' : 'Generate exportable PDF, CSV, and audit reports for property and resolution analytics.' }}
                 </p>
-                <div v-if="!searchQuery && selectedFormat === 'all'" class="pt-2 flex items-center justify-center">
+                <div v-if="!hasActiveFilters" class="pt-2 flex items-center justify-center">
                   <button
                     type="button"
                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0B5D3B] hover:bg-[#09482e] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer"
@@ -543,7 +693,14 @@ onUnmounted(() => {
 
             <!-- Requester / User -->
             <td class="px-4 py-3.5 text-slate-700 dark:text-slate-300 font-medium">
-              {{ report.requester?.full_name || `User #${report.requested_by}` }}
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900 dark:text-white">
+                  {{ report.requester?.full_name || report.requested_by_user?.full_name || report.generated_by?.full_name || (report.requested_by ? `Staff #${report.requested_by}` : 'Administrator') }}
+                </span>
+                <span v-if="report.requester?.email || report.requested_by_user?.email" class="text-[11px] text-slate-400 font-mono">
+                  {{ report.requester?.email || report.requested_by_user?.email }}
+                </span>
+              </div>
             </td>
 
             <!-- Format -->
@@ -570,22 +727,34 @@ onUnmounted(() => {
               {{ formatDate(report.created_at) }}
             </td>
 
-            <!-- Action 3-Dots Menu -->
+            <!-- Action Column with Direct Download & Action Menu -->
             <td class="px-4 py-3.5 text-center">
-              <AppActionMenu v-slot="{ close }" width-class="w-52">
+              <div class="flex items-center justify-center gap-1">
                 <button
                   v-if="report.status === 'ready'"
                   type="button"
-                  class="w-full text-left px-3.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
-                  @click="close(); handleDownload(report)"
+                  title="Download Document"
+                  :disabled="downloadingId === report.id"
+                  class="h-8 w-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
+                  @click="handleDownload(report)"
                 >
-                  <Download class="h-4 w-4 text-emerald-500" />
-                  <span>Download Document</span>
+                  <Download class="h-3.5 w-3.5" :class="downloadingId === report.id ? 'animate-bounce' : ''" />
                 </button>
-                <div v-else class="px-3.5 py-2 text-slate-400">
-                  Status: {{ report.status }}
-                </div>
-              </AppActionMenu>
+                <AppActionMenu v-slot="{ close }" width-class="w-52">
+                  <button
+                    v-if="report.status === 'ready'"
+                    type="button"
+                    class="w-full text-left px-3.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
+                    @click="close(); handleDownload(report)"
+                  >
+                    <Download class="h-4 w-4 text-emerald-500" />
+                    <span>Download ({{ (report.format || 'CSV').toUpperCase() }})</span>
+                  </button>
+                  <div v-else class="px-3.5 py-2 text-slate-400 text-xs italic">
+                    Status: {{ report.status }}
+                  </div>
+                </AppActionMenu>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -596,10 +765,10 @@ onUnmounted(() => {
     <AppPagination
       :current-page="currentPage"
       :total-pages="totalPages"
-      :total="filteredReports.length"
+      :total="totalReportsCount"
       :per-page="perPage"
-      @update:current-page="currentPage = $event"
-      @update:per-page="perPage = $event; currentPage = 1"
+      @update:current-page="loadReports($event)"
+      @update:per-page="perPage = $event; loadReports(1)"
     />
 
     <!-- Create Report Modal -->

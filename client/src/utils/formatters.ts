@@ -1,7 +1,18 @@
 import { t } from '@/i18n'
 
+export const claimStatusLabels: Record<string, string> = {
+  pending: 'Pending Review',
+  under_review: 'Under Review',
+  approved: 'Approved',
+  rejected: 'Rejected',
+  reversed: 'Reversed',
+  cancelled: 'Cancelled',
+  withdrawn: 'Withdrawn',
+}
+
 export function formatStatus(status: string | null | undefined): string {
   if (!status) return t('common.none')
+  if (claimStatusLabels[status]) return claimStatusLabels[status]
   const itemKey = `items.statuses.${status}`
   const trans = t(itemKey)
   if (trans !== itemKey) return trans

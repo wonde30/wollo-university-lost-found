@@ -12,7 +12,11 @@ class CampusFactory extends Factory
     public function definition(): array
     {
         return [
-            // Factory attributes
+            'name' => fake()->city() . ' Campus',
+            'short_code' => strtoupper(fake()->unique()->lexify('???')),
+            'city' => fake()->city(),
+            'region' => 'Amhara',
+            'is_active' => true,
         ];
     }
 }

@@ -525,6 +525,15 @@ export const am = {
     "descriptionLabel": "ዝርዝር መግለጫ"
   },
   "claims": {
+    "status": {
+      "pending": "ውሳኔ የሚጠብቅ",
+      "under_review": "በምርመራ ላይ",
+      "approved": "የተፈቀደ",
+      "rejected": "ውድቅ የተደረገ",
+      "reversed": "የተመለሰ",
+      "cancelled": "የተሰረዘ",
+      "withdrawn": "የተመለሰ"
+    },
     "submittedSuccess": "የባለቤትነት ጥያቄዎ ለግምገማ በተሳካ ሁኔታ ቀርቧል።",
     "decisionUpdated": "የጥያቄ #{id} ውሳኔ ወደ {status} ተቀይሯል።",
     "receiptConfirmedSuccess": "ዕቃውን መረከብዎ በተሳካ ሁኔታ ተረጋግጧል! እናመሰግናለን።",
@@ -584,13 +593,7 @@ export const am = {
     "handoverRecord": "የአካል ርክክብ መዝገብ",
     "conditionOnReturn": "ሲረከብ የነበረበት ሁኔታ",
     "receiptConfirmed": "ርክክቡ በባለቤቱ ተረጋግጧል",
-    "receiptPending": "የባለቤቱን ማረጋገጫ በመጠባበቅ ላይ",
-    "status": {
-      "pending": "በመጠባበቅ ላይ",
-      "approved": "የጸደቀ",
-      "rejected": "ውድቅ የተደረገ",
-      "reversed": "የተቀየረ"
-    }
+    "receiptPending": "የባለቤቱን ማረጋገጫ በመጠባበቅ ላይ"
   },
   "returns": {
     "processedSuccess": "የዕቃው ርክክብ በተሳካ ሁኔታ ተጠናቋል።",

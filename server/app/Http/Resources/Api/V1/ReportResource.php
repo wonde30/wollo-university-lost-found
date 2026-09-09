@@ -9,6 +9,8 @@ class ReportResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $user = $this->relationLoaded('requester') ? $this->requester : ($this->relationLoaded('requestedBy') ? $this->requestedBy : null);
+
         return [
             'id' => $this->id,
             'requested_by' => $this->requested_by,
@@ -24,8 +26,9 @@ class ReportResource extends JsonResource
             'downloaded_at' => $this->downloaded_at?->toISOString(),
             'download_count' => $this->download_count,
             'expires_at' => $this->expires_at?->toISOString(),
-            'requested_by_user' => new UserResource($this->whenLoaded('requestedBy')),
-            'generated_by' => new UserResource($this->whenLoaded('requestedBy')),
+            'requester' => $user ? new UserResource($user) : null,
+            'requested_by_user' => $user ? new UserResource($user) : null,
+            'generated_by' => $user ? new UserResource($user) : null,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

@@ -17,6 +17,68 @@ export interface DashboardCategoryStat {
   total: number
 }
 
+export interface DashboardSparklines {
+  total_items: number[]
+  lost_items: number[]
+  found_items: number[]
+  returned_items: number[]
+  in_storage: number[]
+}
+
+export interface DashboardTimelineData {
+  labels: string[]
+  lost: number[]
+  found: number[]
+  returned: number[]
+}
+
+export interface DashboardCategoryBreakdown {
+  id: number
+  name: string
+  icon?: string | null
+  total_items: number
+  found_items: number
+  lost_items: number
+  returned_items: number
+  percentage: number
+}
+
+export interface DashboardCampusBreakdown {
+  id: number
+  name: string
+  code: string
+  total_items: number
+  found_items: number
+  lost_items: number
+  returned_items: number
+  recovery_rate: number
+}
+
+export interface DashboardStatusFunnelStage {
+  stage: 'reported' | 'in_custody' | 'claimed' | 'returned' | string
+  label: string
+  count: number
+  percentage: number
+}
+
+export interface DashboardLifecycleSegment {
+  id: string
+  label: string
+  count: number
+  color: string
+}
+
+export interface DashboardAnalytics {
+  period: string
+  date_from: string
+  date_to: string
+  timeline: DashboardTimelineData
+  by_category: DashboardCategoryBreakdown[]
+  by_campus: DashboardCampusBreakdown[]
+  status_funnel: DashboardStatusFunnelStage[]
+  lifecycle_distribution?: DashboardLifecycleSegment[]
+}
+
 export interface DashboardStatistics {
   summary: {
     total_items: number
@@ -26,6 +88,7 @@ export interface DashboardStatistics {
     found_unclaimed: number
     in_storage: number
     returned_items: number
+    claimed_items?: number
     returned_this_month?: number
     pending_claims: number
     pending_matches: number
@@ -37,6 +100,8 @@ export interface DashboardStatistics {
     top_3_categories: DashboardCategoryStat[]
     search_fail_rate_percentage: number
   }
+  sparklines?: DashboardSparklines
+  analytics?: DashboardAnalytics
   recent_activity: {
     recent_items: RecentItem[]
     recent_claims: RecentClaim[]

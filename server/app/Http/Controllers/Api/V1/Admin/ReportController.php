@@ -26,6 +26,8 @@ class ReportController extends Controller
             ->when($request->filled('report_type'), fn ($q) => $q->where('report_type', $request->string('report_type')->toString()))
             ->when($request->filled('format'), fn ($q) => $q->where('format', $request->string('format')->toString()))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')->toString()))
+            ->when($request->filled('date_from'), fn ($q) => $q->whereDate('created_at', '>=', $request->string('date_from')->toString()))
+            ->when($request->filled('date_to'), fn ($q) => $q->whereDate('created_at', '<=', $request->string('date_to')->toString()))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = trim($request->string('search')->toString());
                 $q->where(function ($sub) use ($search) {
@@ -78,7 +80,7 @@ class ReportController extends Controller
     /**
      * FR-58: Download report (CSV or PDF). Expires after 7 days.
      */
-    public function download(Request $request, int $id)
+    public function download(Request $request, int $id): StreamedResponse|JsonResponse
     {
         $report = Report::findOrFail($id);
         
@@ -90,22 +92,39 @@ class ReportController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        if (now()->isAfter($report->expires_at)) {
+        if ($report->expires_at && now()->isAfter($report->expires_at)) {
             return response()->json([
                 'message' => 'This report has expired and is no longer available.',
             ], JsonResponse::HTTP_GONE);
         }
 
-        if (!Storage::disk('local')->exists($report->file_path)) {
+        if (!$report->file_path || !Storage::disk('local')->exists($report->file_path)) {
             return response()->json([
                 'message' => 'Report file not found.',
             ], JsonResponse::HTTP_NOT_FOUND);
         }
 
+        $report->increment('download_count');
+        $report->update(['downloaded_at' => now()]);
+
+        $format = strtolower($report->format ?? 'csv');
+        $mimeType = match ($format) {
+            'pdf' => 'application/pdf',
+            'csv' => 'text/csv; charset=UTF-8',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            default => 'application/octet-stream',
+        };
+
+        $filename = "wollo_{$report->report_type}_{$report->id}.{$format}";
+
         return Storage::disk('local')->download(
             $report->file_path, 
-            "report_{$report->report_type}_{$report->id}.{$report->format}"
+            $filename,
+            [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+                'X-Content-Type-Options' => 'nosniff',
+            ]
         );
     }
 }
-

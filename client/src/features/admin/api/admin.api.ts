@@ -50,10 +50,16 @@ import type {
 // ==========================================
 
 /**
- * Get dashboard statistics and recent activity.
+ * Get dashboard statistics, sparklines, and multi-dimensional analytics.
  */
-export async function getDashboardStatistics(): Promise<DashboardStatistics> {
-  const { data } = await apiClient.get<DashboardStatistics>(ADMIN.DASHBOARD_STATISTICS)
+export async function getDashboardStatistics(params?: {
+  period?: string
+  date_from?: string
+  date_to?: string
+  force?: boolean
+}): Promise<DashboardStatistics> {
+  const query = params ? buildPaginationQuery(params as any) : ''
+  const { data } = await apiClient.get<DashboardStatistics>(ADMIN.DASHBOARD_STATISTICS + query)
   return data
 }
 

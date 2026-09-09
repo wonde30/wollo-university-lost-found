@@ -525,6 +525,15 @@ export const en = {
     "descriptionLabel": "Detailed Description"
   },
   "claims": {
+    "status": {
+      "pending": "Pending Review",
+      "under_review": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "reversed": "Reversed",
+      "cancelled": "Cancelled",
+      "withdrawn": "Withdrawn"
+    },
     "submittedSuccess": "Your ownership claim has been submitted for review.",
     "decisionUpdated": "Claim #{id} decision updated to {status}.",
     "receiptConfirmedSuccess": "Item collection confirmed successfully! Thank you.",
@@ -584,13 +593,7 @@ export const en = {
     "handoverRecord": "Physical Handover Record",
     "conditionOnReturn": "Condition on Handover",
     "receiptConfirmed": "Receipt Acknowledged",
-    "receiptPending": "Pending Claimant Acknowledgment",
-    "status": {
-      "pending": "Pending Review",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "reversed": "Reversed"
-    }
+    "receiptPending": "Pending Claimant Acknowledgment"
   },
   "returns": {
     "processedSuccess": "Item return handed over and processed successfully.",
@@ -1000,12 +1003,12 @@ export const en = {
       "updatedJustNow": "Updated just now",
       "updatedMinutesAgo": "Updated {m}m ago",
       "totalItems": "Total Items",
-      "allRecords": "All registry records",
+      "allRecords": "Period registry records",
       "lostItems": "Active Lost",
-      "lostSublabel": "Awaiting recovery",
+      "lostSublabel": "Awaiting recovery / match",
       "foundItems": "Found in Custody",
-      "foundSublabel": "In campus storage",
-      "returnedItems": "Returned",
+      "foundSublabel": "In custody / unclaimed",
+      "returnedItems": "Returned to Owner",
       "recoveryRate": "Recovery rate",
       "avgTurnaround": "Avg. Resolution",
       "avgSublabel": "Intake to handover",

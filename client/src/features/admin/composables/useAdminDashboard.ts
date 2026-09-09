@@ -9,15 +9,18 @@ export type { AdminStats } from '../stores/admin.store'
 
 export function useAdminDashboard() {
   const adminStore = useAdminStore()
-  const { stats, statistics, recentActivity, loading, error, statisticsLoaded } = storeToRefs(adminStore)
+  const { stats, statistics, sparklines, analytics, currentPeriod, recentActivity, loading, error, statisticsLoaded } = storeToRefs(adminStore)
 
-  async function fetchStats(force = false): Promise<void> {
-    return adminStore.fetchStats(force)
+  async function fetchStats(options: boolean | { force?: boolean; period?: string; date_from?: string; date_to?: string } = false): Promise<void> {
+    return adminStore.fetchStats(options)
   }
 
   return {
     stats,
     statistics,
+    sparklines,
+    analytics,
+    currentPeriod,
     recentActivity,
     loading,
     error,

@@ -8,8 +8,11 @@ export interface GeneratedReport {
   requested_by: number
   report_type: string
   format: 'csv' | 'pdf'
-  status: 'pending' | 'generating' | 'ready' | 'failed'
+  status: 'pending' | 'processing' | 'generating' | 'ready' | 'failed'
   file_path: string | null
+  file_size_bytes?: number | null
+  row_count?: number
+  error_message?: string | null
   ready_at: string | null
   expires_at: string | null
   created_at: string
@@ -17,7 +20,17 @@ export interface GeneratedReport {
     id: number
     full_name: string
     email: string
-  }
+  } | null
+  requested_by_user?: {
+    id: number
+    full_name: string
+    email: string
+  } | null
+  generated_by?: {
+    id: number
+    full_name: string
+    email: string
+  } | null
 }
 
 export interface GenerateReportPayload {
@@ -57,7 +70,32 @@ export async function downloadReport(id: number, filename = 'report.csv'): Promi
     responseType: 'blob',
   })
 
-  const blob = new Blob([response.data], { type: 'application/octet-stream' })
+  // Detect if server returned JSON error disguised inside a blob
+  const rawContentType = response.headers['content-type']
+  const contentType = (typeof rawContentType === 'string' ? rawContentType : '').toLowerCase()
+  if (contentType.includes('application/json')) {
+    const text = await (response.data as Blob).text()
+    try {
+      const errorObj = JSON.parse(text)
+      throw new Error(errorObj.message || 'Failed to download report.')
+    } catch (e: any) {
+      if (e instanceof Error && e.message !== 'Failed to download report.') {
+        throw e
+      }
+      throw new Error('Failed to download report.')
+    }
+  }
+
+  const mimeType = filename.endsWith('.pdf')
+    ? 'application/pdf'
+    : filename.endsWith('.csv')
+      ? 'text/csv'
+      : (contentType || 'application/octet-stream')
+
+  const blob = response.data instanceof Blob
+    ? new Blob([response.data], { type: mimeType })
+    : new Blob([response.data], { type: mimeType })
+
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url

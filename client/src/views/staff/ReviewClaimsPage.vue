@@ -8,6 +8,7 @@ import AppSelect from '@/components/ui/AppSelect.vue'
 import AppActionMenu from '@/components/ui/AppActionMenu.vue'
 import { useUiStore } from '@/stores/ui.store'
 import { formatDate } from '@/utils/date'
+import { claimStatusLabels } from '@/utils/formatters'
 import { t } from '@/i18n'
 import type { Claim } from '@/features/claims/types/claim.types'
 import {
@@ -81,12 +82,15 @@ function toggleSelectClaim(id: number) {
   }
 }
 
+const statusLabels = claimStatusLabels
+
 const statusFilterOptions = computed(() => [
   { label: 'All Claim Statuses', value: 'all' },
-  { label: 'Pending Adjudication', value: 'pending' },
-  { label: 'Approved', value: 'approved' },
-  { label: 'Rejected', value: 'rejected' },
-  { label: 'Reversed', value: 'reversed' },
+  { label: statusLabels.pending, value: 'pending' },
+  { label: statusLabels.under_review, value: 'under_review' },
+  { label: statusLabels.approved, value: 'approved' },
+  { label: statusLabels.rejected, value: 'rejected' },
+  { label: statusLabels.reversed, value: 'reversed' },
   { label: 'Cancelled', value: 'cancelled' },
 ])
 
@@ -152,6 +156,8 @@ function getClaimBadgeClass(status: string): string {
   switch (status) {
     case 'approved':
       return 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800'
+    case 'under_review':
+      return 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200/60 dark:border-sky-800'
     case 'rejected':
     case 'reversed':
       return 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-800'
@@ -495,7 +501,7 @@ onMounted(() => load())
                   getClaimBadgeClass(claim.status),
                 ]"
               >
-                {{ claim.status }}
+                {{ statusLabels[claim.status] ?? claim.status }}
               </span>
             </td>
 

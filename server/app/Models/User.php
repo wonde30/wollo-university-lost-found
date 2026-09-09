@@ -122,6 +122,11 @@ class User extends Authenticatable
         return $this->hasMany(Item::class, 'reporter_id');
     }
 
+    public function items(): HasMany
+    {
+        return $this->reportedItems();
+    }
+
     public function deletedItems(): HasMany
     {
         return $this->hasMany(Item::class, 'deleted_by');
@@ -344,10 +349,6 @@ class User extends Authenticatable
 
     public function hasPermission(string $permissionName): bool
     {
-        if ($this->isAdmin()) {
-            return true;
-        }
-
         return in_array($permissionName, $this->getPermissionNames(), true);
     }
 

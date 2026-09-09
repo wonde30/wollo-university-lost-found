@@ -20,7 +20,6 @@ class CategoryController extends Controller
             $categories = Category::where('is_active', true)
                 ->where(function ($sub) use ($search) {
                     $sub->where('name', 'like', "%{$search}%")
-                        ->orWhere('display_name', 'like', "%{$search}%")
                         ->orWhere('name_am', 'like', "%{$search}%");
                 })
                 ->orderBy('sort_order')
