@@ -4,6 +4,7 @@ import { useReferencesStore } from '@/features/lookups/stores/references.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import { currentLocale, t } from '@/i18n'
+import { getExportFilename } from '@/stores/settings.store'
 import type { Location } from '@/types/common.types'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
@@ -281,7 +282,7 @@ function exportLocationsCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_locations_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('locations'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

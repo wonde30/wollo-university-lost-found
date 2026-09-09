@@ -40,6 +40,6 @@
     @endif
 
     <p style="font-size: 13px; color: #475569;">
-        Thank you for using the Wollo University Property Recovery System. We are glad your property has been safely returned to you!
+        Thank you for using the {{ \App\Models\SystemSetting::get('institution_name', 'University') }} Property Recovery System. We are glad your property has been safely returned to you!
     </p>
 @endsection

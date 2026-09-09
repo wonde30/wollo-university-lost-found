@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string      $type
  * @property string|null $display_name
  * @property string|null $description
+ * @property string      $group
  * @property bool        $is_public
  * @property bool        $is_editable
  * @property \Carbon\Carbon|null $created_at
@@ -29,6 +30,7 @@ class SystemSetting extends Model
         'type',
         'display_name',
         'description',
+        'group',
         'is_public',
         'is_editable',
     ];

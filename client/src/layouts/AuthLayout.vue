@@ -6,6 +6,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle.vue'
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher.vue'
 import { t } from '@/i18n'
 import { ArrowLeft } from 'lucide-vue-next'
+import { useSettingsStore } from '@/stores/settings.store'
 
 interface Props {
   title?: string
@@ -13,6 +14,7 @@ interface Props {
 }
 
 defineProps<Props>()
+const settingsStore = useSettingsStore()
 </script>
 
 <template>
@@ -23,13 +25,14 @@ defineProps<Props>()
     <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <RouterLink to="/" class="inline-flex items-center gap-2.5 group">
         <img
-          src="/images/wu-logo.png"
-          :alt="t('common.universityEmblem')"
-          class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 ring-[#0B5D3B]/40 p-0.5 group-hover:scale-105 transition-transform"
+          :src="settingsStore.logoUrl"
+          :alt="settingsStore.institutionName + ' Emblem'"
+          class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 p-0.5 group-hover:scale-105 transition-transform"
+          :style="{ '--tw-ring-color': settingsStore.primaryColor + '66' }"
         />
         <div class="flex flex-col text-left">
-          <span class="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-none">WOLLO UNIVERSITY</span>
-          <span class="text-[9px] font-bold tracking-wider text-[#0B5D3B] dark:text-[#75bd97] uppercase mt-0.5">{{ t('common.portalTitle') }}</span>
+          <span class="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-none uppercase">{{ settingsStore.institutionName }}</span>
+          <span class="text-[9px] font-bold tracking-wider uppercase mt-0.5" :style="{ color: settingsStore.primaryColor }">{{ settingsStore.tagline }}</span>
         </div>
       </RouterLink>
 
@@ -72,7 +75,7 @@ defineProps<Props>()
           <span>{{ t('common.back') }} to {{ t('nav.home') }}</span>
         </RouterLink>
       </div>
-      <p class="text-[11px]">&copy; {{ new Date().getFullYear() }} {{ t('common.wolloUniversity') }} &bull; {{ t('common.portalTitle') }}</p>
+      <p class="text-[11px]">&copy; {{ new Date().getFullYear() }} {{ settingsStore.institutionName }} &bull; {{ settingsStore.tagline }}</p>
     </footer>
 
     <AppToast />

@@ -3,6 +3,7 @@ import { onMounted, reactive, computed, ref } from 'vue'
 import { useAdminStore } from '@/features/admin/stores/admin.store'
 import { useUiStore } from '@/stores/ui.store'
 import { formatDateTime } from '@/utils/date'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import type { AuditLog } from '@/features/admin/types/admin.types'
 import AppInput from '@/components/ui/AppInput.vue'
@@ -185,7 +186,7 @@ function exportCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_audit_logs_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('audit_logs'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

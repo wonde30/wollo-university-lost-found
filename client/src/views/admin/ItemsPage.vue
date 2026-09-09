@@ -7,6 +7,7 @@ import { useUiStore } from '@/stores/ui.store'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { currentLocale, t } from '@/i18n'
 import { formatDate } from '@/utils/date'
+import { getExportFilename } from '@/stores/settings.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import type { Item, ItemDetail, ItemStatus } from '@/features/items/types/item.types'
 import AppInput from '@/components/ui/AppInput.vue'
@@ -297,7 +298,7 @@ function exportItemsCsv() {
   const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n')
   const link = document.createElement('a')
   link.setAttribute('href', encodeURI(csvContent))
-  link.setAttribute('download', `wollo_items_master_registry_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('items_master_registry'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

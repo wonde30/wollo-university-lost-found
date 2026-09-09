@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui.store'
-import { t } from '@/i18n'
+import { useSettingsStore } from '@/stores/settings.store'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppToast from '@/components/ui/AppToast.vue'
@@ -10,6 +10,7 @@ import NetworkStatus from '@/components/feedback/NetworkStatus.vue'
 import SystemAnnouncementBanner from '@/components/common/SystemAnnouncementBanner.vue'
 
 const uiStore = useUiStore()
+const settingsStore = useSettingsStore()
 </script>
 
 <template>
@@ -46,11 +47,11 @@ const uiStore = useUiStore()
 
       <footer class="py-3 px-6 border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] text-xs text-slate-400 dark:text-slate-500 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-2">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-700 dark:text-slate-300">{{ t('common.wolloUniversity') }}</span>
+          <span class="font-bold text-slate-700 dark:text-slate-300">{{ settingsStore.institutionName }}</span>
           <span>&bull;</span>
-          <span>{{ t('common.portalTitle') }}</span>
+          <span>{{ settingsStore.tagline }}</span>
         </div>
-        <span class="font-semibold text-slate-400 dark:text-slate-500">Powered by WONDATIR (IT)</span>
+        <span class="font-semibold text-slate-400 dark:text-slate-500">{{ settingsStore.developerCredit }}</span>
       </footer>
     </div>
 

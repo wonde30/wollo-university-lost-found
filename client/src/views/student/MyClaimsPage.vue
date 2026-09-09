@@ -13,6 +13,7 @@ import AppModal from '@/components/ui/AppModal.vue'
 import AppActionMenu from '@/components/ui/AppActionMenu.vue'
 import { formatDate } from '@/utils/date'
 import { claimStatusLabels } from '@/utils/formatters'
+import { getExportFilename } from '@/stores/settings.store'
 import {
   ClipboardList,
   Search,
@@ -205,7 +206,7 @@ function exportClaimsCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_my_claims_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('my_claims'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -5,6 +5,7 @@ import * as reportsApi from '@/features/admin/api/reports.api'
 import type { GeneratedReport } from '@/features/admin/api/reports.api'
 import { useUiStore } from '@/stores/ui.store'
 import { formatDate } from '@/utils/date'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppModal from '@/components/ui/AppModal.vue'
@@ -275,7 +276,7 @@ async function handleDownload(report: GeneratedReport) {
   downloadingId.value = report.id
   try {
     const ext = report.format || 'csv'
-    await reportsApi.downloadReport(report.id, `wollo_${report.report_type}_${report.id}.${ext}`)
+    await reportsApi.downloadReport(report.id, getExportFilename(`${report.report_type}_${report.id}`, ext))
     uiStore.success(t('admin.reports.downloadedSuccess'))
   } catch {
     uiStore.error(t('common.errorOccurred'))

@@ -11,6 +11,7 @@ use App\Models\Item;
 use App\Models\ItemPhoto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ItemPhotoController extends Controller
 {
@@ -50,6 +51,11 @@ class ItemPhotoController extends Controller
         $this->authorize('update', $item);
 
         $photo = ItemPhoto::where('item_id', $itemId)->findOrFail($photoId);
+
+        if ($photo->path && Storage::disk('public')->exists($photo->path)) {
+            Storage::disk('public')->delete($photo->path);
+        }
+
         $photo->delete();
 
         return response()->json([

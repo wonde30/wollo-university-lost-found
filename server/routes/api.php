@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Public\LocationController as PublicLocationContr
 use App\Http\Controllers\Api\V1\Public\AnnouncementController as PublicAnnouncementController;
 use App\Http\Controllers\Api\V1\Public\PublicItemController;
 use App\Http\Controllers\Api\V1\Public\TrackingController;
+use App\Http\Controllers\Api\V1\Public\SettingController as PublicSettingController;
 use App\Http\Controllers\Api\V1\Items\ItemController;
 use App\Http\Controllers\Api\V1\Items\ItemPhotoController;
 use App\Http\Controllers\Api\V1\Items\ItemStatusController;
@@ -63,6 +64,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/locations', [PublicLocationController::class, 'index']);
         Route::get('/announcements', [PublicAnnouncementController::class, 'index']);
         Route::get('/track/{reference_code}', [TrackingController::class, 'track'])->middleware('throttle:20,1');
+        Route::get('/settings', [PublicSettingController::class, 'index']);
     });
 
     // FR-44: Secure token-based recipient return confirmation (single-use, link-based confirmation)
@@ -131,8 +133,7 @@ Route::prefix('v1')->group(function (): void {
             Route::put('/preferences', [NotificationPreferenceController::class, 'update']);
         });
 
-        // Active Broadcast Announcements for Authenticated Users
-        Route::get('/announcements/active', [PublicAnnouncementController::class, 'index']);
+        // Active Announcements — served by the public route above (line 89)
 
         // Physical Returns (FR-11, FR-44, FR-46)
         Route::prefix('returns')->group(function (): void {
@@ -212,6 +213,7 @@ Route::prefix('v1')->group(function (): void {
             // System Settings (FR-12)
             Route::get('/settings', [AdminSystemSettingController::class, 'index']);
             Route::put('/settings/{key}', [AdminSystemSettingController::class, 'update']);
+            Route::post('/settings/upload-logo', [PublicSettingController::class, 'uploadLogo']);
 
             // Reports & Audit Logs + CSV Export (FR-12)
             Route::get('/reports', [AdminReportController::class, 'index']);

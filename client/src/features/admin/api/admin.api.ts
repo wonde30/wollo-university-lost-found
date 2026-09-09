@@ -406,6 +406,17 @@ export async function updateSystemSetting(key: string, settingData: UpdateSystem
   return data.data
 }
 
+export async function uploadLogo(file: File): Promise<{ logo_url: string }> {
+  const formData = new FormData()
+  formData.append('logo', file)
+  const { data } = await apiClient.post<{ data: { logo_url: string }; message: string }>(
+    ADMIN.UPLOAD_LOGO,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
+  return data.data
+}
+
 // ==========================================
 // Reports
 // ==========================================

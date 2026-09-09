@@ -13,6 +13,7 @@ import { useUiStore } from '@/stores/ui.store'
 import { useAnnouncementsStore } from '@/stores/announcements.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import { formatDate } from '@/utils/date'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import type {
   Announcement,
@@ -409,7 +410,7 @@ function exportAnnouncementsCsv(): void {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_announcements_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('announcements'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -7,7 +7,7 @@
 
 import { apiClient } from '@/lib/http/client'
 import { initCsrf } from '@/lib/http/csrf'
-import { AUTH } from '@/lib/api/endpoints'
+import { AUTH, PROFILE } from '@/lib/api/endpoints'
 import type {
   LoginCredentials,
   LoginResponse,
@@ -129,6 +129,6 @@ export interface UserSummaryData {
  * Get personal statistical summary for authenticated user.
  */
 export async function getUserSummary(): Promise<UserSummaryData> {
-  const { data } = await apiClient.get<{ data: UserSummaryData }>('/profile/summary')
+  const { data } = await apiClient.get<{ data: UserSummaryData }>(PROFILE.SUMMARY)
   return data.data
 }

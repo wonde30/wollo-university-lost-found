@@ -201,6 +201,7 @@ class User extends Authenticatable
     /* ------------------------------------------------------------------ */
 
     protected static array $rolePermissionsCache = [];
+    protected static array $roleNamesCache = [];
 
     /**
      * Get permission names inherited from the user's role.
@@ -310,6 +311,7 @@ class User extends Authenticatable
     public static function flushPermissionCache(): void
     {
         static::$rolePermissionsCache = [];
+        static::$roleNamesCache = [];
     }
 
     /* ------------------------------------------------------------------ */
@@ -361,7 +363,14 @@ class User extends Authenticatable
             return $this->role->name;
         }
 
-        return Role::where('id', $this->role_id)->value('name') ?? '';
+        if (isset(static::$roleNamesCache[$this->role_id])) {
+            return static::$roleNamesCache[$this->role_id];
+        }
+
+        $name = Role::where('id', $this->role_id)->value('name') ?? '';
+        static::$roleNamesCache[$this->role_id] = $name;
+
+        return $name;
     }
 
     public function isAdmin(): bool

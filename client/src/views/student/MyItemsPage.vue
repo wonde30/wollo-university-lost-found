@@ -5,6 +5,7 @@ import { useItemsStore } from '@/features/items/stores/items.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import { formatDate } from '@/utils/date'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import type { Item } from '@/features/items/types/item.types'
 import AppModal from '@/components/ui/AppModal.vue'
@@ -261,7 +262,7 @@ function exportItemsCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_my_reported_items_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('my_reported_items'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

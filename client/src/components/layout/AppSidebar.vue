@@ -3,6 +3,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useUiStore } from '@/stores/ui.store'
+import { useSettingsStore } from '@/stores/settings.store'
 import AppTooltip from '@/components/ui/AppTooltip.vue'
 import {
   LayoutDashboard,
@@ -35,6 +36,7 @@ import { t } from '@/i18n'
 const route = useRoute()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
+const settingsStore = useSettingsStore()
 
 // ==========================================
 // Types
@@ -476,17 +478,18 @@ function handleNavClick(): void {
     >
       <RouterLink to="/" class="flex items-center gap-3 overflow-hidden" @click="handleNavClick">
         <img
-          src="/images/wu-logo.png"
-          alt="Wollo University Emblem"
+          :src="settingsStore.logoUrl"
+          :alt="settingsStore.institutionName"
           class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 ring-[#0B5D3B]/40 p-0.5"
+          @error="($event.target as HTMLImageElement).src = '/images/wu-logo.png'"
         />
 
         <div v-if="!uiStore.sidebarCollapsed" class="flex flex-col transition-opacity duration-150 min-w-0">
-          <span class="text-xs font-black tracking-tight text-slate-900 dark:text-white leading-tight truncate">
-            WOLLO UNIVERSITY
+          <span class="text-xs font-black tracking-tight text-slate-900 dark:text-white leading-tight truncate uppercase">
+            {{ settingsStore.institutionName }}
           </span>
           <span class="text-[10px] font-bold text-[#0B5D3B] dark:text-[#75bd97] tracking-wider uppercase truncate">
-            Lost &amp; Found
+            {{ settingsStore.tagline || settingsStore.systemShortName }}
           </span>
         </div>
       </RouterLink>

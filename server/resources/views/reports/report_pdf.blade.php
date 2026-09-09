@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{{ $reportTitle ?? 'Wollo University Report' }}</title>
+    <title>{{ $reportTitle ?? \App\Models\SystemSetting::get('institution_name', 'University') . ' Report' }}</title>
     <style>
         @page {
             margin: 10mm 8mm 12mm 8mm;
@@ -35,7 +35,7 @@
         .header-title-main {
             font-size: 13pt;
             font-weight: bold;
-            color: #0B5D3B;
+            color: {{ \App\Models\SystemSetting::get('theme_primary_color', '#0B5D3B') }};
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
@@ -101,7 +101,7 @@
         }
 
         .data-table th {
-            background-color: #0B5D3B;
+            background-color: {{ \App\Models\SystemSetting::get('theme_primary_color', '#0B5D3B') }};
             color: #ffffff;
             font-size: 7pt;
             font-weight: bold;
@@ -136,7 +136,7 @@
         .mono-ref {
             font-family: monospace;
             font-weight: bold;
-            color: #0B5D3B;
+            color: {{ \App\Models\SystemSetting::get('theme_primary_color', '#0B5D3B') }};
             font-size: 7pt;
         }
 
@@ -193,8 +193,8 @@
     <table class="header-table">
         <tr>
             <td style="width: 60%; vertical-align: middle;">
-                <div class="header-title-main">Wollo University</div>
-                <div class="header-subtitle">Lost & Found Management System (WU-LFMS) &bull; Official Report</div>
+                <div class="header-title-main">{{ \App\Models\SystemSetting::get('institution_name', 'University') }}</div>
+                <div class="header-subtitle">{{ \App\Models\SystemSetting::get('system_short_name', 'LFMS') }} &bull; Official Report</div>
             </td>
             <td style="width: 40%; vertical-align: middle; text-align: right;">
                 <div class="report-badge">{{ $reportTitle }}</div>
@@ -281,7 +281,7 @@
     <!-- DomPDF Script for Page Numbering & Footer -->
     <script type="text/php">
         if (isset($pdf)) {
-            $footerText = "Wollo University • Dessie & Kombolcha Campuses • WU-LFMS Official System • Confidential";
+            $footerText = \App\Models\SystemSetting::get('pdf_footer_text', 'Official System Report • Confidential');
             $pageText = "Page {PAGE_NUM} of {PAGE_COUNT}";
             
             $size = 7;

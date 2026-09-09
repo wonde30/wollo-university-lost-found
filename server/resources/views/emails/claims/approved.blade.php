@@ -27,7 +27,7 @@
     <h3 style="color: #0F5132; font-size: 14px; margin-top: 20px;">What to do next:</h3>
     <ol style="font-size: 13px; color: #334155; padding-left: 20px;">
         <li>Visit the designated campus security / custody office during working hours (8:30 AM – 5:30 PM).</li>
-        <li>Present your official <strong>Wollo University Student/Staff ID card</strong>.</li>
+        <li>Present your official <strong>{{ \App\Models\SystemSetting::get('institution_name', 'University') }} Student/Staff ID card</strong>.</li>
         <li>Provide the reference code: <code>{{ $claim->item->reference_code ?? 'N/A' }}</code> to complete the physical handover confirmation.</li>
     </ol>
 @endsection

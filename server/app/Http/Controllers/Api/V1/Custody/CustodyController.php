@@ -36,7 +36,7 @@ class CustodyController extends Controller
                         ->orWhere('condition', 'like', "%{$search}%")
                         ->orWhereHas('item', fn ($iq) => $iq->where('title', 'like', "%{$search}%")->orWhere('reference_code', 'like', "%{$search}%"))
                         ->orWhereHas('actor', fn ($uq) => $uq->where('full_name', 'like', "%{$search}%"))
-                        ->orWhereHas('storageLocation', fn ($sq) => $sq->where('name', 'like', "%{$search}%")->orWhere('building', 'like', "%{$search}%")->orWhere('room', 'like', "%{$search}%"));
+                        ->orWhereHas('storageLocation', fn ($sq) => $sq->where('name', 'like', "%{$search}%")->orWhere('building', 'like', "%{$search}%")->orWhere('room_number', 'like', "%{$search}%"));
                 });
             })
             ->orderByDesc('created_at')

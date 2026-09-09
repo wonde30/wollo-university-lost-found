@@ -26,3 +26,8 @@ app.config.errorHandler = (err, instance, info) => {
 }
 
 app.mount('#app')
+
+// Bootstrap public settings (non-blocking)
+import { useSettingsStore } from '@/stores/settings.store'
+const settingsStore = useSettingsStore()
+settingsStore.fetchSettings()

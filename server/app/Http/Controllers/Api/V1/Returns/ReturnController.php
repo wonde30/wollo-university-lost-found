@@ -209,7 +209,9 @@ class ReturnController extends Controller
      */
     public function confirmByToken(Request $request, string $token): JsonResponse
     {
-        $returnRecord = ReturnRecord::where('confirmation_token', $token)->first();
+        $returnRecord = ReturnRecord::with(['item', 'claim'])
+            ->where('confirmation_token', $token)
+            ->first();
 
         if (! $returnRecord) {
             return response()->json([
@@ -311,7 +313,7 @@ class ReturnController extends Controller
     {
         $this->authorize('viewAny', ReturnRecord::class);
 
-        $query = ReturnRecord::with(['claim', 'item', 'recipient', 'staff'])
+        $query = ReturnRecord::with(['claim.item', 'recipient', 'staff'])
             ->orderByDesc('return_date');
 
         if ($dateFrom = $request->query('date_from')) {
@@ -333,10 +335,11 @@ class ReturnController extends Controller
             fputcsv($handle, ['ID', 'Item Reference', 'Item Title', 'Recipient', 'Staff', 'Return Date', 'Condition', 'Confirmed At']);
 
             foreach ($returns as $ret) {
+                $item = $ret->claim?->item;
                 fputcsv($handle, [
                     $ret->id,
-                    $ret->item?->reference_code ?? 'N/A',
-                    $ret->item?->title ?? 'N/A',
+                    $item?->reference_code ?? 'N/A',
+                    $item?->title ?? 'N/A',
                     $ret->recipient?->full_name ?? 'N/A',
                     $ret->staff?->full_name ?? 'N/A',
                     $ret->return_date?->format('Y-m-d') ?? (string) $ret->return_date,

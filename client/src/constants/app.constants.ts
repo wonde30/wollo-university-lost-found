@@ -1,11 +1,13 @@
 /**
  * Application-wide configuration constants.
+ * These serve as fallback defaults when settings haven't loaded yet.
+ * Dynamic values come from the settings store (fetched from API).
  */
 
-export const APP_NAME = 'Wollo University Lost & Found System'
-export const APP_SHORT_NAME = 'WU Lost & Found'
+export const APP_NAME = 'Lost & Found System'
+export const APP_SHORT_NAME = 'Lost & Found'
 export const APP_VERSION = '1.0.0'
-export const APP_INSTITUTION = 'Wollo University'
+export const APP_INSTITUTION = 'University'
 
 export const DEFAULT_PAGINATION = {
   PAGE: 1,

@@ -69,6 +69,8 @@ class SystemSettingController extends Controller
         $setting->update($request->validated());
 
         \Illuminate\Support\Facades\Cache::forget('settings.all');
+        \Illuminate\Support\Facades\Cache::forget('settings.public');
+        SystemSetting::flushCache();
 
         return response()->json([
             'message' => 'System setting updated successfully',

@@ -104,7 +104,6 @@ class ClaimReviewController extends Controller
                         'from_status'     => 'pending',
                         'to_status'       => 'rejected',
                         'changed_by_role' => 'system',
-                        'was_auto_rejected' => true,
                         'note'            => 'Auto-rejected due to competing claim approval.',
                         'ip_address'      => $request->ip(),
                     ]);

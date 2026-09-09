@@ -26,7 +26,7 @@ class ItemDetailResource extends JsonResource
             'campus_id' => $this->campus_id,
             'type' => (string) $this->type,
             'status' => (string) $this->status,
-            'held_at' => (string) $this->held_at,
+            'held_at' => $this->held_at,
             'title' => $this->title,
             'description' => $this->description,
             'brand' => $this->brand,

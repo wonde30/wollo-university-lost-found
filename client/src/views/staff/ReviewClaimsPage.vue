@@ -9,6 +9,7 @@ import AppActionMenu from '@/components/ui/AppActionMenu.vue'
 import { useUiStore } from '@/stores/ui.store'
 import { formatDate } from '@/utils/date'
 import { claimStatusLabels } from '@/utils/formatters'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import type { Claim } from '@/features/claims/types/claim.types'
 import {
@@ -188,7 +189,7 @@ function exportClaimsCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_review_claims_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('review_claims'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -9,6 +9,7 @@ import AppActionMenu from '@/components/ui/AppActionMenu.vue'
 import { useUiStore } from '@/stores/ui.store'
 import { formatDateTime } from '@/utils/date'
 import { formatStatus } from '@/utils/formatters'
+import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import {
   Package,
@@ -184,7 +185,7 @@ function exportCustodyCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_custody_events_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('custody_events'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -63,37 +63,39 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $lostCount = \App\Models\Item::where('reporter_id', $user->id)
-            ->where('type', 'lost')
+        // Consolidated item counts (1 query instead of 3)
+        $itemCounts = \App\Models\Item::where('reporter_id', $user->id)
             ->where('is_deleted', false)
-            ->count();
+            ->selectRaw("
+                SUM(CASE WHEN type = 'lost' THEN 1 ELSE 0 END) as lost_count,
+                SUM(CASE WHEN type = 'found' THEN 1 ELSE 0 END) as found_count,
+                SUM(CASE WHEN status = 'returned' THEN 1 ELSE 0 END) as returned_count
+            ")
+            ->first();
 
-        $foundCount = \App\Models\Item::where('reporter_id', $user->id)
-            ->where('type', 'found')
-            ->where('is_deleted', false)
-            ->count();
+        // Consolidated claim counts (1 query instead of 3)
+        $claimCounts = \App\Models\Claim::where('claimant_id', $user->id)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN status IN ('pending', 'under_review') THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved
+            ")
+            ->first();
 
-        $claimsCount = \App\Models\Claim::where('claimant_id', $user->id)->count();
-        $activeClaimsCount = \App\Models\Claim::where('claimant_id', $user->id)
-            ->whereIn('status', ['pending', 'under_review'])
-            ->count();
+        // Resolved = approved claims with confirmed return (still needs subquery)
         $resolvedClaimsCount = \App\Models\Claim::where('claimant_id', $user->id)
             ->where('status', 'approved')
             ->whereHas('returnRecord', fn ($rq) => $rq->where('recipient_confirmed', true)->orWhereNotNull('confirmed_at'))
             ->count();
-        $returnedItemsCount = \App\Models\Item::where('reporter_id', $user->id)
-            ->where('status', 'returned')
-            ->where('is_deleted', false)
-            ->count();
 
         return response()->json([
             'data' => [
-                'my_lost_count'         => $lostCount,
-                'my_found_count'        => $foundCount,
-                'my_claims_count'       => $claimsCount,
-                'active_claims_count'   => $activeClaimsCount,
+                'my_lost_count'         => (int) ($itemCounts->lost_count ?? 0),
+                'my_found_count'        => (int) ($itemCounts->found_count ?? 0),
+                'my_claims_count'       => (int) ($claimCounts->total ?? 0),
+                'active_claims_count'   => (int) ($claimCounts->active ?? 0),
                 'resolved_claims_count' => $resolvedClaimsCount,
-                'returned_items_count'  => $returnedItemsCount,
+                'returned_items_count'  => (int) ($itemCounts->returned_count ?? 0),
             ],
         ]);
     }

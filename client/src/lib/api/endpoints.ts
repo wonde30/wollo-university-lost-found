@@ -32,6 +32,7 @@ export const PUBLIC = {
   LOCATIONS: `${API_V1}/public/locations`,
   ANNOUNCEMENTS: `${API_V1}/public/announcements`,
   TRACK: (referenceCode: string) => `${API_V1}/public/track/${referenceCode}`,
+  SETTINGS: `${API_V1}/public/settings`,
 } as const
 
 // ==================================================
@@ -155,6 +156,7 @@ export const ADMIN = {
   
   SETTINGS: `${API_V1}/admin/settings`,
   SETTING: (key: string) => `${API_V1}/admin/settings/${key}`,
+  UPLOAD_LOGO: `${API_V1}/admin/settings/upload-logo`,
   
   REPORTS: `${API_V1}/admin/reports`,
   REPORTS_GENERATE: `${API_V1}/admin/reports/generate`,
@@ -170,4 +172,5 @@ export const ADMIN = {
 export const PROFILE = {
   UPDATE: `${API_V1}/profile`,
   UPLOAD_AVATAR: `${API_V1}/profile/avatar`,
+  SUMMARY: `${API_V1}/profile/summary`,
 } as const

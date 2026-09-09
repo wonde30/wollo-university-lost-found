@@ -1,13 +1,18 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useSettingsStore } from './settings.store'
 
 export const useAppContextStore = defineStore('appContext', () => {
+  const settingsStore = useSettingsStore()
+
   const isOnline = ref(typeof navigator !== 'undefined' ? navigator.onLine : true)
   const networkStatus = ref<'online' | 'offline'>(isOnline.value ? 'online' : 'offline')
-  const systemName = ref('Wollo University Lost & Found Platform')
   const appVersion = ref('1.0.0')
   const systemVersion = appVersion
   const lastActivity = ref<number>(Date.now())
+
+  // Dynamic from settings store
+  const systemName = computed(() => settingsStore.siteName)
 
   function recordActivity(): void {
     lastActivity.value = Date.now()

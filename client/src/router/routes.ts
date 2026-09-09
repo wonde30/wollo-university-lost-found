@@ -19,7 +19,7 @@ export const routes: RouteRecordRaw[] = [
     name: ROUTE_NAMES.HOME,
     component: () => import('@/views/public/HomePage.vue'),
     meta: {
-      title: 'Home - Wollo Lost & Found',
+      title: 'Home',
     },
   },
   {

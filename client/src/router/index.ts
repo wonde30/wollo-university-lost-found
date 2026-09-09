@@ -1,11 +1,7 @@
-/**
- * Vue Router configuration.
- * Single authoritative beforeEach guard — no duplicate auth initialization.
- */
-
 import { createRouter, createWebHistory } from 'vue-router'
 import { routes } from './routes'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
+import { useSettingsStore } from '@/stores/settings.store'
 import { ROUTE_NAMES } from './route-names'
 
 export const router = createRouter({
@@ -88,7 +84,10 @@ router.beforeEach(async (to) => {
 // ==========================================
 
 router.afterEach((to) => {
-  document.title = (to.meta.title as string | undefined) ?? 'Wollo Lost & Found'
+  const settingsStore = useSettingsStore()
+  const suffix = settingsStore.siteName || 'Lost & Found'
+  const pageTitle = to.meta.title as string | undefined
+  document.title = pageTitle ? `${pageTitle} | ${suffix}` : suffix
 })
 
 export default router

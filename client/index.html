@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="/images/wu-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0F5132" />
-    <title>Wollo University - Lost & Found System</title>
+    <title>Lost &amp; Found System</title>
     <!-- Google Fonts Preconnect & Stylesheets for High-Contrast Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,6 +23,31 @@
           }
           const locale = localStorage.getItem('wu_locale') || 'en';
           document.documentElement.setAttribute('lang', locale);
+
+          const cachedSettings = localStorage.getItem('app_public_settings');
+          if (cachedSettings) {
+            const parsed = JSON.parse(cachedSettings);
+            if (parsed && parsed.data) {
+              if (parsed.data.site_name) {
+                document.title = parsed.data.site_name;
+              }
+              if (parsed.data.theme_primary_color) {
+                document.documentElement.style.setProperty('--app-primary', parsed.data.theme_primary_color);
+                const themeMeta = document.querySelector('meta[name="theme-color"]');
+                if (themeMeta) themeMeta.setAttribute('content', parsed.data.theme_primary_color);
+              }
+              if (parsed.data.theme_primary_light) {
+                document.documentElement.style.setProperty('--app-primary-light', parsed.data.theme_primary_light);
+              }
+              if (parsed.data.theme_primary_hover) {
+                document.documentElement.style.setProperty('--app-primary-hover', parsed.data.theme_primary_hover);
+              }
+              if (parsed.data.logo_url) {
+                const iconLink = document.querySelector('link[rel="icon"]');
+                if (iconLink) iconLink.setAttribute('href', parsed.data.logo_url);
+              }
+            }
+          }
         } catch (e) {}
       })();
     </script>

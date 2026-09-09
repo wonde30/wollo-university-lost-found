@@ -193,6 +193,7 @@ export interface SystemSetting {
   value: string | number | boolean | null
   type: string
   display_name?: string | null
+  group?: string
   description: string | null
   is_public: boolean
   is_editable?: boolean

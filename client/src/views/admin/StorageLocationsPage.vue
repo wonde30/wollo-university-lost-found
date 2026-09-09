@@ -4,6 +4,7 @@ import { useReferencesStore } from '@/features/lookups/stores/references.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
 import { currentLocale, t } from '@/i18n'
+import { getExportFilename } from '@/stores/settings.store'
 import * as custodyApi from '@/features/custody/api/custody.api'
 import type { StorageLocation, Campus } from '@/types/common.types'
 import AppInput from '@/components/ui/AppInput.vue'
@@ -331,7 +332,7 @@ function exportVaultsCsv() {
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement('a')
   link.setAttribute('href', encodedUri)
-  link.setAttribute('download', `wollo_vaults_${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute('download', getExportFilename('vaults'))
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useUiStore } from '@/stores/ui.store'
+import { useSettingsStore } from '@/stores/settings.store'
 import { t } from '@/i18n'
 import UserMenu from './UserMenu.vue'
 import NotificationBell from './NotificationBell.vue'
@@ -11,6 +12,7 @@ import { Menu } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
 const uiStore = useUiStore()
+const settingsStore = useSettingsStore()
 </script>
 
 <template>
@@ -20,16 +22,16 @@ const uiStore = useUiStore()
       <div class="flex items-center gap-3">
         <RouterLink to="/" class="flex items-center gap-2.5 group">
           <img
-            src="/images/wu-logo.png"
-            alt="Wollo University Emblem"
-            class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 ring-[#0B5D3B]/40 p-0.5 group-hover:scale-105 transition-transform"
+            :src="settingsStore.logoUrl"
+            :alt="settingsStore.institutionName + ' Emblem'"
+            class="h-9 w-9 shrink-0 object-contain rounded-full bg-white dark:bg-slate-800 shadow-2xs ring-1 ring-slate-300/40 dark:ring-slate-700/40 p-0.5 group-hover:scale-105 transition-transform"
           />
           <div class="flex flex-col">
             <span class="text-base font-black tracking-tight text-slate-900 dark:text-white leading-none">
-              WOLLO <span class="text-[#0B5D3B] dark:text-[#75bd97]">LOST & FOUND</span>
+              {{ settingsStore.institutionShortName }} <span :style="{ color: settingsStore.primaryColor }">LOST &amp; FOUND</span>
             </span>
-            <span class="text-[10px] font-bold tracking-wider text-[#0B5D3B] dark:text-[#75bd97] uppercase mt-0.5">
-              ወሎ ዩኒቨርሲቲ &bull; Digital Recovery
+            <span class="text-[10px] font-bold tracking-wider uppercase mt-0.5" :style="{ color: settingsStore.primaryColor }">
+              {{ settingsStore.tagline }}
             </span>
           </div>
         </RouterLink>
@@ -40,7 +42,7 @@ const uiStore = useUiStore()
         <RouterLink
           to="/"
           class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-extrabold shadow-2xs"
+          active-class="font-extrabold shadow-2xs"
         >
           {{ t('nav.home') }}
         </RouterLink>
@@ -48,7 +50,7 @@ const uiStore = useUiStore()
         <RouterLink
           to="/browse"
           class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-extrabold shadow-2xs"
+          active-class="font-extrabold shadow-2xs"
         >
           {{ t('nav.browse') }}
         </RouterLink>
@@ -56,7 +58,7 @@ const uiStore = useUiStore()
         <RouterLink
           to="/track"
           class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-extrabold shadow-2xs"
+          active-class="font-extrabold shadow-2xs"
         >
           {{ t('nav.track') }}
         </RouterLink>
