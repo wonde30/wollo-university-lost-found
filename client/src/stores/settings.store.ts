@@ -43,14 +43,14 @@ export const useSettingsStore = defineStore('settings', () => {
   // Computed branding helpers
   // =====================================================
 
-  const institutionName = computed(() => get('institution_name', 'University'))
-  const institutionShortName = computed(() => get('institution_short_name', 'UNI'))
-  const institutionWebsite = computed(() => get('institution_website', '#'))
-  const siteName = computed(() => get('site_name', 'Lost & Found System'))
-  const systemShortName = computed(() => get('system_short_name', 'LFMS'))
-  const tagline = computed(() => get('institution_tagline', 'Property Recovery Portal'))
-  const institutionDescription = computed(() => get('institution_description', ''))
-  const campusesText = computed(() => get('institution_campuses_text', ''))
+  const institutionName = computed(() => get('institution_name', 'Wollo University'))
+  const institutionShortName = computed(() => get('institution_short_name', 'WU'))
+  const institutionWebsite = computed(() => get('institution_website', 'https://wu.edu.et'))
+  const siteName = computed(() => get('site_name', 'Wollo University Lost & Found'))
+  const systemShortName = computed(() => get('system_short_name', 'WU-L&F'))
+  const tagline = computed(() => get('institution_tagline', 'Together for a Safer Campus'))
+  const institutionDescription = computed(() => get('institution_description', 'Official Lost and Found Property Recovery Portal of Wollo University.'))
+  const campusesText = computed(() => get('institution_campuses_text', 'Dessie Main Campus & Kombolcha Institute of Technology'))
   const logoUrl = computed(() => get('logo_url', '/images/wu-logo.png'))
   const developerCredit = computed(() => get('developer_credit', ''))
   const csvExportPrefix = computed(() => get('csv_export_prefix', 'export'))

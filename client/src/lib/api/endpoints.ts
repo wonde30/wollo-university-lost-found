@@ -33,6 +33,7 @@ export const PUBLIC = {
   ANNOUNCEMENTS: `${API_V1}/public/announcements`,
   TRACK: (referenceCode: string) => `${API_V1}/public/track/${referenceCode}`,
   SETTINGS: `${API_V1}/public/settings`,
+  STATISTICS: `${API_V1}/public/statistics`,
 } as const
 
 // ==================================================

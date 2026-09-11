@@ -32,31 +32,60 @@ const uiStore = useUiStore()
         <RouterLink
           to="/"
           class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-bold"
+          active-class="text-[#0B5D3B] dark:text-[#75bd97] bg-[#E8F4EE] dark:bg-[#153C2D]/60 font-bold"
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Home class="h-4 w-4" />
-          {{ t('nav.home') }}
+          Home
         </RouterLink>
 
         <RouterLink
           to="/browse"
           class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-bold"
+          active-class="text-[#0B5D3B] dark:text-[#75bd97] bg-[#E8F4EE] dark:bg-[#153C2D]/60 font-bold"
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Search class="h-4 w-4" />
-          {{ t('nav.browse') }}
+          Browse Items
+        </RouterLink>
+
+        <RouterLink
+          :to="authStore.isAuthenticated ? '/report-lost' : { name: 'login', query: { redirect: '/report-lost' } }"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          active-class="text-[#0B5D3B] dark:text-[#75bd97] bg-[#E8F4EE] dark:bg-[#153C2D]/60 font-bold"
+          @click="uiStore.setMobileMenuOpen(false)"
+        >
+          <FileText class="h-4 w-4" />
+          Report Lost
+        </RouterLink>
+
+        <RouterLink
+          :to="authStore.isAuthenticated ? '/report-found' : { name: 'login', query: { redirect: '/report-found' } }"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          active-class="text-[#0B5D3B] dark:text-[#75bd97] bg-[#E8F4EE] dark:bg-[#153C2D]/60 font-bold"
+          @click="uiStore.setMobileMenuOpen(false)"
+        >
+          <Package class="h-4 w-4" />
+          Report Found
         </RouterLink>
 
         <RouterLink
           to="/track"
           class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          active-class="text-[#0B5D3B] dark:text-white bg-[#E8F4EE] dark:bg-[#153C2D] font-bold"
+          active-class="text-[#0B5D3B] dark:text-[#75bd97] bg-[#E8F4EE] dark:bg-[#153C2D]/60 font-bold"
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Compass class="h-4 w-4" />
-          {{ t('nav.track') }}
+          Track Item
+        </RouterLink>
+
+        <RouterLink
+          to="/browse"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          @click="uiStore.setMobileMenuOpen(false)"
+        >
+          <Info class="h-4 w-4" />
+          About
         </RouterLink>
       </div>
 

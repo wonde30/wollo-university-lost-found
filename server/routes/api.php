@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Public\CategoryController as PublicCategoryContr
 use App\Http\Controllers\Api\V1\Public\LocationController as PublicLocationController;
 use App\Http\Controllers\Api\V1\Public\AnnouncementController as PublicAnnouncementController;
 use App\Http\Controllers\Api\V1\Public\PublicItemController;
+use App\Http\Controllers\Api\V1\Public\PublicStatisticsController;
 use App\Http\Controllers\Api\V1\Public\TrackingController;
 use App\Http\Controllers\Api\V1\Public\SettingController as PublicSettingController;
 use App\Http\Controllers\Api\V1\Items\ItemController;
@@ -65,6 +66,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/announcements', [PublicAnnouncementController::class, 'index']);
         Route::get('/track/{reference_code}', [TrackingController::class, 'track'])->middleware('throttle:20,1');
         Route::get('/settings', [PublicSettingController::class, 'index']);
+        Route::get('/statistics', [PublicStatisticsController::class, 'index']);
     });
 
     // FR-44: Secure token-based recipient return confirmation (single-use, link-based confirmation)

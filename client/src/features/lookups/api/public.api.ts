@@ -8,6 +8,7 @@ import { PUBLIC } from '@/lib/api/endpoints'
 import type { PaginatedResponse, PaginationParams } from '@/lib/api/pagination'
 import type { Item, ItemListParams } from '@/features/items/types/item.types'
 import type { Category, Location } from '@/types/common.types'
+import type { PublicStatistics } from '../types/landing.types'
 
 // ==========================================
 // Public Items Discovery
@@ -73,3 +74,18 @@ export async function trackItem(referenceCode: string): Promise<any> {
   const { data } = await apiClient.get<any>(PUBLIC.TRACK(referenceCode))
   return data?.data ?? data
 }
+
+// ==========================================
+// Public Landing Page Statistics
+// ==========================================
+
+/**
+ * Fetch aggregate platform statistics for the public landing page.
+ * Returns safe, non-sensitive counts only.
+ * No authentication required. Cached server-side for 5 minutes.
+ */
+export async function getPublicStatistics(): Promise<PublicStatistics> {
+  const { data } = await apiClient.get<{ data: PublicStatistics }>(PUBLIC.STATISTICS)
+  return data.data
+}
+

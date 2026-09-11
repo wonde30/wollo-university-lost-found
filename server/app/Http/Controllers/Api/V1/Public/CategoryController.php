@@ -33,6 +33,10 @@ class CategoryController extends Controller
 
         $data = Cache::remember('categories.all', 3600, function () {
             $categories = Category::where('is_active', true)
+                ->withCount(['items' => function ($query) {
+                    $query->where('is_deleted', false)
+                          ->where('status', '!=', 'withdrawn');
+                }])
                 ->orderBy('sort_order')
                 ->orderBy('name')
                 ->get();

@@ -7,6 +7,15 @@ import AppConfirmDialog from '@/components/ui/AppConfirmDialog.vue'
 import LoadingOverlay from '@/components/feedback/LoadingOverlay.vue'
 import NetworkStatus from '@/components/feedback/NetworkStatus.vue'
 import SystemAnnouncementBanner from '@/components/common/SystemAnnouncementBanner.vue'
+
+withDefaults(
+  defineProps<{
+    fullWidth?: boolean
+  }>(),
+  {
+    fullWidth: false,
+  }
+)
 </script>
 
 <template>
@@ -16,7 +25,12 @@ import SystemAnnouncementBanner from '@/components/common/SystemAnnouncementBann
     <SystemAnnouncementBanner />
     <MobileNav />
 
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 animate-fade-in">
+    <main
+      :class="[
+        'flex-1 w-full animate-fade-in',
+        fullWidth ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6',
+      ]"
+    >
       <slot />
     </main>
 
