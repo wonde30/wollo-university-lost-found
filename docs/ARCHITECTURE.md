@@ -91,11 +91,11 @@ wollo-lost-found/
     │   └── Support/Services/                 # Cross-cutting support services (Audit, Storage, RBAC)
     ├── database/
     │   ├── factories/                        # Model test factories
-    │   ├── migrations/                       # 43 database schema migrations
-    │   └── seeders/                          # Database seeders (roles, locations, taxonomies)
+    │   ├── migrations/                       # 48 database schema migrations
+    │   └── seeders/                         # Database seeders (roles, locations, taxonomies)
     └── routes/
-        ├── api.php                           # API v1 routing table with prefix & middleware groups
-        └── console.php                       # Artisan console route bindings
+        ├── api.php                           # API v1 routing table — 145 registered routes
+        └── console.php                       # 5 scheduled cron tasks (artisan schedule)
 ```
 
 ---
@@ -140,173 +140,125 @@ sequenceDiagram
 <!-- source: app/Support/Services/ -->
 <!-- source: app/Domain/ -->
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Administration\Services\DashboardStatisticsService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/DashboardStatisticsService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/DashboardStatisticsService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Administration\Services\DashboardStatisticsService`
+<!-- source: app/Domain/Administration/Services/DashboardStatisticsService.php -->
+**File:** `app/Domain/Administration/Services/DashboardStatisticsService.php`  
+**Responsibility:** Computes admin dashboard aggregated statistics (item counts by status, claims, custody records).
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Administration\Services\ReportExportService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/ReportExportService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/ReportExportService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Administration\Services\ReportExportService`
+<!-- source: app/Domain/Administration/Services/ReportExportService.php -->
+**File:** `app/Domain/Administration/Services/ReportExportService.php`  
+**Responsibility:** Handles report data export generation (CSV/PDF) for admin-triggered report downloads.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Administration\Services\UserAdministrationService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/UserAdministrationService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Administration/Services/UserAdministrationService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Administration\Services\UserAdministrationService`
+<!-- source: app/Domain/Administration/Services/UserAdministrationService.php -->
+**File:** `app/Domain/Administration/Services/UserAdministrationService.php`  
+**Responsibility:** Manages user account operations for admins (create, update role, toggle active, sync permissions). Enforces privilege-escalation checks.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Auth\Services\AuthenticationService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/AuthenticationService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/AuthenticationService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Auth\Services\AuthenticationService`
+<!-- source: app/Domain/Auth/Services/AuthenticationService.php -->
+**File:** `app/Domain/Auth/Services/AuthenticationService.php`  
+**Responsibility:** Orchestrates login, logout, session creation, account lockout tracking, and Sanctum token issuance.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Auth\Services\OtpService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/OtpService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/OtpService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Auth\Services\OtpService`
+<!-- source: app/Domain/Auth/Services/OtpService.php -->
+**File:** `app/Domain/Auth/Services/OtpService.php`  
+**Responsibility:** Generates, stores, validates, and expires 6-digit OTP codes in `auth_verifications` for email verification and password reset.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Auth\Services\PasswordService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/PasswordService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Auth/Services/PasswordService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Auth\Services\PasswordService`
+<!-- source: app/Domain/Auth/Services/PasswordService.php -->
+**File:** `app/Domain/Auth/Services/PasswordService.php`  
+**Responsibility:** Enforces password history rules, change requirements, and credential rotation.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Claims\Services\ClaimService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Claims/Services/ClaimService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Claims/Services/ClaimService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Claims\Services\ClaimService`
+<!-- source: app/Domain/Claims/Services/ClaimService.php -->
+**File:** `app/Domain/Claims/Services/ClaimService.php`  
+**Responsibility:** Manages claim creation, duplicate prevention, pessimistic locking during review, approval/rejection state transitions, and claim reversal.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Custody\Services\CustodyService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Custody/Services/CustodyService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Custody/Services/CustodyService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Custody\Services\CustodyService`
+<!-- source: app/Domain/Custody/Services/CustodyService.php -->
+**File:** `app/Domain/Custody/Services/CustodyService.php`  
+**Responsibility:** Records custody intake events, manages storage location assignments, and processes inter-location transfers.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Items\Services\DuplicateDetectionService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/DuplicateDetectionService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/DuplicateDetectionService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Items\Services\DuplicateDetectionService`
+<!-- source: app/Domain/Items/Services/DuplicateDetectionService.php -->
+**File:** `app/Domain/Items/Services/DuplicateDetectionService.php`  
+**Responsibility:** Detects potential duplicate item reports using description similarity and field-level comparison.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Items\Services\ItemReferenceCodeService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/ItemReferenceCodeService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/ItemReferenceCodeService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Items\Services\ItemReferenceCodeService`
+<!-- source: app/Domain/Items/Services/ItemReferenceCodeService.php -->
+**File:** `app/Domain/Items/Services/ItemReferenceCodeService.php`  
+**Responsibility:** Generates unique, human-readable reference codes for item tracking (used by `/api/v1/public/track/{code}`).
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Items\Services\ItemSearchService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/ItemSearchService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Items/Services/ItemSearchService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Items\Services\ItemSearchService`
+<!-- source: app/Domain/Items/Services/ItemSearchService.php -->
+**File:** `app/Domain/Items/Services/ItemSearchService.php`  
+**Responsibility:** Handles filtered search, pagination, and keyword matching across the item catalogue.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Matching\Services\ItemMatchingService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/ItemMatchingService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/ItemMatchingService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Matching\Services\ItemMatchingService`
+<!-- source: app/Domain/Matching/Services/ItemMatchingService.php -->
+**File:** `app/Domain/Matching/Services/ItemMatchingService.php`  
+**Responsibility:** Orchestrates the full matching pipeline: tokenization → Jaccard scoring → match suggestion persistence (threshold ≥ 35%).
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Matching\Services\JaccardSimilarityService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/JaccardSimilarityService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/JaccardSimilarityService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Matching\Services\JaccardSimilarityService`
+<!-- source: app/Domain/Matching/Services/JaccardSimilarityService.php -->
+**File:** `app/Domain/Matching/Services/JaccardSimilarityService.php`  
+**Responsibility:** Computes Jaccard similarity coefficient between two token sets. Threshold: ≥ 0.35 triggers a match suggestion.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Matching\Services\TokenizerService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/TokenizerService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Matching/Services/TokenizerService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Matching\Services\TokenizerService`
+<!-- source: app/Domain/Matching/Services/TokenizerService.php -->
+**File:** `app/Domain/Matching/Services/TokenizerService.php`  
+**Responsibility:** Normalizes and tokenizes item descriptions into comparable n-gram token sets for Jaccard similarity scoring.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Notifications\Services\NotificationPreferenceService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Notifications/Services/NotificationPreferenceService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Notifications/Services/NotificationPreferenceService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Notifications\Services\NotificationPreferenceService`
+<!-- source: app/Domain/Notifications/Services/NotificationPreferenceService.php -->
+**File:** `app/Domain/Notifications/Services/NotificationPreferenceService.php`  
+**Responsibility:** Manages per-user notification channel preferences (email, in-app) for each notification event type.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Notifications\Services\NotificationService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Notifications/Services/NotificationService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Notifications/Services/NotificationService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Notifications\Services\NotificationService`
+<!-- source: app/Domain/Notifications/Services/NotificationService.php -->
+**File:** `app/Domain/Notifications/Services/NotificationService.php`  
+**Responsibility:** Creates and dispatches database notification records; drives SSE stream delivery.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Returns\Services\ReturnPdfService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Returns/Services/ReturnPdfService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Returns/Services/ReturnPdfService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Returns\Services\ReturnPdfService`
+<!-- source: app/Domain/Returns/Services/ReturnPdfService.php -->
+**File:** `app/Domain/Returns/Services/ReturnPdfService.php`  
+**Responsibility:** Generates PDF return confirmation documents (barryvdh/laravel-dompdf ^3.1) for physical handover records.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Domain\Returns\Services\ReturnService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Returns/Services/ReturnService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Domain/Returns/Services/ReturnService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Domain\Returns\Services\ReturnService`
+<!-- source: app/Domain/Returns/Services/ReturnService.php -->
+**File:** `app/Domain/Returns/Services/ReturnService.php`  
+**Responsibility:** Orchestrates the return lifecycle: token generation, identity verification, handover confirmation, status finalization, and audit logging.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\AuditLogger`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/AuditLogger.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/AuditLogger.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\AuditLogger`
+<!-- source: app/Support/Services/AuditLogger.php -->
+**File:** `app/Support/Services/AuditLogger.php`  
+**Responsibility:** Writes immutable records to `audit_logs` capturing actor ID, IP, action type, target model, and before/after state snapshots.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\FileStorageService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/FileStorageService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/FileStorageService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\FileStorageService`
+<!-- source: app/Support/Services/FileStorageService.php -->
+**File:** `app/Support/Services/FileStorageService.php`  
+**Responsibility:** Abstracts disk-specific file storage, UUID filename generation, MIME validation, and secure deletion across public (items, avatars) and private (evidence, signatures, PDFs) disks.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\PermissionGroupService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/PermissionGroupService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/PermissionGroupService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\PermissionGroupService`
+<!-- source: app/Support/Services/PermissionGroupService.php -->
+**File:** `app/Support/Services/PermissionGroupService.php`  
+**Responsibility:** Manages RBAC permission groups (enable/disable groups and their constituent permissions).
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\PermissionService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/PermissionService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/PermissionService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\PermissionService`
+<!-- source: app/Support/Services/PermissionService.php -->
+**File:** `app/Support/Services/PermissionService.php`  
+**Responsibility:** Fine-grained permission operations: toggle active state, sync per-user and per-role permission matrices.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\RequestContext`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/RequestContext.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/RequestContext.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\RequestContext`
+<!-- source: app/Support/Services/RequestContext.php -->
+**File:** `app/Support/Services/RequestContext.php`  
+**Responsibility:** Captures request-scoped metadata (IP, user-agent) for use by the AuditLogger.
 
-#### `\App\C:\Users\W\Desktop\wollo-lost-found\server\app\Support\Services\RoleService`
-<!-- source: C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/RoleService.php -->
-**File:** `C:/Users/W/Desktop/wollo-lost-found/server/app/Support/Services/RoleService.php`  
-**Responsibility:** Encapsulates domain logic and transaction boundaries for its respective subsystem.
-**Public Methods:**
-- *Invokable action or internal service helper.*
+#### `\App\Support\Services\RoleService`
+<!-- source: app/Support/Services/RoleService.php -->
+**File:** `app/Support/Services/RoleService.php`  
+**Responsibility:** Manages role CRUD, role-permission sync, in-process cache flush, and protected system-role guards.
 
 ---
 

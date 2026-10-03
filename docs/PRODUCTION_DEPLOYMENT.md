@@ -146,7 +146,9 @@ Add to `/etc/cron.d/wu-lostfound`:
 * * * * * www-data cd /var/www/wollo-lost-found/server && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Tasks executed automatically:
-- `items:expire-inactive`: Expires inactive unclaimed items based on retention policy.
-- `items:send-expiry-warnings`: Dispatches in-app and email notifications 7 days prior to item expiration.
-- `reports:cleanup-expired`: Purges generated CSV/PDF exports older than 7 days.
+Tasks executed automatically (registered in `routes/console.php`):
+- `auth:cleanup-expired`: Purges expired OTP and auth-verification records from `auth_verifications` (daily 01:00).
+- `items:expire-inactive`: Expires inactive unclaimed items based on retention policy (daily 02:00).
+- `items:send-expiry-warnings`: Dispatches in-app and email notifications 7 days prior to item expiration (daily 08:00).
+- `reports:cleanup-expired`: Purges generated CSV/PDF exports older than 7 days (weekly Monday 03:00).
+- `reports:generate-system`: Generates weekly system-wide analytics report (weekly Monday 04:00).

@@ -13,8 +13,10 @@
 This evidence package contains **direct, un-mocked visual and technical proof** captured from the live, running deployment of the Wollo University Lost & Found Item Tracking Operational Portal.
 
 - **Frontend:** Vue 3.5 (Composition API), TypeScript 6, Vite 8, Tailwind CSS v4, Pinia (running at `http://localhost:5173`)
-- **Backend:** Laravel 11 REST API, Sanctum Auth, Form Request Validation, Policy Authorization (running at `http://localhost:8000`)
+- **Backend:** Laravel 13 REST API (^13.17), Sanctum SPA Auth, Form Request Validation, Policy Authorization (running at `http://localhost:8000`)
 - **Database:** MySQL 8.0 (`wollo_lost_found_normalized`) with 44 Normalized Tables and 0 FK Violations
+
+> **Note:** This evidence package is a point-in-time visual snapshot. The current authoritative implementation reference is the source code and [`docs/`](../../docs/) documentation suite.
 - **Matching Engine:** Deterministic category-gated Jaccard similarity scorer
 - **Cryptographic Handover:** Secure SHA-256 token verification on return release
 

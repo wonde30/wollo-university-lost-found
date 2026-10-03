@@ -99,7 +99,7 @@ The **Wollo University Lost & Found Management System (WU-LFMS)** replaces archa
 | **Styling & UI**| Tailwind CSS 4.3, Lucide Vue Next, Glassmorphism Tokens |
 | **Database** | MySQL 8.0+ |
 | **Queue & Cache** | Database Queue Workers, Database Cache & Session Drivers |
-| **CI / CD** | GitHub Actions Workflow (`.github/workflows/ci.yml`) |
+| **CI / CD** | Manual `php artisan test` + `npm run type-check` + `npm run build` (CI workflow removed) |
 
 ---
 
@@ -107,23 +107,38 @@ The **Wollo University Lost & Found Management System (WU-LFMS)** replaces archa
 
 ```text
 wollo-lost-found/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                 # Automated CI test & build pipeline
 ├── client/                        # Vue 3 + TypeScript Single Page Application
+│   ├── e2e/                       # Playwright end-to-end test specs
 │   ├── src/
+│   │   ├── app/                   # Root app configuration
 │   │   ├── components/            # Reusable UI & Layout Components
 │   │   ├── composables/           # Vue Composition API Hooks
 │   │   ├── constants/             # Central Domain Constants
+│   │   ├── directives/            # Custom Vue directives (v-can, etc.)
 │   │   ├── features/              # Feature Modules (auth, items, claims, custody, etc.)
+│   │   ├── i18n/                  # EN/AM localization bundles
 │   │   ├── layouts/               # Default, Auth, Dashboard Layouts
 │   │   ├── lib/                   # Axios HTTP client, CSRF, API endpoints
+│   │   ├── permissions/           # RBAC stores, capability checkers
 │   │   ├── router/                # Vue Router with centralized navigation guards
 │   │   ├── stores/                # Global Pinia state stores
 │   │   └── views/                 # Page Views (admin, staff, student, public, auth)
 │   ├── package.json
+│   ├── playwright.config.ts       # Playwright E2E configuration
 │   ├── tsconfig.json
 │   └── vite.config.ts
+├── docs/                          # Full technical documentation suite
+│   ├── API_REFERENCE.md           # Complete API endpoint catalogue
+│   ├── ARCHITECTURE.md            # System architecture reference
+│   ├── DATABASE.md                # Database schema & ERD reference
+│   ├── DATA_DICTIONARY.md         # Field-level data dictionary (44 tables)
+│   ├── FRS.md                     # Functional Requirements Specification
+│   ├── INDEX.md                   # Documentation suite index
+│   ├── PRODUCTION_DEPLOYMENT.md   # Production hardening & deployment guide
+│   ├── RBAC.md                    # RBAC architecture & permission catalogue
+│   └── audit/
+│       └── AUDIT_REPORT.md        # Security & code audit report (2026-09-29)
+├── evidence/                      # Visual & technical verification evidence package
 ├── server/                        # Laravel 13 PHP RESTful API
 │   ├── app/
 │   │   ├── Console/Commands/      # Scheduled artisan commands
@@ -134,21 +149,20 @@ wollo-lost-found/
 │   │   │   ├── Middleware/        # RBAC & active account verification
 │   │   │   ├── Requests/Api/V1/   # Form validation request classes
 │   │   │   └── Resources/Api/V1/  # JSON API resource transformers
-│   │   ├── Jobs/                  # Asynchronous queue jobs
+│   │   ├── Jobs/                  # Asynchronous queue jobs (15 jobs)
 │   │   ├── Listeners/             # Event listeners
 │   │   ├── Mail/                  # Transactional Mailable classes
-│   │   ├── Models/                # Eloquent models & relationships
-│   │   └── Policies/              # Gate authorization policies
+│   │   ├── Models/                # Eloquent models & relationships (35 models)
+│   │   └── Policies/              # Gate authorization policies (19 policies)
 │   ├── database/
-│   │   ├── migrations/            # 35+ Database schema migrations
+│   │   ├── migrations/            # 48 database schema migrations
 │   │   └── seeders/               # University campus, department, user seeders
 │   ├── lang/                      # Amharic (am) and English (en) localization
 │   ├── resources/views/emails/    # Transactional Blade email templates
 │   ├── routes/
-│   │   ├── api.php                # 94 versioned API endpoints
-│   │   └── console.php            # Scheduled cron jobs
-│   └── tests/                     # 78 Feature & Unit test suites
-├── SYSTEM_DOCUMENTATION.md        # Comprehensive technical specification
+│   │   ├── api.php                # 145 versioned API endpoints
+│   │   └── console.php            # Scheduled cron jobs (5 tasks)
+│   └── tests/                     # Feature & Unit test suites
 └── README.md
 ```
 
@@ -210,7 +224,19 @@ Visit **`http://localhost:5173`** in your browser.
 cd server
 php artisan test
 ```
-> **Result**: 78 tests passed, 196 assertions, 0 errors across 11 test suites.
+> **Current suite:** 208 tests, 909 assertions as reported in the 2026-09-29 audit (`docs/audit/AUDIT_REPORT.md`). Not re-executed during this documentation audit.
+
+### Frontend Unit Tests
+```bash
+cd client
+npm run test
+```
+
+### E2E Tests (Playwright)
+```bash
+cd client
+npm run test:e2e
+```
 
 ### Frontend Type Checking & Build
 ```bash
@@ -239,20 +265,21 @@ The API is fully RESTful and versioned under `/api/v1`.
 - **Physical Returns**: `POST /api/v1/returns`, `GET /api/v1/returns/{id}`
 - **Directorate Admin**: `/api/v1/admin/dashboard/statistics`, `/api/v1/admin/users`, `/api/v1/admin/audit-logs/export`
 
-For detailed parameter schemas, JSON structures, and security gates, refer to [`SYSTEM_DOCUMENTATION.md`](SYSTEM_DOCUMENTATION.md).
+For detailed parameter schemas, JSON structures, and security gates, refer to [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md).
 
 ---
 
 ## 🛡️ Production Deployment Blueprint
 
-For the full, step-by-step production deployment manual, including **email SMTP setup (Gmail, Brevo, Wollo University SMTP, Mailgun, SES)**, **6-digit OTP email verification engine**, **Supervisor queue daemon configs**, **Nginx with SSL**, and **1-click deploy scripts**, refer to:
+For the full production deployment manual, including Nginx with SSL, Supervisor queue daemon config, and environment hardening, refer to:
 
-👉 **[Complete Production Deployment & Email Verification Guide (deploysetupreadme.md)](deploysetupreadme.md)**
+👉 **[Production Deployment & Hardening Guide](docs/PRODUCTION_DEPLOYMENT.md)**
 
 ### Quick Checklist:
 1. **Environment Variables**: Configure `APP_ENV=production`, `APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true` in `server/.env`.
-2. **Background Queue Worker**: Configure Supervisor for `php artisan queue:work database --tries=3` (crucial for sending OTP emails).
+2. **Background Queue Worker**: Configure Supervisor for `php artisan queue:work database --sleep=3 --tries=3` (required for OTP emails, claim decisions, match notifications).
 3. **Automated Scheduler**: Add `* * * * * cd /path/to/server && php artisan schedule:run >> /dev/null 2>&1` to system crontab.
+   - Scheduled tasks: `auth:cleanup-expired` (daily 01:00), `items:expire-inactive` (daily 02:00), `items:send-expiry-warnings` (daily 08:00), `reports:cleanup-expired` (weekly), `reports:generate-system` (weekly).
 4. **Static Optimization**:
    ```bash
    cd server

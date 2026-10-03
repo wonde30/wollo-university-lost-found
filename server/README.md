@@ -5,13 +5,13 @@ The backend for the **Wollo University Lost & Found Property Management System (
 ---
 
 ## 🛠️ Tech Stack & Key Components
-- **Framework**: Laravel 13.x
+- **Framework**: Laravel 13.x (^13.17)
 - **PHP Version**: 8.3+
-- **Database**: MySQL 8.0+ (InnoDB) / SQLite (Testing)
+- **Database**: MySQL 8.0+ (InnoDB) — primary; SQLite supported only for isolated unit test runs
 - **Auth**: Laravel Sanctum SPA Session-Cookie with automatic CSRF management
 - **Queue Driver**: Database (`jobs` table with automated retries)
 - **Email Engine**: Transactional Blade email templates (`resources/views/emails/`)
-- **Testing**: PHPUnit / Laravel Test Suite (78 Feature & Unit Tests)
+- **Testing**: PHPUnit 12.x / Laravel Test Suite (208 tests, 909 assertions as of 2026-09-29 audit)
 
 ---
 
@@ -45,12 +45,19 @@ php artisan serve --port=8000
 # Execute automated test suite
 php artisan test
 
-# Verify all 94 registered routes
+# Verify registered routes
 php artisan route:list
 
 # Clear optimization caches
 php artisan optimize:clear
 ```
+
+### Scheduled Commands (registered in routes/console.php)
+- `auth:cleanup-expired` — Daily 01:00 (removes expired OTP/verification records)
+- `items:expire-inactive` — Daily 02:00 (marks stale unclaimed items as expired)
+- `items:send-expiry-warnings` — Daily 08:00 (emails 7-day expiry warning to reporters)
+- `reports:cleanup-expired` — Weekly Mon 03:00 (purges CSV/PDF exports older than 7 days)
+- `reports:generate-system` — Weekly Mon 04:00 (generates system-wide analytics report)
 
 ---
 

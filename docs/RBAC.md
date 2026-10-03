@@ -1,9 +1,9 @@
 ---
 title: Role-Based Access Control Architecture
-version: 1.0.0
+version: 1.1.0
 system: Wollo University Lost & Found System
 generated_from: source code (migrations, controllers, policies, routes, seeders)
-date: 2026-08-31
+date: 2026-10-03
 ---
 
 # Role-Based Access Control (RBAC) Architecture
@@ -161,7 +161,17 @@ flowchart TD
 <!-- source: app/Support/Services/PermissionService.php:40-75 -->
 
 #### 4.1 Permission Caching Mechanism
-To eliminate expensive recursive database joins during request handling, user permission sets are cached in Redis / MySQL Cache using the key convention `user:{id}:permissions` with a 24-hour TTL.
+To reduce repeated database joins during a single request's lifecycle, resolved permission name arrays are cached **in-process** using PHP static class arrays on the `User` model:
+
+```php
+// app/Models/User.php
+protected static array $rolePermissionsCache = []; // key: role_id => string[]
+protected static array $roleNamesCache = [];        // key: role_id => string
+```
+
+**Cache scope:** Request-scoped in-process memory only. These caches are cleared between requests by normal PHP process lifecycle (no cross-request persistence).
+
+**Explicit invalidation:** `User::flushPermissionCache()` resets both static arrays. Called on every RBAC mutation operation to prevent stale authorization within the same long-running process (e.g., queue workers).
 
 #### 4.2 Invalidation Trigger Points
 `User::flushPermissionCache()` is deterministically invoked upon:
@@ -205,3 +215,30 @@ The system enforces multi-layered defenses to prevent horizontal and vertical pr
 3. **Protected System Roles:** Roles with `is_system = true` (`admin`, `staff`, `student`) are protected against renaming, deletion, or slug modification.
 4. **Direct Route Middleware Boundary:** Sensitive administrative routes are shielded by both Sanctum session token verification and `EnsureUserHasRole:admin` middleware before Eloquent policy evaluation.
 5. **Immutable Audit Trail:** Every attempt to update roles, sync permissions, or toggle account status is captured in `audit_logs` with the actor's IP address and original/new state snapshots.
+
+---
+
+### 6. Policy Inventory (2026-10-03)
+<!-- source: app/Policies/ -->
+
+| Policy Class | Model | Key Authorization Methods |
+|---|---|---|
+| `AuditLogPolicy` | `AuditLog` | `viewAny` |
+| `CampusPolicy` | `Campus` | `viewAny`, `create`, `update`, `delete` |
+| `CategoryPolicy` | `Category` | `viewAny`, `create`, `update`, `delete` |
+| `ClaimPolicy` | `Claim` | `viewAny`, `create`, `view`, `review`, `reverse` |
+| `CustodyEventPolicy` | `CustodyEvent` | `viewAny`, `create` |
+| `ItemPolicy` | `Item` | `viewAny`, `view`, `create`, `update`, `delete`, `withdraw` |
+| `LocationPolicy` | `Location` | `viewAny`, `create`, `update`, `delete` |
+| `OrganizationalUnitPolicy` | `OrganizationalUnit` | `viewAny`, `create`, `update`, `delete` |
+| `OrganizationalUnitTypePolicy` | `OrganizationalUnitType` | `viewAny`, `create`, `update`, `delete` |
+| `PermissionGroupPolicy` | `PermissionGroup` | `viewAny`, `create`, `update`, `delete` |
+| `PermissionPolicy` | `Permission` | `viewAny`, `create`, `update`, `delete` |
+| `ReportPolicy` | `Report` | `viewAny`, `create`, `download` |
+| `ReturnPolicy` | `ReturnRecord` | `viewAny`, `create`, `view`, `confirm` |
+| `RolePolicy` | `Role` | `viewAny`, `create`, `update`, `delete` |
+| `StorageLocationPolicy` | `StorageLocation` | `viewAny`, `create`, `update`, `delete` |
+| `SystemAnnouncementPolicy` | `SystemAnnouncement` | `viewAny`, `create`, `update`, `delete` |
+| `SystemSettingPolicy` | `SystemSetting` | `viewAny`, `update` |
+| `UniversityDomainPolicy` | `UniversityDomain` | `viewAny`, `create`, `update`, `delete`, `toggle` |
+| `UserPolicy` | `User` | `viewAny`, `view`, `create`, `update`, `updateRole`, `toggleActive` |
