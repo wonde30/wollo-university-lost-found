@@ -146,7 +146,7 @@ export const routes: RouteRecordRaw[] = [
       },
       {
         path: 'claim/:id',
-        alias: ['submit-claim', 'submit-claim/:id', 'student/claim/:id', 'student/submit-claim', 'student/submit-claim/:id'],
+        alias: ['submit-claim/:id', 'student/claim/:id', 'student/submit-claim/:id'],
         name: ROUTE_NAMES.STUDENT_SUBMIT_CLAIM,
         component: () => import('@/views/student/SubmitClaimPage.vue'),
         meta: { requiresAuth: true, title: 'Submit Claim' },
@@ -161,6 +161,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/student',
     component: () => import('@/layouts/DashboardLayout.vue'),
     redirect: '/student/dashboard',
+    meta: { requiresAuth: true, capability: 'student' },
     children: [
       {
         path: 'dashboard',
@@ -178,6 +179,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/staff',
     component: () => import('@/layouts/DashboardLayout.vue'),
     redirect: '/staff/dashboard',
+    meta: { requiresAuth: true, capability: 'staff' },
     children: [
       {
         path: 'dashboard',
@@ -230,6 +232,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/admin',
     component: () => import('@/layouts/DashboardLayout.vue'),
     redirect: '/admin/dashboard',
+    meta: { requiresAuth: true, capability: 'admin' },
     children: [
       {
         path: 'dashboard',
@@ -323,6 +326,12 @@ export const routes: RouteRecordRaw[] = [
         name: ROUTE_NAMES.ADMIN_PERMISSIONS,
         component: () => import('@/views/admin/PermissionsPage.vue'),
         meta: { requiresAuth: true, permission: 'MANAGE_PERMISSIONS', title: 'Role Permissions Matrix' },
+      },
+      {
+        path: 'university-domains',
+        name: ROUTE_NAMES.ADMIN_UNIVERSITY_DOMAINS,
+        component: () => import('@/views/admin/UniversityDomainsPage.vue'),
+        meta: { requiresAuth: true, permission: 'MANAGE_SETTINGS', title: 'University Domains' },
       },
     ],
   },

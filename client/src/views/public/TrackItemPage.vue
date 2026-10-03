@@ -48,7 +48,7 @@ function getStatusVariant(status: string): any {
         </div>
         <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">{{ t('nav.trackItem') }}</h1>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-medium">
-          Enter the unique reference code from your report receipt to track the live custody and resolution status of your item.
+          {{ t('items.trackSubtitle') }}
         </p>
       </div>
 
@@ -58,7 +58,7 @@ function getStatusVariant(status: string): any {
           <AppInput
             id="track-code"
             class="w-full pl-8"
-            placeholder="e.g. WU-2024-001234"
+            :placeholder="t('items.trackPlaceholder')"
             :model-value="referenceCode"
             :error="error || undefined"
             @update:model-value="referenceCode = $event"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { t } from '@/i18n'
 import type { PublicStatistics } from '@/features/lookups/types/landing.types'
 import {
   FileEdit,
@@ -16,28 +17,28 @@ const props = defineProps<{
 const statsList = computed(() => [
   {
     id: 'reported',
-    label: 'Items Reported',
+    label: t('home.stats.reported'),
     value: (props.statistics?.items_reported ?? 0).toLocaleString(),
     icon: FileEdit,
     iconBg: 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97]',
   },
   {
     id: 'returned',
-    label: 'Items Returned',
+    label: t('home.stats.returned'),
     value: (props.statistics?.items_returned ?? 0).toLocaleString(),
     icon: CheckCircle2,
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400',
+    iconBg: 'bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97]',
   },
   {
     id: 'community',
-    label: 'Community Members',
+    label: t('home.stats.community'),
     value: (props.statistics?.community_members ?? 0).toLocaleString(),
     icon: Users,
-    iconBg: 'bg-amber-50 dark:bg-amber-950/60 text-[#B7791F] dark:text-[#D4AF37]',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50 text-[#B7791F] dark:text-[#D4AF37]',
   },
   {
     id: 'campuses',
-    label: 'Campuses',
+    label: t('home.stats.campuses'),
     value: (props.statistics?.campuses ?? 0).toLocaleString(),
     icon: Building2,
     iconBg: 'bg-slate-100 dark:bg-slate-800 text-[#0B5D3B] dark:text-[#75bd97]',
@@ -46,7 +47,7 @@ const statsList = computed(() => [
 </script>
 
 <template>
-  <div class="relative z-20 max-w-6xl mx-auto px-4 -mt-10 sm:-mt-14 mb-16 sm:mb-20" aria-label="Platform Statistics">
+  <div class="relative z-20 max-w-6xl mx-auto px-4 -mt-10 sm:-mt-14 mb-16 sm:mb-20" :aria-label="t('landing.platformStats')">
     <div class="bg-white dark:bg-[#111827] rounded-2xl shadow-xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 transition-colors duration-150">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-slate-800/80">
         <div

@@ -38,6 +38,8 @@ use App\Http\Controllers\Api\V1\Admin\SystemSettingController as AdminSystemSett
 use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\V1\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
+use App\Http\Controllers\Api\V1\Public\UniversityDomainController as PublicUniversityDomainController;
+use App\Http\Controllers\Api\V1\Admin\UniversityDomainController as AdminUniversityDomainController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,13 +51,13 @@ Route::prefix('v1')->group(function (): void {
     |--------------------------------------------------------------------------
     */
     Route::prefix('auth')->group(function (): void {
-        Route::post('/register', [RegisterController::class, 'register']);
-        Route::post('/login', [LoginController::class, 'login'])->name('login');
-        Route::post('/verify-email', [VerificationController::class, 'verify']);
-        Route::post('/resend-verification', [VerificationController::class, 'resend']);
-        Route::post('/forgot-password', [PasswordResetController::class, 'request']);
-        Route::post('/verify-password-reset', [PasswordResetController::class, 'verifyOtp']);
-        Route::post('/reset-password', [PasswordResetController::class, 'reset']);
+        Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:register');
+        Route::post('/login', [LoginController::class, 'login'])->name('login')->middleware('throttle:login');
+        Route::post('/verify-email', [VerificationController::class, 'verify'])->middleware('throttle:otp-verify');
+        Route::post('/resend-verification', [VerificationController::class, 'resend'])->middleware('throttle:otp-resend');
+        Route::post('/forgot-password', [PasswordResetController::class, 'request'])->middleware('throttle:password-reset');
+        Route::post('/verify-password-reset', [PasswordResetController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
+        Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:password-reset');
     });
 
     Route::prefix('public')->group(function (): void {
@@ -67,6 +69,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/track/{reference_code}', [TrackingController::class, 'track'])->middleware('throttle:20,1');
         Route::get('/settings', [PublicSettingController::class, 'index']);
         Route::get('/statistics', [PublicStatisticsController::class, 'index']);
+        Route::get('/university-domains', [PublicUniversityDomainController::class, 'index']);
     });
 
     // FR-44: Secure token-based recipient return confirmation (single-use, link-based confirmation)
@@ -80,7 +83,7 @@ Route::prefix('v1')->group(function (): void {
     | Authenticated User Routes (Sanctum SPA Session-Cookie)
     |--------------------------------------------------------------------------
     */
-    Route::middleware('auth:sanctum')->group(function (): void {
+    Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
 
         // Auth info
         Route::prefix('auth')->group(function (): void {
@@ -100,6 +103,7 @@ Route::prefix('v1')->group(function (): void {
         // Student / User Items (FR-10)
         Route::prefix('items')->group(function (): void {
             Route::post('/check-duplicate', [ItemController::class, 'checkDuplicate']);
+            Route::post('/cross-link-check', [ItemController::class, 'checkCrossLinkEligibility']);
             Route::get('/', [ItemController::class, 'index']);
             Route::post('/lost', [ItemController::class, 'storeLost']);
             Route::post('/found', [ItemController::class, 'storeFound']);
@@ -129,8 +133,10 @@ Route::prefix('v1')->group(function (): void {
         Route::prefix('notifications')->group(function (): void {
             Route::get('/stream', [RealtimeNotificationController::class, 'stream']);
             Route::get('/', [NotificationController::class, 'index']);
-            Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
-            Route::patch('/read-all', [NotificationController::class, 'markAllAsRead']);
+            Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+            Route::match(['patch', 'post'], '/{id}/read', [NotificationController::class, 'markAsRead']);
+            Route::match(['patch', 'post'], '/read-all', [NotificationController::class, 'markAllAsRead']);
+            Route::delete('/{id}', [NotificationController::class, 'destroy']);
             Route::get('/preferences', [NotificationPreferenceController::class, 'index']);
             Route::put('/preferences', [NotificationPreferenceController::class, 'update']);
         });
@@ -216,6 +222,10 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/settings', [AdminSystemSettingController::class, 'index']);
             Route::put('/settings/{key}', [AdminSystemSettingController::class, 'update']);
             Route::post('/settings/upload-logo', [PublicSettingController::class, 'uploadLogo']);
+
+            // University Domains Management
+            Route::apiResource('university-domains', AdminUniversityDomainController::class);
+            Route::patch('/university-domains/{id}/toggle-active', [AdminUniversityDomainController::class, 'toggleActive']);
 
             // Reports & Audit Logs + CSV Export (FR-12)
             Route::get('/reports', [AdminReportController::class, 'index']);

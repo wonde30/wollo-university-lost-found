@@ -218,13 +218,13 @@ async function handleRefresh() {
 
 // Filter Options
 const statusOptions = computed(() => [
-  { label: 'All Status', value: 'all' },
+  { label: t('admin.roles.allStatuses'), value: 'all' },
   { label: t('admin.roles.activeRoles'), value: 'active' },
   { label: t('admin.users.suspended'), value: 'inactive' },
 ])
 
 const typeOptions = computed(() => [
-  { label: 'All Types', value: 'all' },
+  { label: t('admin.roles.allTypes'), value: 'all' },
   { label: t('admin.roles.systemRoles'), value: 'system' },
   { label: t('admin.roles.custom'), value: 'custom' },
 ])
@@ -505,7 +505,7 @@ onMounted(() => {
         >
           <X v-if="showFilters" class="h-4 w-4 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -514,7 +514,7 @@ onMounted(() => {
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportRolesCsv"
         >
@@ -524,7 +524,7 @@ onMounted(() => {
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"

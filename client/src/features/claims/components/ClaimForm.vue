@@ -74,7 +74,7 @@ async function handleSubmit(): Promise<void> {
 
     <AppTextarea
       id="claim-explanation"
-      :label="t('claims.review.ownership') + ' *'"
+      :label="t('claims.review.ownership')"
       :placeholder="t('claims.placeholders.explanation')"
       :model-value="form.explanation"
       :error="errors.explanation"

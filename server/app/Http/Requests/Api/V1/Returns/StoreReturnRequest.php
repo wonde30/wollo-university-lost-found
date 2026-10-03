@@ -15,7 +15,7 @@ class StoreReturnRequest extends FormRequest
     {
         return [
             'claim_id' => ['required', 'integer', 'exists:claims,id', 'unique:returns,claim_id'],
-            'item_id' => ['required', 'integer', 'exists:items,id'],
+            'item_id' => ['nullable', 'integer', 'exists:items,id'],
             'returned_to' => ['required', 'integer', 'exists:users,id'],
             'storage_location_id' => ['nullable', 'integer', 'exists:storage_locations,id'],
             'return_date' => ['required', 'date'],

@@ -14,6 +14,9 @@ import {
   User,
   LogIn,
   UserPlus,
+  FileText,
+  Package,
+  Info,
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
@@ -23,7 +26,7 @@ const uiStore = useUiStore()
 <template>
   <AppDrawer
     :open="uiStore.isMobileMenuOpen"
-    :title="t('nav.home')"
+    :title="t('common.appName')"
     placement="left"
     @close="uiStore.setMobileMenuOpen(false)"
   >
@@ -36,7 +39,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Home class="h-4 w-4" />
-          Home
+          {{ t('nav.home') }}
         </RouterLink>
 
         <RouterLink
@@ -46,7 +49,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Search class="h-4 w-4" />
-          Browse Items
+          {{ t('nav.browseItems') }}
         </RouterLink>
 
         <RouterLink
@@ -56,7 +59,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <FileText class="h-4 w-4" />
-          Report Lost
+          {{ t('nav.reportLost') }}
         </RouterLink>
 
         <RouterLink
@@ -66,7 +69,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Package class="h-4 w-4" />
-          Report Found
+          {{ t('nav.reportFound') }}
         </RouterLink>
 
         <RouterLink
@@ -76,7 +79,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Compass class="h-4 w-4" />
-          Track Item
+          {{ t('nav.trackItem') }}
         </RouterLink>
 
         <RouterLink
@@ -85,7 +88,7 @@ const uiStore = useUiStore()
           @click="uiStore.setMobileMenuOpen(false)"
         >
           <Info class="h-4 w-4" />
-          About
+          {{ t('nav.about') }}
         </RouterLink>
       </div>
 

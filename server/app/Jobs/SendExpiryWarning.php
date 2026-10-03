@@ -38,7 +38,6 @@ class SendExpiryWarning implements ShouldQueue
                 'reference_code' => $item->reference_code,
                 'title'          => $item->title,
                 'days_remaining' => $this->daysRemaining,
-                'message'        => "Your reported item \"{$item->title}\" (Ref: {$item->reference_code}) will expire in {$this->daysRemaining} days if unclaimed.",
             ]
         ));
 

@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useSettingsStore } from '@/stores/settings.store'
+import { t } from '@/i18n'
 import {
   MapPin,
   Mail,
@@ -10,6 +11,7 @@ import {
   Twitter,
   Youtube,
   Linkedin,
+  Heart,
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -53,13 +55,13 @@ function handleReportFound() {
                 {{ settingsStore.institutionName }}
               </div>
               <div class="text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider">
-                Lost &amp; Found
+                {{ t('common.appName') }}
               </div>
             </div>
           </div>
 
           <p class="text-xs text-slate-400 leading-relaxed max-w-xs">
-            Building a safer, more connected university community.
+            {{ t('footer.brandDescription') }}
           </p>
 
           <!-- Social Icons -->
@@ -69,7 +71,7 @@ function handleReportFound() {
               target="_blank"
               rel="noopener noreferrer"
               class="h-8 w-8 rounded-full bg-slate-800/90 hover:bg-[#0B5D3B] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-              aria-label="Facebook"
+              :aria-label="t('footer.socialFacebook')"
             >
               <Facebook class="h-4 w-4" />
             </a>
@@ -78,7 +80,7 @@ function handleReportFound() {
               target="_blank"
               rel="noopener noreferrer"
               class="h-8 w-8 rounded-full bg-slate-800/90 hover:bg-[#0B5D3B] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-              aria-label="Twitter"
+              :aria-label="t('footer.socialTwitter')"
             >
               <Twitter class="h-4 w-4" />
             </a>
@@ -87,7 +89,7 @@ function handleReportFound() {
               target="_blank"
               rel="noopener noreferrer"
               class="h-8 w-8 rounded-full bg-slate-800/90 hover:bg-[#0B5D3B] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-              aria-label="YouTube"
+              :aria-label="t('footer.socialYoutube')"
             >
               <Youtube class="h-4 w-4" />
             </a>
@@ -96,7 +98,7 @@ function handleReportFound() {
               target="_blank"
               rel="noopener noreferrer"
               class="h-8 w-8 rounded-full bg-slate-800/90 hover:bg-[#0B5D3B] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-              aria-label="LinkedIn"
+              :aria-label="t('footer.socialLinkedin')"
             >
               <Linkedin class="h-4 w-4" />
             </a>
@@ -106,17 +108,17 @@ function handleReportFound() {
         <!-- Col 2: Quick Links -->
         <div class="space-y-3.5">
           <h4 class="text-xs font-black uppercase tracking-wider text-white">
-            Quick Links
+            {{ t('footer.quickLinks') }}
           </h4>
           <ul class="space-y-2 text-xs text-slate-400">
             <li>
               <RouterLink to="/" class="hover:text-white transition-colors">
-                Home
+                {{ t('nav.home') }}
               </RouterLink>
             </li>
             <li>
               <RouterLink to="/browse" class="hover:text-white transition-colors">
-                Browse Items
+                {{ t('nav.browseItems') }}
               </RouterLink>
             </li>
             <li>
@@ -125,7 +127,7 @@ function handleReportFound() {
                 class="hover:text-white transition-colors cursor-pointer text-left"
                 @click="handleReportLost"
               >
-                Report Lost
+                {{ t('nav.reportLost') }}
               </button>
             </li>
             <li>
@@ -134,12 +136,12 @@ function handleReportFound() {
                 class="hover:text-white transition-colors cursor-pointer text-left"
                 @click="handleReportFound"
               >
-                Report Found
+                {{ t('nav.reportFound') }}
               </button>
             </li>
             <li>
               <RouterLink to="/track" class="hover:text-white transition-colors">
-                Track Item
+                {{ t('nav.trackItem') }}
               </RouterLink>
             </li>
           </ul>
@@ -148,32 +150,32 @@ function handleReportFound() {
         <!-- Col 3: Resources -->
         <div class="space-y-3.5">
           <h4 class="text-xs font-black uppercase tracking-wider text-white">
-            Resources
+            {{ t('footer.resources') }}
           </h4>
           <ul class="space-y-2 text-xs text-slate-400">
             <li>
               <RouterLink to="/browse" class="hover:text-white transition-colors">
-                About
+                {{ t('nav.about') }}
               </RouterLink>
             </li>
             <li>
               <RouterLink to="/track" class="hover:text-white transition-colors">
-                Help &amp; Support
+                {{ t('footer.helpSupport') }}
               </RouterLink>
             </li>
             <li>
               <a :href="settingsStore.institutionWebsite" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
-                Terms of Service
+                {{ t('footer.termsOfService') }}
               </a>
             </li>
             <li>
               <a :href="settingsStore.institutionWebsite" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
-                Privacy Policy
+                {{ t('footer.privacyPolicy') }}
               </a>
             </li>
             <li>
               <a :href="'mailto:' + (settingsStore.contactEmail || 'lostfound@wu.edu.et')" class="hover:text-white transition-colors">
-                Contact Us
+                {{ t('footer.contactUs') }}
               </a>
             </li>
           </ul>
@@ -182,13 +184,13 @@ function handleReportFound() {
         <!-- Col 4: Contact Us -->
         <div class="space-y-3.5">
           <h4 class="text-xs font-black uppercase tracking-wider text-white">
-            Contact Us
+            {{ t('footer.contactUs') }}
           </h4>
           <ul class="space-y-3 text-xs text-slate-400">
             <li class="flex items-start gap-2.5">
               <MapPin class="h-4 w-4 text-[#D4AF37] shrink-0 mt-0.5" />
               <span>
-                {{ settingsStore.institutionName }}, Kombolcha / Dessie, Amhara Region, Ethiopia
+                {{ t('footer.locationText', { institution: settingsStore.institutionName }) }}
               </span>
             </li>
             <li class="flex items-center gap-2.5">
@@ -210,10 +212,11 @@ function handleReportFound() {
       <!-- Bottom Bar -->
       <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
         <p>
-          &copy; {{ currentYear }} {{ settingsStore.institutionName }}. All rights reserved.
+          &copy; {{ currentYear }} {{ settingsStore.institutionName }}. {{ t('footer.rightsReserved') }}
         </p>
-        <p class="flex items-center gap-1 font-medium text-slate-400">
-          Together for a Better Tomorrow <span class="text-red-500">❤️</span>
+        <p class="flex items-center gap-1.5 font-medium text-slate-400">
+          {{ t('footer.motto') }}
+          <Heart class="h-3.5 w-3.5 text-rose-500 fill-rose-500 inline shrink-0" />
         </p>
       </div>
     </div>

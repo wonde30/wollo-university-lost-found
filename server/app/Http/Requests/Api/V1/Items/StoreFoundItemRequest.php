@@ -18,7 +18,14 @@ class StoreFoundItemRequest extends FormRequest
             'description' => ['required', 'string', 'min:20', 'max:2000'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'campus_id' => ['nullable', 'integer', 'exists:campuses,id'],
-            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'location_id' => [
+                'nullable',
+                'integer',
+                \Illuminate\Validation\Rule::exists('locations', 'id')->when(
+                    $this->filled('campus_id'),
+                    fn ($rule) => $rule->where('campus_id', $this->input('campus_id'))
+                ),
+            ],
             'location_detail' => ['nullable', 'string', 'max:255'],
             'brand' => ['nullable', 'string', 'max:80'],
             'color' => ['nullable', 'string', 'max:60'],
@@ -26,7 +33,14 @@ class StoreFoundItemRequest extends FormRequest
             'incident_date' => ['required', 'date', 'before_or_equal:today'],
             'incident_time' => ['nullable', 'date_format:H:i,H:i:s'],
             'held_at' => ['nullable', 'string', 'in:security_office,with_finder,unknown'], // FR-19, FR-20
-            'storage_location_id' => ['nullable', 'integer', 'exists:storage_locations,id'],
+            'storage_location_id' => [
+                'nullable',
+                'integer',
+                \Illuminate\Validation\Rule::exists('storage_locations', 'id')->when(
+                    $this->filled('campus_id'),
+                    fn ($rule) => $rule->where('campus_id', $this->input('campus_id'))
+                ),
+            ],
             'photos' => ['nullable', 'array', 'max:3'],
             'photos.*' => ['file', 'mimes:jpeg,png,webp', 'max:5120'],
         ];

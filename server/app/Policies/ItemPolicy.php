@@ -53,13 +53,14 @@ class ItemPolicy
     }
 
     /**
-     * Status transitions are allowed for the reporter (e.g. withdraw)
-     * or any staff/admin (custody operations, closures).
+     * General status transitions are restricted to staff/officers with CHANGE_ITEM_STATUS
+     * or administrators. Item reporters must withdraw their reports via the dedicated
+     * withdraw endpoint (FR-18).
      */
     public function changeStatus(User $user, Item $item): bool
     {
-        return $user->id === $item->reporter_id
-            || $user->isAdmin()
+        return $user->isAdmin()
+            || $user->hasPermission('CHANGE_ITEM_STATUS')
             || $user->isOfficer();
     }
 }

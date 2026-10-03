@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import type { Item } from '../types/item.types'
 import { formatDate } from '@/utils/date'
 import { resolveStorageUrl } from '@/utils/url'
-import { currentLocale, t } from '@/i18n'
+import { t, getLocalizedName } from '@/i18n'
 import ItemStatusBadge from './ItemStatusBadge.vue'
-import { ImageOff, Calendar } from 'lucide-vue-next'
+import { ImageOff, Calendar, Sparkles } from 'lucide-vue-next'
 
 interface Props {
   item: Item
@@ -58,7 +58,8 @@ const photoUrl = computed(() => {
         v-if="item.is_high_value"
         class="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700 shadow-2xs flex items-center gap-1"
       >
-        ★ {{ t('items.highValue') }}
+        <Sparkles class="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+        <span>{{ t('items.highValue') }}</span>
       </span>
     </div>
 
@@ -67,7 +68,7 @@ const photoUrl = computed(() => {
       <div>
         <div class="flex items-center justify-between gap-2 mb-1.5">
           <span class="text-xs font-bold text-[#0B5D3B] dark:text-[#75bd97]">
-            {{ (currentLocale === 'am' && item.category?.display_name_am) ? item.category.display_name_am : (item.category?.display_name || item.category?.name || t('items.category')) }}
+            {{ getLocalizedName(item.category, t('items.category')) }}
           </span>
           <span class="text-[11px] text-slate-400 dark:text-slate-500 font-mono font-bold">
             #{{ item.reference_code }}

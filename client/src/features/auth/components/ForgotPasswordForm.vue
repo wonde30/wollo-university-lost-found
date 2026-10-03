@@ -50,7 +50,7 @@ async function handleSubmit(): Promise<void> {
       id="forgot-email"
       :label="t('auth.forgotPassword.email')"
       type="email"
-      placeholder="student@wu.edu.et"
+      :placeholder="t('auth.emailPlaceholder')"
       :model-value="form.email"
       :error="errors.email"
       required

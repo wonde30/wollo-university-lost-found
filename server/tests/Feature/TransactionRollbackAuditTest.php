@@ -199,4 +199,87 @@ class TransactionRollbackAuditTest extends TestCase
         $this->assertNotNull($role);
         $this->assertCount(2, $role->fresh()->permissions);
     }
+
+    public function test_create_found_item_rolls_back_all_tables_on_failure(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $campus = Campus::firstOrCreate(['short_code' => 'DES'], ['name' => 'Dessie Campus', 'city' => 'Dessie', 'region' => 'Amhara']);
+        $category = Category::firstOrCreate(['name' => 'Electronics'], ['display_name' => 'Electronics', 'icon' => 'laptop']);
+
+        $initialItemCount = Item::count();
+        $initialHistoryCount = ItemStatusHistory::count();
+
+        try {
+            DB::transaction(function () use ($admin, $campus, $category) {
+                $item = Item::create([
+                    'reference_code' => 'WU-FAIL-TEST',
+                    'reporter_id' => $admin->id,
+                    'campus_id' => $campus->id,
+                    'category_id' => $category->id,
+                    'type' => 'found',
+                    'status' => 'found_unclaimed',
+                    'title' => 'Rollback Test Item',
+                    'description' => 'Should be rolled back',
+                ]);
+
+                ItemStatusHistory::create([
+                    'item_id' => $item->id,
+                    'changed_by' => $admin->id,
+                    'from_status' => null,
+                    'to_status' => 'found_unclaimed',
+                    'changed_by_role' => 'staff',
+                    'note' => 'Initial intake',
+                ]);
+
+                throw new \RuntimeException('Simulated unexpected failure during photo or tag processing');
+            });
+        } catch (\RuntimeException $e) {
+            // caught
+        }
+
+        $this->assertEquals($initialItemCount, Item::count(), 'Item record was completely rolled back');
+        $this->assertEquals($initialHistoryCount, ItemStatusHistory::count(), 'Item status history was completely rolled back');
+    }
+
+    public function test_claim_approval_rolls_back_on_failure(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $student = User::factory()->create();
+        $campus = Campus::firstOrCreate(['short_code' => 'DES'], ['name' => 'Dessie Campus', 'city' => 'Dessie', 'region' => 'Amhara']);
+        $category = Category::firstOrCreate(['name' => 'Electronics'], ['display_name' => 'Electronics', 'icon' => 'laptop']);
+
+        $item = Item::create([
+            'reference_code' => 'WU-CLAIM-TEST',
+            'reporter_id' => $admin->id,
+            'campus_id' => $campus->id,
+            'category_id' => $category->id,
+            'type' => 'found',
+            'status' => 'found_unclaimed',
+            'title' => 'Claimable Laptop',
+            'description' => 'Test description',
+        ]);
+
+        $claim = \App\Models\Claim::create([
+            'claim_number' => 'CLM-TEST-001',
+            'item_id' => $item->id,
+            'claimant_id' => $student->id,
+            'status' => 'pending',
+            'claim_reason' => 'Lost my laptop in library',
+        ]);
+
+        try {
+            DB::transaction(function () use ($claim, $item, $admin) {
+                $claim->update(['status' => 'approved', 'reviewed_by' => $admin->id]);
+                $item->update(['status' => 'claimed']);
+
+                throw new \RuntimeException('Simulated failure during custody event or notification dispatch');
+            });
+        } catch (\RuntimeException $e) {
+            // caught
+        }
+
+        $this->assertEquals('pending', $claim->fresh()->status, 'Claim status reverted to pending');
+        $this->assertEquals('found_unclaimed', $item->fresh()->status, 'Item status reverted to found_unclaimed');
+    }
 }
+

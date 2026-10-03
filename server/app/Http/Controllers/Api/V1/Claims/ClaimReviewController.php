@@ -33,7 +33,7 @@ class ClaimReviewController extends Controller
         $status     = $request->input('status');      // 'approved' | 'rejected'
         $reviewNote = $request->input('review_note');
 
-        DB::transaction(function () use ($id, $user, $status, $reviewNote, $request) {
+        $claim = DB::transaction(function () use ($id, $user, $status, $reviewNote, $request) {
             $claim = Claim::with('item')
                 ->lockForUpdate()
                 ->findOrFail($id);
@@ -68,6 +68,9 @@ class ClaimReviewController extends Controller
             if ($status === 'approved') {
                 $item = $claim->item;
 
+                // Capture current status BEFORE mutation (BUG-01 fix: was hardcoded 'found_unclaimed')
+                $itemFromStatus = (string) $item->status;
+
                 // Transition item to claimed
                 $item->status           = 'claimed';
                 $item->last_activity_at = now();
@@ -76,7 +79,7 @@ class ClaimReviewController extends Controller
                 ItemStatusHistory::create([
                     'item_id'         => $item->id,
                     'changed_by'      => $user->id,
-                    'from_status'     => 'found_unclaimed',
+                    'from_status'     => $itemFromStatus,
                     'to_status'       => 'claimed',
                     'changed_by_role' => $user->getRoleName(),
                     'note'            => "Claim #{$claim->id} approved.",
@@ -117,9 +120,11 @@ class ClaimReviewController extends Controller
                 ['status' => (string) $claim->status],
                 $user
             );
+
+            return $claim;
         });
 
-        $claim = Claim::with(['item', 'claimant', 'reviewer'])->findOrFail($id);
+        $claim->load(['item', 'claimant', 'reviewer']);
 
         // Fire notification event AFTER the transaction so the claim is fully committed
         if ($status === 'approved') {
@@ -146,7 +151,7 @@ class ClaimReviewController extends Controller
         $user       = $request->user();
         $reviewNote = $request->input('review_note');
 
-        DB::transaction(function () use ($id, $user, $reviewNote, $request) {
+        $claim = DB::transaction(function () use ($id, $user, $reviewNote, $request) {
             $claim = Claim::with('item')
                 ->lockForUpdate()
                 ->findOrFail($id);
@@ -236,9 +241,11 @@ class ClaimReviewController extends Controller
                 ['status' => 'rejected'],
                 $user
             );
+
+            return $claim;
         });
 
-        $claim = Claim::with(['item', 'claimant', 'reviewer'])->findOrFail($id);
+        $claim->load(['item', 'claimant', 'reviewer']);
 
         return response()->json([
             'message' => 'Claim approval reversed. Item is available for new claims.',

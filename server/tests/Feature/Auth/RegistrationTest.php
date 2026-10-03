@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\Campus;
 use App\Models\OrganizationalUnit;
 use App\Models\OrganizationalUnitType;
+use App\Models\UniversityDomain;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,6 +16,13 @@ class RegistrationTest extends TestCase
 
     public function test_user_can_register_with_valid_details(): void
     {
+        UniversityDomain::create([
+            'domain' => 'wollo.edu.et',
+            'institution_name' => 'Wollo University',
+            'is_active' => true,
+        ]);
+        UniversityDomain::flushDomainCache();
+
         $campus = Campus::create(['name' => 'Main Campus', 'short_code' => 'MC', 'city' => 'Dessie', 'region' => 'Amhara']);
         $type = OrganizationalUnitType::firstOrCreate(
             ['code' => 'dept'],
@@ -32,7 +40,6 @@ class RegistrationTest extends TestCase
             'full_name' => 'Abebe Bikila',
             'university_id' => 'WU/12345/14',
             'email' => 'abebe.bikila@wollo.edu.et',
-            'password' => 'WolloSecure123!@#',
             'phone' => '+251911223344',
             'organizational_unit_id' => $unit->id,
         ]);
@@ -41,7 +48,7 @@ class RegistrationTest extends TestCase
             ->assertJsonStructure([
                 'message',
                 'data' => [
-                    'user' => ['id', 'email', 'full_name', 'role'],
+                    'email',
                 ],
             ]);
 
@@ -49,10 +56,11 @@ class RegistrationTest extends TestCase
         $this->assertNotNull($user);
         $this->assertEquals('WU/12345/14', $user->university_id);
         $this->assertEquals('student', $user->getRoleName());
+        $this->assertFalse($user->is_active);
+        $this->assertNull($user->password);
         $this->assertDatabaseHas('user_organizational_units', [
             'user_id' => $user->id,
             'organizational_unit_id' => $unit->id,
         ]);
     }
 }
-

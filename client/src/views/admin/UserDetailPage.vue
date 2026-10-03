@@ -518,7 +518,7 @@ onMounted(async () => {
             <div class="relative flex-1">
               <AppInput
                 id="perm-search"
-                placeholder="Search permissions by name or capability..."
+                :placeholder="t('admin.users.searchPermissions')"
                 :model-value="permissionSearch"
                 class="w-full text-xs"
                 @update:model-value="permissionSearch = $event"
@@ -534,17 +534,17 @@ onMounted(async () => {
               class="h-10 px-3 text-xs font-bold rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-[#0B5D3B] cursor-pointer"
             >
               <option v-for="cat in permissionCategories" :key="cat" :value="cat">
-                {{ cat === 'all' ? 'All Categories' : cat.toUpperCase() }}
+                {{ cat === 'all' ? t('common.allCategories') : cat.toUpperCase() }}
               </option>
             </select>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
             <AppButton variant="secondary" size="xs" @click="grantAllAvailable">
-              Grant All
+              {{ t('admin.users.grantAll') }}
             </AppButton>
             <AppButton variant="secondary" size="xs" @click="clearDirectPermissions">
-              Reset to Role Defaults
+              {{ t('admin.users.resetToRoleDefaults') }}
             </AppButton>
             <AppButton
               variant="primary"
@@ -555,7 +555,7 @@ onMounted(async () => {
               <template #icon-left>
                 <Save class="h-3.5 w-3.5 mr-1" />
               </template>
-              Save User Permissions
+              {{ t('admin.users.saveUserPermissions') }}
             </AppButton>
           </div>
         </div>
@@ -563,7 +563,7 @@ onMounted(async () => {
         <!-- Loading Permissions Spinner -->
         <div v-if="permissionsLoading" class="flex items-center justify-center py-12">
           <AppSpinner size="md" />
-          <span class="ml-2 text-xs font-semibold text-slate-500">Loading permission matrix...</span>
+          <span class="ml-2 text-xs font-semibold text-slate-500">{{ t('common.loading') }}</span>
         </div>
 
         <!-- Permission Matrix Grid -->
@@ -590,7 +590,7 @@ onMounted(async () => {
                   <span
                     v-if="isRoleInherited(perm.name)"
                     class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
-                    title="Granted automatically via assigned role"
+                    :title="t('admin.users.roleGrantedTooltip')"
                   >
                     <Shield class="h-2.5 w-2.5" />
                     Role ({{ currentUser.role }})
@@ -600,7 +600,7 @@ onMounted(async () => {
                   <span
                     v-if="isDirectlyGranted(perm.id)"
                     class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                    title="Specifically granted to this individual user"
+                    :title="t('admin.users.directGrantedTooltip')"
                   >
                     <Sparkles class="h-2.5 w-2.5" />
                     Direct
@@ -626,7 +626,7 @@ onMounted(async () => {
                   class="h-4 w-4 text-[#0B5D3B] border-slate-300 rounded focus:ring-[#0B5D3B] cursor-pointer"
                   @change="toggleDirectPermission(perm.id)"
                 />
-                <span>Direct User Grant</span>
+                <span>{{ t('admin.users.directUserGrant') }}</span>
               </label>
 
               <span

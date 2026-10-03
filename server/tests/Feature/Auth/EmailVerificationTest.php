@@ -7,6 +7,8 @@ namespace Tests\Feature\Auth;
 use App\Models\AuthVerification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class EmailVerificationTest extends TestCase
@@ -15,8 +17,13 @@ class EmailVerificationTest extends TestCase
 
     public function test_user_can_verify_email_with_valid_otp(): void
     {
+        Queue::fake();
+
         $user = User::factory()->create([
+            'email' => 'student.verify@wu.edu.et',
             'email_verified_at' => null,
+            'password' => null,
+            'is_active' => false,
         ]);
 
         $otp = '123456';
@@ -25,7 +32,7 @@ class EmailVerificationTest extends TestCase
             'email' => $user->email,
             'type' => 'email_verification',
             'code' => $otp,
-            'token' => \Illuminate\Support\Facades\Hash::make($otp),
+            'token' => Hash::make($otp),
             'attempts' => 0,
             'last_sent_at' => now(),
             'expires_at' => now()->addMinutes(10),
@@ -37,12 +44,18 @@ class EmailVerificationTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertNotNull($user->fresh()->email_verified_at);
+        $refreshed = $user->fresh();
+        $this->assertNotNull($refreshed->email_verified_at);
+        $this->assertTrue($refreshed->is_active);
+        $this->assertNotNull($refreshed->password);
     }
 
     public function test_user_can_resend_verification_otp(): void
     {
+        Queue::fake();
+
         $user = User::factory()->create([
+            'email' => 'student.resend@wu.edu.et',
             'email_verified_at' => null,
         ]);
 

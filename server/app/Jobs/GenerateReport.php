@@ -11,6 +11,8 @@ use App\Models\Report;
 use App\Models\ReturnRecord;
 use App\Models\SearchLog;
 use App\Models\User;
+use App\Domain\Notifications\DTOs\NotificationData;
+use App\Domain\Notifications\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -91,6 +93,23 @@ class GenerateReport implements ShouldQueue
                 'expires_at' => now()->addDays(7), // FR-58: 7-day expiry
             ]);
 
+            if ($this->report->requested_by) {
+                try {
+                    app(NotificationService::class)->send(new NotificationData(
+                        userId: (int) $this->report->requested_by,
+                        type: 'report_generated',
+                        payload: [
+                            'report_id'   => $this->report->id,
+                            'report_type' => $this->report->report_type,
+                            'format'      => $format,
+                            'row_count'   => count($rows),
+                        ]
+                    ));
+                } catch (Throwable $notifEx) {
+                    Log::warning("Failed to send report_generated notification: " . $notifEx->getMessage());
+                }
+            }
+
         } catch (Throwable $e) {
             Log::error("Report generation failed for Report #{$this->report->id}: " . $e->getMessage(), [
                 'report_id' => $this->report->id,
@@ -101,6 +120,22 @@ class GenerateReport implements ShouldQueue
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
+
+            if ($this->report->requested_by) {
+                try {
+                    app(NotificationService::class)->send(new NotificationData(
+                        userId: (int) $this->report->requested_by,
+                        type: 'report_failed',
+                        payload: [
+                            'report_id'     => $this->report->id,
+                            'report_type'   => $this->report->report_type,
+                            'error_message' => $e->getMessage(),
+                        ]
+                    ));
+                } catch (Throwable $notifEx) {
+                    Log::warning("Failed to send report_failed notification: " . $notifEx->getMessage());
+                }
+            }
 
             throw $e;
         }

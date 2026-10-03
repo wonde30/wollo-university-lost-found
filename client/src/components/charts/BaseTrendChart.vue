@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { t } from '@/i18n'
 import {
   Chart,
   LineController,
@@ -268,7 +269,7 @@ watch(
       v-if="loading"
       class="w-full rounded-2xl bg-slate-100 dark:bg-slate-800/80 animate-pulse flex flex-col justify-between p-4"
       :style="{ height: `${height}px` }"
-      aria-label="Loading trend chart"
+      :aria-label="t('charts.loadingTrend')"
     >
       <div class="h-4 w-36 bg-slate-200 dark:bg-slate-700 rounded-md" />
       <div class="space-y-3 w-full my-auto">
@@ -288,14 +289,14 @@ watch(
       :style="{ height: `${height}px` }"
     >
       <AlertCircle class="h-7 w-7 text-rose-500 mb-2" />
-      <p class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1">Failed to load trend data</p>
+      <p class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1">{{ t('common.trendError') }}</p>
       <p class="text-[11px] text-rose-600/80 dark:text-rose-400/80 mb-3">{{ error }}</p>
       <button
         type="button"
         class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 rounded-lg hover:bg-rose-50 cursor-pointer shadow-2xs transition-colors"
         @click="emit('retry')"
       >
-        Retry Analytics
+        {{ t('charts.retryAnalytics') }}
       </button>
     </div>
 
@@ -306,7 +307,7 @@ watch(
       :style="{ height: `${height}px` }"
     >
       <FileX2 class="h-7 w-7 text-slate-400 mb-2" />
-      <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">No Historical Records</p>
+      <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">{{ t('charts.noHistoricalRecords') }}</p>
       <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ emptyText }}</p>
     </div>
 

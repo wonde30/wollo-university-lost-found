@@ -14,7 +14,8 @@ class ItemDetailResource extends JsonResource
             $viewer->isAdmin() ||
             $viewer->isOfficer() ||
             $viewer->id === $this->reporter_id ||
-            $this->claims()->where('claimant_id', $viewer->id)->where('status', 'approved')->exists()
+            // whenLoaded: only checks if 'approvedClaimByViewer' was eager-loaded — no extra query
+            $this->whenLoaded('approvedClaimByViewer', fn() => $this->approvedClaimByViewer->isNotEmpty(), false)
         );
 
         $reporterUser = $this->reporter ?? $this->user;
@@ -36,9 +37,9 @@ class ItemDetailResource extends JsonResource
             'incident_time' => $this->incident_time,
             'estimated_value' => $this->estimated_value,
             'is_high_value' => $this->is_high_value,
-            'category' => new CategoryResource($this->whenLoaded('category')),
-            'location' => new LocationResource($this->whenLoaded('location')),
-            'campus' => new CampusResource($this->whenLoaded('campus')),
+            'category' => $this->whenLoaded('category', fn() => new CategoryResource($this->category)),
+            'location' => $this->whenLoaded('location', fn() => new LocationResource($this->location)),
+            'campus' => $this->whenLoaded('campus', fn() => new CampusResource($this->campus)),
             'reporter' => $reporterUser ? ($canViewFullContact ? new UserResource($reporterUser) : [
                 'id' => $reporterUser->id,
                 'name' => $reporterUser->full_name,

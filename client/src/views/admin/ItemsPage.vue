@@ -348,7 +348,7 @@ watch(() => route.query, () => {
       <Package class="h-4 w-4 text-[#0B5D3B] dark:text-[#75bd97]" />
       <span>{{ t('nav.lostAndFound') || 'Lost & Found' }}</span>
       <span>&rsaquo;</span>
-      <span class="text-slate-900 dark:text-slate-100 font-extrabold">Items Directory & Registry</span>
+      <span class="text-slate-900 dark:text-slate-100 font-extrabold">{{ t('nav.itemsDirectory') }}</span>
     </div>
 
     <!-- 4 Top Metric Cards Grid -->
@@ -666,17 +666,17 @@ watch(() => route.query, () => {
                     <span
                       v-if="item.is_high_value"
                       class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-yellow-100 dark:bg-yellow-950/80 text-yellow-800 dark:text-yellow-300"
-                      title="High Value Item (>5,000 ETB)"
+                      :title="t('items.highValueTooltip')"
                     >
                       <Sparkles class="h-2.5 w-2.5" />
-                      High Value
+                      {{ t('items.highValue') || 'High Value' }}
                     </span>
                   </div>
 
                   <button
                     type="button"
                     class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-[#0B5D3B] dark:hover:text-[#75bd97] inline-flex items-center gap-1 cursor-pointer transition-colors"
-                    title="Click to copy reference code"
+                    :title="t('items.clickToCopyRef')"
                     @click="copyReferenceCode(item.reference_code)"
                   >
                     <span>{{ item.reference_code }}</span>
@@ -837,7 +837,7 @@ watch(() => route.query, () => {
     <!-- 1. INSPECT ITEM DETAIL MODAL -->
     <AppModal
       :open="detailModalOpen"
-      title="Item Details & Lifecycle"
+      :title="t('items.itemDetailsLifecycle')"
       size="lg"
       @close="detailModalOpen = false"
     >
@@ -951,19 +951,19 @@ watch(() => route.query, () => {
     <!-- 2. CHANGE STATUS MODAL -->
     <AppModal
       :open="statusModalOpen"
-      title="Update Item Operational Status"
+      :title="t('items.updateOperationalStatus')"
       size="md"
       @close="statusModalOpen = false"
     >
       <div v-if="itemToUpdateStatus" class="space-y-4 text-sm">
         <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-          <p class="text-xs text-slate-500">Target Item:</p>
+          <p class="text-xs text-slate-500">{{ t('items.targetItem') || 'Target Item:' }}</p>
           <p class="font-bold text-slate-900 dark:text-white">{{ itemToUpdateStatus.title }} ({{ itemToUpdateStatus.reference_code }})</p>
         </div>
 
         <div>
           <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5">
-            New Operational Status *
+            {{ t('items.newOperationalStatus') || 'New Operational Status *' }}
           </label>
           <AppSelect
             v-model="statusForm.status"
@@ -974,11 +974,11 @@ watch(() => route.query, () => {
 
         <div>
           <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5">
-            Audit Remark / Operational Note
+            {{ t('items.auditRemarks') || 'Audit Remark / Operational Note' }}
           </label>
           <AppTextarea
             v-model="statusForm.remarks"
-            placeholder="Provide reason for this status transition (e.g. Returned to claimant at Central Depot)..."
+            :placeholder="t('admin.items.transitionReasonPlaceholder')"
             :rows="3"
             class="w-full text-xs"
           />
@@ -1006,7 +1006,7 @@ watch(() => route.query, () => {
     <!-- 3. CONFIRM DELETE MODAL -->
     <AppModal
       :open="deleteModalOpen"
-      title="Delete Item Confirmation"
+      :title="t('items.deleteConfirmation')"
       size="sm"
       @close="deleteModalOpen = false"
     >

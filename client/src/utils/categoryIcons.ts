@@ -94,8 +94,10 @@ const ICON_MAP: Record<string, LucideIcon> = {
 export function getCategoryIcon(slug: string | null | undefined): LucideIcon {
   if (!slug) return Package
 
-  const normalised = slug.trim().toLowerCase().replace(/[\s-]+/g, '_')
-  return ICON_MAP[normalised] ?? Package
+  const cleaned = slug.trim().toLowerCase()
+  const normalised = cleaned.replace(/[\s-]+/g, '_')
+  const stripped = cleaned.replace(/[\s\-_]+/g, '')
+  return ICON_MAP[normalised] ?? ICON_MAP[stripped] ?? Package
 }
 
 /** The default fallback icon component, exported for convenience. */

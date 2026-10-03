@@ -80,17 +80,20 @@ export const useSettingsStore = defineStore('settings', () => {
   // Fetch & cache
   // =====================================================
 
-  async function fetchSettings(): Promise<void> {
-    // Try cache first
-    if (!loaded.value) {
+  let _fetchSettingsPromise: Promise<void> | null = null
+
+  async function fetchSettings(force = false): Promise<void> {
+    // Try cache first if not forced
+    if (!force && !loaded.value) {
       try {
         const cached = localStorage.getItem(CACHE_KEY)
         if (cached) {
           const parsed = JSON.parse(cached)
-          if (parsed.ts && Date.now() - parsed.ts < CACHE_TTL_MS) {
+          if (parsed.ts && Date.now() - parsed.ts < CACHE_TTL_MS && parsed.data) {
             settings.value = parsed.data
             loaded.value = true
             applyThemeColors()
+            return
           }
         }
       } catch {
@@ -98,27 +101,40 @@ export const useSettingsStore = defineStore('settings', () => {
       }
     }
 
-    loading.value = true
-    try {
-      const { data } = await apiClient.get<{ data: SettingsMap }>(PUBLIC.SETTINGS)
-      settings.value = data.data
-      loaded.value = true
-
-      // Cache to localStorage
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        ts: Date.now(),
-        data: data.data,
-      }))
-
-      applyThemeColors()
-    } catch {
-      // If fetch fails but we have cache, that's fine
-      if (!loaded.value) {
-        loaded.value = true // mark loaded to avoid infinite retries
-      }
-    } finally {
-      loading.value = false
+    if (!force && loaded.value) {
+      return
     }
+
+    if (_fetchSettingsPromise) {
+      return _fetchSettingsPromise
+    }
+
+    _fetchSettingsPromise = (async () => {
+      loading.value = true
+      try {
+        const { data } = await apiClient.get<{ data: SettingsMap }>(PUBLIC.SETTINGS)
+        settings.value = data.data
+        loaded.value = true
+
+        // Cache to localStorage
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          ts: Date.now(),
+          data: data.data,
+        }))
+
+        applyThemeColors()
+      } catch {
+        // If fetch fails but we have cache, that's fine
+        if (!loaded.value) {
+          loaded.value = true // mark loaded to avoid infinite retries
+        }
+      } finally {
+        loading.value = false
+        _fetchSettingsPromise = null
+      }
+    })()
+
+    return _fetchSettingsPromise
   }
 
   /**

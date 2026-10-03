@@ -32,15 +32,14 @@ class SendReturnNotification implements ShouldQueue
             userId:  $claim->claimant_id,
             type:    'item_returned',
             payload: [
-                'return_id'      => $returnRecord->id,
-                'claim_id'       => $claim->id,
-                'item_id'        => $item->id,
-                'reference_code' => $item->reference_code,
-                'title'          => $item->title,
-                'return_date'    => $returnRecord->return_date,
+                'return_id'          => $returnRecord->id,
+                'claim_id'           => $claim->id,
+                'item_id'            => $item->id,
+                'reference_code'     => $item->reference_code,
+                'title'              => $item->title,
+                'return_date'        => $returnRecord->return_date,
                 'confirmation_token' => $returnRecord->confirmation_token,
                 'confirmation_url'   => config('app.frontend_url') . '/confirm-return/' . $returnRecord->confirmation_token,
-                'message'        => "Your item \"{$item->title}\" (Ref: {$item->reference_code}) has been handed over to you. Please confirm receipt.",
             ]
         ));
 

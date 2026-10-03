@@ -6,7 +6,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as adminApi from '../api/admin.api'
-import type { DashboardStatistics, AuditLog, Report, SystemSetting } from '../types/admin.types'
+import type {
+  DashboardStatistics,
+  AuditLog,
+  Report,
+  SystemSetting,
+  GenerateReportData,
+  UpdateSystemSettingData,
+} from '../types/admin.types'
 import type { PaginationMeta } from '@/types/common.types'
 
 export interface AdminStats {
@@ -131,9 +138,9 @@ export const useAdminStore = defineStore('admin', () => {
         _statsCache.set(cacheKey, { data, timestamp: Date.now() })
         _applyStatsData(data)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (currentRequestId === _activeRequestId) {
-        error.value = err.message ?? 'Failed to load statistics'
+        error.value = err instanceof Error ? err.message : 'Failed to load statistics'
       }
     } finally {
       if (currentRequestId === _activeRequestId) {
@@ -179,7 +186,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  async function generateReport(data: any): Promise<Report> {
+  async function generateReport(data: GenerateReportData): Promise<Report> {
     const newReport = await adminApi.generateReport(data)
     reports.value.unshift(newReport)
     return newReport
@@ -204,7 +211,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  async function updateSetting(key: string, data: any): Promise<SystemSetting> {
+  async function updateSetting(key: string, data: UpdateSystemSettingData): Promise<SystemSetting> {
     const updated = await adminApi.updateSystemSetting(key, data)
     const index = settings.value.findIndex(s => s.key === key)
     if (index !== -1) settings.value[index] = updated

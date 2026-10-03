@@ -28,9 +28,7 @@ class SendMatchNotification implements ShouldQueue
             return;
         }
 
-        $score   = round((float) $match->score * 100);
-        $message = "A potential match ({$score}% similarity) was found for your lost item \"{$lostItem->title}\" (Ref: {$lostItem->reference_code}). "
-                 . "Found item: \"{$foundItem->title}\" (Ref: {$foundItem->reference_code}).";
+        $score = round((float) $match->score * 100);
 
         $notificationService->send(new NotificationData(
             userId:  $lostItem->reporter_id,
@@ -41,8 +39,8 @@ class SendMatchNotification implements ShouldQueue
                 'found_item_id'        => $foundItem->id,
                 'lost_reference_code'  => $lostItem->reference_code,
                 'found_reference_code' => $foundItem->reference_code,
-                'score'                => $match->score,
-                'message'              => $message,
+                'title'                => $lostItem->title,
+                'score'                => $score,
             ]
         ));
 

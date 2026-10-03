@@ -27,7 +27,7 @@ class LocationController extends Controller
                         ->orWhere('name_am', 'like', "%{$search}%")
                         ->orWhere('code', 'like', "%{$search}%")
                         ->orWhere('building', 'like', "%{$search}%")
-                        ->orWhere('room_number', 'like', "%{$search}%");
+                        ->orWhere('zone', 'like', "%{$search}%");
                 });
             })
             ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
@@ -58,7 +58,16 @@ class LocationController extends Controller
     public function store(StoreLocationRequest $request): JsonResponse
     {
         $this->authorize('create', Location::class);
-        $location = Location::create($request->validated());
+        $validated = $request->validated();
+        if (empty($validated['code'])) {
+            $validated['code'] = 'LOC-' . strtoupper(substr(uniqid(), -6));
+        }
+        if (empty($validated['zone']) && !empty($validated['floor'])) {
+            $validated['zone'] = $validated['floor'];
+        }
+        unset($validated['floor'], $validated['room_number'], $validated['coordinates']);
+
+        $location = Location::create($validated);
         \Illuminate\Support\Facades\Cache::forget('locations.all');
 
         return response()->json([
@@ -82,7 +91,13 @@ class LocationController extends Controller
         $location = Location::findOrFail($id);
         $this->authorize('update', $location);
 
-        $location->update($request->validated());
+        $validated = $request->validated();
+        if (empty($validated['zone']) && !empty($validated['floor'])) {
+            $validated['zone'] = $validated['floor'];
+        }
+        unset($validated['floor'], $validated['room_number'], $validated['coordinates']);
+
+        $location->update($validated);
         \Illuminate\Support\Facades\Cache::forget('locations.all');
 
         return response()->json([

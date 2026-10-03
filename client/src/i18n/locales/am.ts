@@ -23,8 +23,9 @@ export const am = {
     "department": "ክፍል",
     "state": "ሁኔታ",
     "openMenu": "የአሰሳ ምናሌውን ክፈት",
-    "closeMenu": "ምናሌውን ዝጋ",
+    "closeMenu": "ማውጫውን ዝጋ",
     "userMenu": "የተጠቃሚ ምናሌ",
+    "user": "ተጠቃሚ",
     "switchLanguage": "ቋንቋ ቀይር",
     "switchToEnglish": "ወደ እንግሊዝኛ ቀይር",
     "switchToAmharic": "ወደ አማርኛ ቀይር",
@@ -34,7 +35,6 @@ export const am = {
     "portalTitle": "የንብረት መልሶ ማግኛ ፖርታል",
     "export": "ኤክስፖርት (CSV)",
     "loading": "በመጫን ላይ...",
-
     "processing": "በማስኬድ ላይ...",
     "saving": "በማስቀመጥ ላይ...",
     "saved": "በተሳካ ሁኔታ ተቀምጧል",
@@ -125,7 +125,7 @@ export const am = {
     "today": "ዛሬ",
     "last7Days": "ያለፉት 7 ቀናት",
     "thisMonth": "በዚህ ወር",
-    "allTime": "ሁልጊዜ",
+    "allTime": "የሁሉም ጊዜ",
     "showLess": "አሳጥር",
     "readMore": "ተጨማሪ አንብብ",
     "dismiss": "ዝጋ",
@@ -133,7 +133,44 @@ export const am = {
     "allStatuses": "ሁሉም ሁኔታዎች",
     "createdOn": "የተፈጠረበት ቀን",
     "showingResults": "ከ {total} መዝገቦች {count} እየታዩ ነው",
-    "toggleStatus": "ሁኔታ ቀይር"
+    "toggleStatus": "ሁኔታ ቀይር",
+    "selected": "ተመርጧል",
+    "refreshed": "በተሳካ ሁኔታ ታድሷል",
+    "chartError": "የቻርት መረጃዎችን መጫን አልተቻለም",
+    "trendError": "የአዝማሚያ መረጃዎችን መጫን አልተቻለም",
+    "timePeriodSelector": "የጊዜ ክልል መምረጫ",
+    "exitFullscreen": "ሙሉ ማያ ገጽን ውጣ",
+    "fullscreen": "ሙሉ ማያ ገጽ",
+    "sevenDays": "7 ቀናት",
+    "thirtyDays": "30 ቀናት",
+    "ninetyDays": "90 ቀናት",
+    "twelveMonths": "12 ወራት",
+    "noHistoricalRecords": "ምንም የታሪክ መዝገብ የለም",
+    "noDistributionData": "ምንም የሥርጭት መረጃ የለም",
+    "loadingChart": "ቻርቱ በመጫን ላይ...",
+    "loadingTrendChart": "የትሬንድ ቻርቱ በመጫን ላይ",
+    "loadingDonutChart": "የዶናት ቻርቱ በመጫን ላይ",
+    "loadingBarChart": "የባር ቻርቱ በመጫን ላይ",
+    "loadingSparkline": "ስፓርክላይን በመጫን ላይ",
+    "failedSparkline": "ስፓርክላይን መጫን አልተቻለም",
+    "noSparklineData": "ምንም የስፓርክላይን ዳታ የለም",
+    "retryAnalytics": "እንደገና ይሞክሩ",
+    "stepCount": "ደረጃ {current} ከ {total}",
+    "days7": "7 ቀናት",
+    "days30": "30 ቀናት",
+    "days90": "90 ቀናት",
+    "months12": "12 ወራት",
+    "clearSelection": "ምርጫን አጽዳ",
+    "livePreview": "የቀጥታ ቅድመ እይታ",
+    "idPlaceholder": "ለምሳሌ፡ 1",
+    "backToHome": "ወደ ዋናው ገጽ ተመለስ",
+    "numericPlaceholder": "ለምሳሌ፡ 1",
+    "hideFilters": "ማጣሪያዎችን ደብቅ",
+    "refreshList": "ዝርዝሩን አድስ",
+    "downloadDocument": "ሰነዱን አውርድ",
+    "clearAllFilters": "ሁሉንም ማጣሪያዎች ዳግም አስጀምር",
+    "allCategories": "ሁሉም ምድቦች",
+    "noneGeneral": "ምንም / አጠቃላይ"
   },
   "nav": {
     "menu": "ዋና ምናሌ",
@@ -172,6 +209,7 @@ export const am = {
     "reports": "ሪፖርቶች",
     "auditLogs": "የኦዲት ምዝግብ ማስታወሻዎች",
     "announcements": "የስርዓት ማስታወቂያዎች",
+    "universityDomains": "የዩኒቨርሲቲ ዶሜይኖች",
     "settings": "ቅንብሮች",
     "helpAndSupport": "እርዳታ እና ድጋፍ",
     "reportLost": "የጠፋ ዕቃ አስመዝግብ",
@@ -190,87 +228,146 @@ export const am = {
     "adminPortal": "የአስተዳዳሪ ፖርታል",
     "notifications": "ማሳወቂያዎች",
     "governance": "አስተዳደር እና ትንታኔ",
-    "portal": "የተማሪዎች ፖርታል"
+    "portal": "የተማሪዎች ፖርታል",
+    "browseItems": "ዕቃዎችን ፈልግ",
+    "about": "ስለ እኛ",
+    "login": "ግባ",
+    "getStarted": "ይጀምሩ",
+    "openMenu": "የአሰሳ ምናሌ ክፈት",
+    "closeMenu": "የአሰሳ ምናሌ ዝጋ",
+    "analytics": "ትንታኔዎች",
+    "staffOperations": "የሰራተኞች ተግባራት",
+    "itemsDirectory": "የዕቃዎች ማውጫ"
   },
   "home": {
     "hero": {
-      "badge": "ይፋዊ የዩኒቨርሲቲ ንብረት መልሶ ማግኛ ሲስተም",
-      "title": "በዩኒቨርሲቲው ግቢ ውስጥ ዕቃ ጠፍቶብዎታል?",
-      "subtitle": "ንብረትዎን እንዲያገኙ እናግዝዎታለን።",
-      "description": "በተቋሙ ግቢዎች ውስጥ ለተማሪዎች፣ መምህራንና ሰራተኞች የተዘጋጀ ይፋዊ የጠፉና የተገኙ ንብረቶች መከታተያ መድረክ።",
-      "browseBtn": "የተገኙ ዕቃዎችን ያስሱ",
-      "dashboardBtn": "ወደ ዳሽቦርድ ይሂዱ",
-      "reportBtn": "የጠፋ ዕቃ አስመዝግብ",
-      "trackBtn": "የመከታተያ ኮድ አለዎት? የዕቃውን ሁኔታ በቀጥታ ይከታተሉ"
+      "badge": "አንድ ላይ ለደህንነቱ የተጠበቀ ግቢ",
+      "title1": "ዕቃ ጠፍቶብዎታል?",
+      "title2": "ብቻዎትን አይደሉም።",
+      "description": "የ{institution} የጠፉ እና የተገኙ ዕቃዎች ፖርታል ተማሪዎች፣ መምህራን፣ ሰራተኞች እና እንግዶች የተሰወሩባቸውን ንብረቶች እንዲያገኙ ያግዛል። በቀላሉና በአስተማማኝ ሁኔታ ያመልክቱ፣ ይፈልጉ እና ይከታተሉ።",
+      "reportLost": "የጠፋ ዕቃ አመልክት",
+      "browseFound": "የተገኙ ዕቃዎችን ፈልግ",
+      "secureReliable": "አስተማማኝ እና ደህንነቱ የተጠበቀ",
+      "universityCommunity": "የዩኒቨርሲቲ ማህበረሰብ",
+      "realtimeUpdates": "የወቅቱ መረጃ ዝመና",
+      "quote": "የተሳሰረ እና አሳቢ የዩኒቨርሲቲ ማህበረሰብ መገንባት።"
     },
-    "heroBadge": "ይፋዊ የዩኒቨርሲቲ ንብረት መልሶ ማግኛ ሲስተም",
-    "heroTitle": "በዩኒቨርሲቲው ግቢ ውስጥ ዕቃ ጠፍቶብዎታል?",
-    "heroTitleHighlight": "ንብረትዎን እንዲያገኙ እናግዝዎታለን።",
-    "heroSubtitle": "በተቋሙ ግቢዎች ውስጥ ለተማሪዎች፣ መምህራንና ሰራተኞች የተዘጋጀ ይፋዊ የጠፉና የተገኙ ንብረቶች መከታተያ መድረክ።",
-    "browseFoundBtn": "የተገኙ ዕቃዎችን ያስሱ",
-    "myDashboardBtn": "ወደ ዳሽቦርድ ይሂዱ",
-    "createAccountBtn": "የተማሪ አካውንት ይክፈቱ",
-    "trackLink": "የመከታተያ ኮድ አለዎት? የዕቃውን ሁኔታ በቀጥታ ይከታተሉ",
     "stats": {
-      "campuses": "የዩኒቨርሲቲ ግቢዎች",
-      "dessieKombolcha": "2 ካምፓሶች - ደሴ እና ኮምቦልቻ",
-      "verifiedCustody": "የተረጋገጠ የደህንነት ማከማቻ",
-      "vaultStorage": "100% በካዝናና በማከማቻ ክፍል ቁጥጥር የሚደረግበት",
-      "fastVerification": "ፈጣን ማረጋገጫ",
-      "claimSLA": "< 24 ሰዓት የባለቤትነት ማረጋገጫ ምላሽ",
-      "safeHandover": "አስተማማኝ ርክክብ",
-      "idCheck": "በመታወቂያና በፊርማ የተረጋገጠ"
+      "reported": "የተመዘገቡ ዕቃዎች",
+      "returned": "ለባለቤቶች የተመለሱ",
+      "community": "የማህበረሰብ አባላት",
+      "campuses": "ግቢዎች",
+      "safeHandover": "ደህንነቱ የተጠበቀ የርክክብ ሥርዓት"
     },
-    "statsCampuses": "የዩኒቨርሲቲ ግቢዎች",
-    "statsCampusesVal": "2 ካምፓሶች",
-    "statsCampusesDesc": "ደሴ እና ኮምቦልቻ",
-    "statsCustody": "የተረጋገጠ የደህንነት ማከማቻ",
-    "statsCustodyVal": "100% ክትትል የሚደረግበት",
-    "statsCustodyDesc": "በካዝና እና ደህንነቱ በተጠበቀ ክፍል",
-    "statsSla": "ፈጣን ማረጋገጫ",
-    "statsSlaVal": "< 24 ሰዓት",
-    "statsSlaDesc": "የባለቤትነት ማረጋገጫ ምላሽ",
-    "statsHandover": "አስተማማኝ ርክክብ",
-    "statsHandoverVal": "የተረጋገጠ",
-    "statsHandoverDesc": "በመታወቂያና በፊርማ ማረጋገጫ",
-    "recentItems": {
-      "title": "በቅርቡ የተገኙ ንብረቶች",
-      "subtitle": "በግቢ ውስጥ ተገኝተው እውነተኛ ባለቤታቸውን በመጠባበቅ ላይ ያሉ ዕቃዎች",
-      "viewAll": "ሁሉንም ዕቃዎች ተመልከት"
+    "features": {
+      "tag": "አገልግሎቶቻችን",
+      "title": "የሚፈልጉትን በቀላሉ የሚያገኙበት ዘመናዊ መንገድ",
+      "subtitle": "ለዩኒቨርሲቲው ማህበረሰብ የተቀላጠፉ፣ ደህንነታቸው የተጠበቀ እና ፈጣን ዲጂታል አገልግሎቶች።",
+      "smartSearchTitle": "ዘመናዊ ፍለጋ",
+      "smartSearchDesc": "የላቁ ማጣሪያዎችን፣ የምስል ናሙናዎችን እና ብልህ ንጽጽርን በመጠቀም የጠፉ ወይም የተገኙ ዕቃዎችን በፍጥነት ያግኙ።",
+      "smartSearchAction": "ዕቃዎችን ፈልግ",
+      "reportTitle": "ዕቃዎችን ማመልከት",
+      "reportDesc": "የጠፋ ወይም የተገኘ ማንኛውንም ዕቃ ከፎቶዎች፣ ዝርዝር መግለጫ እና የግቢው ስፍራ ጋር በጥቂት ደቂቃዎች ውስጥ ይመዝግቡ።",
+      "reportAction": "አሁን ይመዝግቡ",
+      "trackTitle": "ሂደቱን መከታተል",
+      "trackDesc": "የማመልከቻዎትን፣ የማረጋገጫ ሂደቱን እና የንብረት ርክክቡን ሁኔታ በዳሽቦርድዎ ላይ በቅጽበት ይከታተሉ።",
+      "trackAction": "ዕቃን ተከታተል",
+      "notifyTitle": "ፈጣን ማሳወቂያዎች",
+      "notifyDesc": "ተዛማጅ ዕቃ ሲገኝ ወይም የይገባኛል ማመልከቻዎ ሁኔታ ሲቀየር ፈጣን የጽሑፍ እና የሲስተም መልእክት ይደርስዎታል።",
+      "notifyAction": "ተጨማሪ ይወቁ"
     },
-    "recentTitle": "በቅርቡ የተገኙ ንብረቶች",
-    "recentSubtitle": "በግቢ ውስጥ ተገኝተው እውነተኛ ባለቤታቸውን በመጠባበቅ ላይ ያሉ ዕቃዎች",
-    "viewAll": "ሁሉንም ዕቃዎች ተመልከት",
-    "noPhoto": "ፎቶ አልተያያዘም",
-    "foundProperty": "የተገኘ ንብረት",
-    "lostReport": "የጠፋ ሪፖርት",
     "howItWorks": {
-      "title": "ሲስተሙ እንዴት ይሰራል?",
-      "subtitle": "ለፍጥነት፣ ለደህንነት እና ለተረጋገጠ የተማሪ ማንነት የተዘጋጀ ቀላል ባለ 3-ደረጃ ዲጂታል አሰራር።",
-      "step1Title": "ዕቃ ያስመዝግቡ",
-      "step1Desc": "ዕቃ ጠፍቶብዎታል ወይስ አግኝተዋል? የዕቃውን ፎቶ፣ ምድብ እና የተገኘበትን ካምፓስ በመሙላት ይመዝግቡ።",
-      "step2Title": "ያስሱ እና ያዛምዱ",
-      "step2Desc": "በካምፓስ፣ በቀን እና በዕቃው አይነት መሰረት በቀላሉ ይፈልጉ እና ያዛምዱ።",
-      "step3Title": "ያረጋግጡ እና ይረከቡ",
-      "step3Desc": "የባለቤትነት ማረጋገጫ ያቅርቡ። የካምፓስ ደህንነት ሰራተኞች ካረጋገጡ በኋላ ንብረትዎን በደህና ይረከቡ።"
+      "tag": "አሰራሩ እንዴት ነው?",
+      "title": "ቀላል ደረጃዎች፣ ውጤታማ ርክክብ",
+      "subtitle": "በወሎ ዩኒቨርሲቲ ግቢዎች ውስጥ የጠፉ ንብረቶችን ከባለቤቶቻቸው ጋር ማገናኘት ቀላል ነው።",
+      "step1Title": "ማመልከት",
+      "step1Desc": "ስለ ጠፋው ወይም ስለተገኘው ዕቃ ከፎቶ እና ከግቢው ትክክለኛ ስፍራ ጋር መረጃ ያስገቡ።",
+      "step2Title": "መፈለግ እና ማዛመድ",
+      "step2Desc": "ሲስተማችን አዳዲስ መረጃዎችን ከደህንነት መጋዘን ካታሎግ ጋር በብልህነት ያዛምዳል።",
+      "step3Title": "ማሳወቂያ መቀበል",
+      "step3Desc": "ተዛማጅ ዕቃ በደህንነት ቢሮ ሲመዘገብ ወይም ሲረጋገጥ ፈጣን ማሳወቂያ ይደርስዎታል።",
+      "step4Title": "መረከብ",
+      "step4Desc": "የባለቤትነት ማረጋገጫ ሂደቱን በግቢው የንብረት ቁጥጥር ቢሮ አጠናቀው ንብረትዎን ይረከቡ።"
     },
-    "howItWorksTitle": "ሲስተሙ እንዴት ይሰራል?",
-    "howItWorksSubtitle": "ለፍጥነት፣ ለደህንነት እና ለተረጋገጠ የተማሪ ማንነት የተዘጋጀ ቀላል ባለ 3-ደረጃ ዲጂታል አሰራር።",
-    "step1Title": "ዕቃ ያስመዝግቡ",
-    "step1Desc": "ዕቃ ጠፍቶብዎታል ወይስ አግኝተዋል? የዕቃውን ፎቶ፣ ምድብ እና የተገኘበትን ካምፓስ በመሙላት ይመዝግቡ።",
-    "step2Title": "ያስሱ እና ያዛምዱ",
-    "step2Desc": "በካምፓስ፣ በቀን እና በዕቃው አይነት መሰረት በቀላሉ ይፈልጉ እና ያዛምዱ።",
-    "step3Title": "ያረጋግጡ እና ይረከቡ",
-    "step3Desc": "የባለቤትነት ማረጋገጫ ያቅርቡ። የካምፓስ ደህንነት ሰራተኞች ካረጋገጡ በኋላ ንብረትዎን በደህና ይረከቡ።",
-    "cta": {
-      "title": "በንብረት ማግኛ ፖርታል ዛሬውኑ ይጀምሩ",
-      "subtitle": "የጠፉ ዕቃዎችን ሪፖርት ለማድረግ፣ የተገኙ ንብረቶችን ለመጠየቅ እና ፈጣን ማሳወቂያዎችን ለማግኘት በተቋሙ መለያዎ ይመዝገቡ።",
-      "registerBtn": "የተማሪ መለያ ይክፈቱ"
+    "categories": {
+      "tag": "በምድብ ያስሱ",
+      "title": "በግቢው ውስጥ የተለመዱ የዕቃ ምድቦች",
+      "subtitle": "የጠፉ እና የተገኙ ንብረቶችን በይፋዊ የግቢ ምድቦች ተደራጅተው ይመልከቱ።",
+      "viewAll": "ሁሉንም ምድቦች ይመልከቱ",
+      "noCategories": "እስካሁን የተመዘገቡ ምድቦች የሉም።",
+      "itemsCount": "({count} ዕቃዎች)"
     },
-    "ctaTitle": "በንብረት ማግኛ ፖርታል ዛሬውኑ ይጀምሩ",
-    "ctaSubtitle": "የጠፉ ዕቃዎችን ሪፖርት ለማድረግ፣ የተገኙ ንብረቶችን ለመጠየቅ እና ፈጣን ማሳወቂያዎችን ለማግኘት በተቋሙ መለያዎ ይመዝገቡ።",
-    "ctaBtn": "የተማሪ አካውንት ይመዝገቡ",
-    "noRecentItems": "በአሁኑ ጊዜ የተመዘገበ የቅርብ ጊዜ ዕቃ የለም።"
+    "recentItems": {
+      "tag": "በቅርብ የተገኙ ዕቃዎች",
+      "title": "በቅርብ ጊዜ የተገኙ ዕቃዎች",
+      "subtitle": "እነዚህ ዕቃዎች በቅርብ ጊዜ በግቢው ውስጥ የተገኙ ሲሆኑ በዩኒቨርሲቲው ደህንነት ቁጥጥር ስር ባለቤቶቻቸውን እየጠበቁ ይገኛሉ።",
+      "viewAll": "ሁሉንም የተገኙ ዕቃዎች ይመልከቱ",
+      "noItems": "በአሁኑ ጊዜ በቅርብ የተገኘ ንብረት አልተመዘገበም።",
+      "statusFound": "የተገኘ",
+      "campusGrounds": "የዩኒቨርሲቲው ግቢ",
+      "generalCategory": "አጠቃላይ"
+    },
+    "finalCta": {
+      "title": "ዕቃ ጠፍቶብዎታል ወይም አግኝተዋል?",
+      "subtitle": "በ{institution} ውስጥ ንብረቶች ወደ ትክክለኛ ባለቤቶቻቸው እንዲመለሱ እገዛ ያድርጉ።",
+      "reportLost": "የጠፋ ዕቃ አመልክት",
+      "reportFound": "የተገኘ ዕቃ አስመዝግብ"
+    },
+    "testimonials": {
+      "tag": "የማህበረሰብ አስተያየቶች",
+      "title": "የዩኒቨርሲቲው ማህበረሰብ ምስክርነት",
+      "subtitle": "የ{institution} ተማሪዎች፣ መምህራን እና ሰራተኞች እውነተኛ ልምዶች።",
+      "t1": {
+        "name": "አስቴር በቀለ",
+        "role": "የሶፍትዌር ምህንድስና ተማሪ፣ ኮምቦልቻ ቴክኖሎጂ ኢንስቲትዩት",
+        "quote": "የጠፋብኝን ስማርት ስልክ በዚህ ፖርታል አማካኝነት አስመልሻለሁ! በኮምቦልቻ በር ላይ የሚገኘው የደህንነት ቡድን ባለቤትነቴን በጥቂት ሰዓታት ውስጥ አረጋገጠ። እናመሰግናለን {institution}!"
+      },
+      "t2": {
+        "name": "ዳንኤል ተስፋዬ",
+        "role": "መምህር፣ ኢንፎርማቲክስ ኮሌጅ፣ ደሴ ዋና ግቢ",
+        "quote": "ለአካዳሚክ ማህበረሰባችን እጅግ ግልጽ እና አስተማማኝ አሰራር ነው። በሁሉም ግቢዎች ውስጥ ታማኝነትን፣ ተጠያቂነትን እና የተማሪዎችን እምነት ያጠናክራል።"
+      },
+      "t3": {
+        "name": "መሀሪ ወርቁ",
+        "role": "የሲቪል ምህንድስና ተማሪ፣ ደሴ ዋና ግቢ",
+        "quote": "ያገኘሁትን የላፕቶፕ ቦርሳ ከመማሪያ መጽሐፍት ጋር በዚህ ፖርታል በኩል አስመዝግቤ አስረክቤያለሁ። የርክክብ ማረጋገጫው በጣም ቀልጣፋ እና ደህንነቱ የተጠበቀ ነበር።"
+      }
+    },
+    "faq": {
+      "tag": "ተደጋግመው የሚጠየቁ ጥያቄዎች",
+      "title": "ተደጋግመው የሚጠየቁ ጥያቄዎች",
+      "subtitle": "በ{institution} የጠፉ እና የተገኙ ንብረቶችን አያያዝ እና ርክክብን የተመለከቱ ዝርዝር ምላሾች።",
+      "q1": "የጠፋብኝን ዕቃ እንዴት ማመልከት እችላለሁ?",
+      "a1": "\"የጠፋ ዕቃ አመልክት\" የሚለውን ይጫኑ፣ በ{institution} የተማሪ ወይም የሰራተኛ አካውንትዎ ይግቡ፣ ከዚያም የምድቡን፣ የቦታውን (ለምሳሌ ህንጻ፣ አዳራሽ ወይም ላብራቶሪ) እና ገላጭ ፎቶዎችን ያስገቡ። ሲስተሙ ወዲያውኑ በደህንነት ቁጥጥር ውስጥ ካሉ ዕቃዎች ጋር ያወዳድራል።",
+      "q2": "በፖርታሉ ላይ የተዘረዘረ የተገኘ ዕቃ የኔ መሆኑን እንዴት ማረጋገጥ እችላለሁ?",
+      "a2": "የተገኙ ዕቃዎችን ካታሎግ ያስሱ፣ \"ይህ ዕቃ የኔ ነው\" የሚለውን ይጫኑ እና የባለቤትነት ማረጋገጫ (እንደ ሴሪያል ቁጥር፣ መለያ ምልክት፣ ደረሰኝ ወይም የመክፈቻ ኮድ) ያቅርቡ። የንብረት ቁጥጥር ኃላፊዎች ማመልከቻዎን በ24 የሥራ ሰዓታት ውስጥ ይመረምራሉ።",
+      "q3": "በግቢው ውስጥ የጠፉ ንብረቶች ደህንነት ቢሮዎች የት ይገኛሉ?",
+      "a3": "የተገኙ ንብረቶች በደሴ ዋና ግቢ አስተዳደርና ደህንነት ቢሮ እንዲሁም በኮምቦልቻ ቴክኖሎጂ ኢንስቲትዩት (KIoT) ዋና በር ደህንነት ጽህፈት ቤት በሚገኙ ደህንነታቸው በተጠበቁ መጋዘኖች ውስጥ ይቀመጣሉ።",
+      "q4": "የተገኙ ንብረቶች በደህንነት ቢሮ ውስጥ ለምን ያህል ጊዜ ይቆያሉ?",
+      "a4": "የተገኙ ዕቃዎች በደህንነት መጋዘን ውስጥ እስከ 90 የቀን መቁጠሪያ ቀናት ድረስ ይቀመጣሉ። ለተዛማጅ ዕቃዎች ባለቤቶች የዩኒቨርሲቲው ንብረት አወጋገድ ኮሚቴ ከመወሰኑ በፊት ተከታታይ ማሳወቂያዎች ይላካሉ።",
+      "q5": "የግቢው እንግዶች ወይም ጎብኚዎች ያለ መለያ (አካውንት) ማመልከት ይችላሉ?",
+      "a5": "አዎ። ጎብኚዎች ያለ መለያ የህዝብ ዝርዝሮችን መፈለግ እና በማጣቀሻ ኮድ ንብረቶችን መከታተል ይችላሉ። አዲስ ማመልከቻ ለማስገባት ግን የደህንነት ማረጋገጫውን አስተማማኝ ለማድረግ መሰረታዊ ምዝገባ ያስፈልጋል።",
+      "q6": "የግል እና የእውቂያ መረጃዬ በሚስጥር ይጠበቃል?",
+      "a6": "አዎ። የእርስዎ ስልክ ቁጥርና የግል መረጃ በይፋ ለህዝብ አይታይም። በይፋዊ የርክክብ ሂደት ወቅት የተፈቀደላቸው የ{institution} የደህንነት ኃላፊዎች ብቻ የተረጋገጠውን መረጃ ማየት ይችላሉ።"
+    },
+    "noRecentItems": "ምንም የቅርብ ጊዜ እቃዎች አልተገኙም",
+    "trust": {
+      "tag": "የተቋማዊ ታማኝነት ዋስትና",
+      "title": "የካምፓስ ንብረት ደህንነት እና መልሶ ማግኛ ደረጃዎች",
+      "subtitle": "በሁሉም የወሎ ዩኒቨርሲቲ ግቢዎች የተረጋገጠ የጥበቃ፣ ፍትሃዊ ይገባኛል እና ደህንነቱ የተጠበቀ የርክክብ አሰራር የሚመራባቸው ይፋዊ መርሆዎች።",
+      "p1": {
+        "title": "የተረጋገጠ የጥበቃ ሰንሰለት",
+        "desc": "እያንዳንዱ የተገኘ እቃ በግቢው የደህንነት ግምጃ ቤት፣ በኃላፊዎች ፊርማ እና በማይለወጥ የክስተት መዝገብ ይመዘገባል።"
+      },
+      "p2": {
+        "title": "ዲጂታል ባለሁለት-ደረጃ ማረጋገጫ",
+        "desc": "እቃዎችን መረከብ ነጠላ-ጥቅም ምስጢራዊ ኮዶችን ወይም የተረጋገጠ የኃላፊ ፒን እና ዲጂታል ደረሰኝ ይጠይቃል።"
+      },
+      "p3": {
+        "title": "የማንነት እና የመረጃ ሚስጥራዊነት",
+        "desc": "ሚስጥራዊ የመለያ ቁጥሮች፣ የአግኚው አድራሻ እና የማስረጃ ሰነዶች ከህዝባዊ ካታሎግ ተደብቀው በደህንነት ይጠበቃሉ።"
+      }
+    }
   },
   "auth": {
     "registerSuccessOtp": "መለያዎ በተሳካ ሁኔታ ተመዝግቧል! እባክዎ ኢሜይልዎን ያረጋግጡ።",
@@ -280,6 +377,16 @@ export const am = {
     "resetSuccessSignIn": "የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል! እባክዎ በአዲሱ የይለፍ ቃል ይግቡ።",
     "passwordChangedSuccess": "የይለፍ ቃል በተሳካ ሁኔታ ተቀይሯል።",
     "profileUpdatedSuccess": "መገለጫ በተሳካ ሁኔታ ተዘምኗል።",
+    "credentialsSent": "የመለያዎ መግቢያ መረጃ በተሳካ ሁኔታ ወደ ተረጋገጠው የዩኒቨርሲቲ ኢሜይልዎ ተልኳል።",
+    "credentialsSentSubtitle": "አስተማማኝ ጊዜያዊ የይለፍ ቃል ተዘጋጅቶ ወደ ኢሜይልዎ ተልኳል። እባክዎ ኢሜይልዎን በመመልከት ይግቡ።",
+    "step1Title": "የተቋሙ መረጃ",
+    "step2Title": "የኢሜይል ማረጋገጫ (OTP)",
+    "step3Title": "ማግበር ተጠናቋል",
+    "allowedDomains": "የተፈቀዱ የዩኒቨርሲቲ ኢሜይል ዶሜይኖች",
+    "mustChangePasswordTitle": "የደህንነት መስፈርት፡ ቋሚ የይለፍ ቃል ያዘጋጁ",
+    "mustChangePasswordSubtitle": "በጊዜያዊ የይለፍ ቃል ገብተዋል። ለመለያዎ ደህንነት ሲባል ከመቀጠልዎ በፊት አዲስ ቋሚ የይለፍ ቃል ማዘጋጀት አለብዎት።",
+    "tempPassword": "ጊዜያዊ የይለፍ ቃል",
+    "goToLogin": "ወደ መግቢያ ገጽ ይቀጥሉ",
     "features": {
       "matchAlertsTitle": "የቅጽበት ተዛማጅነት ማሳወቂያዎች",
       "matchAlertsDesc": "የጠፉ ዕቃዎች ከተገኙ ንብረቶች ጋር ሲመሳሰሉ የሚላክ አውቶማቲክ ማሳወቂያ።",
@@ -362,7 +469,7 @@ export const am = {
     "email": "የዩኒቨርሲቲ ኢሜይል",
     "emailPlaceholder": "name@wu.edu.et",
     "phone": "ስልክ ቁጥር",
-    "phonePlaceholder": "+251 91 234 5678",
+    "phonePlaceholder": "ለምሳሌ፡ +251 911 234 567",
     "password": "የይለፍ ቃል",
     "passwordPlaceholder": "••••••••",
     "passwordConfirm": "የይለፍ ቃል ማረጋገጫ",
@@ -383,7 +490,19 @@ export const am = {
     "otpCodePlaceholder": "ባለ 6-አሃዝ ኮድ",
     "invalidCredentials": "የተሳሳተ የኢሜይል ወይም የይለፍ ቃል አስገብተዋል።",
     "registrationSuccess": "ምዝገባዎ በተሳካ ሁኔታ ተጠናቋል። እባክዎ ኢሜይልዎን ያረጋግጡ።",
-    "passwordResetSuccess": "የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል። አሁን መግባት ይችላሉ።"
+    "passwordResetSuccess": "የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል። አሁን መግባት ይችላሉ።",
+    "domainRequirementNote": "ማስታወሻ፡ ምዝገባው ይፋዊ የተቋም ኢሜይል ዶሜይን ይጠይቃል።",
+    "academicUnitOptional": "የትምህርት ክፍል / ኮሌጅ (አማራጭ)",
+    "selectAcademicUnit": "ኮሌጅ ወይም የትምህርት ክፍል ይምረጡ...",
+    "changeEmail": "ኢሜይል ቀይር",
+    "securityNotice": "የደህንነት ማሳሰቢያ፡",
+    "securityNoticeDesc": "በጊዜያዊ የይለፍ ቃልዎ ለመጀመሪያ ጊዜ ሲገቡ ወደ ሲስተሙ አገልግሎት ከመግባትዎ በፊት አዲስ ቋሚ የይለፍ ቃል እንዲያዘጋጁ ይጠየቃሉ።",
+    "accountActivationCheck": "የመለያ ማረጋገጫ የደህንነት ፍተሻ",
+    "tempPasswordPlaceholder": "ከኢሜይል የተላከውን ጊዜያዊ የይለፍ ቃል ያስገቡ",
+    "newPasswordPlaceholder": "ቢያንስ 8 ፊደላት ከትላልቅ፣ ትናንሽ፣ ቁጥሮች እና ምልክቶች ጋር",
+    "repeatPasswordPlaceholder": "አዲሱን የይለፍ ቃል በድጋሚ ያስገቡ",
+    "idPlaceholder": "ለምሳሌ፡ UGR/12345/14",
+    "otpPlaceholder": "ለምሳሌ፡ 123456"
   },
   "browse": {
     "title": "የጠፉና የተገኙ ንብረቶችን ያስሱ",
@@ -438,7 +557,9 @@ export const am = {
     "form": {
       "title": "የዕቃው መጠሪያ / ርዕስ",
       "incidentDate": "የተከሰተበት ቀን",
-      "description": "ዝርዝር መግለጫ"
+      "description": "ዝርዝር መግለጫ",
+      "locationDetail": "የቦታው ዝርዝር መግለጫ",
+      "titlePlaceholderFound": "ለምሳሌ ሳይንሳዊ ካልኩሌተር Casio fx-991EX"
     },
     "report": {
       "lostTitle": "የጠፋ ዕቃ አስመዝግብ",
@@ -463,7 +584,14 @@ export const am = {
     "isHighValue": "ከፍተኛ ዋጋ ያለው ወይም ሚስጥራዊ ንብረት",
     "primaryPhoto": "ዋና ፎቶ",
     "statusHistory": "የሁኔታ ታሪክ",
-    "timeline": "የዕቃው የጉዞ ሂደት",
+    "timeline": {
+      "statusHistoryAudit": "የሁኔታ ታሪክ እና ኦዲት",
+      "noTransitions": "እስካሁን የተመዘገበ የሁኔታ ለውጥ የለም።",
+      "from": "ከ",
+      "reason": "ምክንያት",
+      "notes": "ማስታወሻዎች",
+      "by": "በ፡ {name}"
+    },
     "reporter": "ሪፖርት ያደረገው ሰው",
     "custodyStatus": "የማከማቻ ሁኔታ",
     "heldAt": "በአሁኑ ሰዓት የሚገኝበት ክፍል",
@@ -522,7 +650,35 @@ export const am = {
     "withdrawnSuccess": "የዕቃው ሪፖርት በተሳካ ሁኔታ ተነስቷል።",
     "editTitle": "የተዘገበውን ዕቃ አርትዕ",
     "titleLabel": "የዕቃው መጠሪያ / መግለጫ",
-    "descriptionLabel": "ዝርዝር መግለጫ"
+    "descriptionLabel": "ዝርዝር መግለጫ",
+    "searchPlaceholder": "ሪፖርት ያደረጓቸውን እቃዎች በርዕስ፣ ምድብ፣ ግቢ ይፈልጉ...",
+    "iFoundThis": "ይህንን ዕቃ አግኝቼዋለሁ",
+    "thisIsMine": "ይህ ዕቃ የእኔ ነው",
+    "crossLinkFoundBanner": "ከጠፋው ዕቃ ሪፖርት #{ref} በቅድሚያ የተሞላ — ያገኙትን ዕቃ ትክክለኛ መረጃ ያዘምኑ",
+    "crossLinkLostBanner": "ከተገኘው ዕቃ #{ref} በቅድሚያ የተሞላ — የጠፋብዎትን ዕቃ ዝርዝር ይግለጹ",
+    "crossLinkExistingWarning": "ቀደም ሲል በዚህ ምድብ ውስጥ የተመዘገበ ንቁ የ{type} ሪፖርት አለዎት (መለያ ቁጥር: #{ref})። ቢሆንም መቀጠል ይፈልጋሉ?",
+    "crossLinkExistingTitle": "ቀደም ሲል የተመዘገበ ሪፖርት ተገኝቷል",
+    "crossLinkOwnItemError": "በራስዎ የተመዘገበ ዕቃ ላይ ይህንን እርምጃ መውሰድ አይችሉም።",
+    "crossLinkTip": "ጠቃሚ ምክር፡ በመጀመሪያ የጠፋ ዕቃ ሪፖርት ማቅረብ የባለቤትነት ጥያቄዎን ያጠናክራል",
+    "crossLinkMatchTip": "ተመሳሳይ የጠፋ ዕቃ ሪፖርት አስመዝግበዋል (መለያ ቁጥር: #{ref}) — ይህ የባለቤትነት ጥያቄዎን ያጠናክራል!",
+    "crossLinkContinueBtn": "ቢሆንም ቀጥል",
+    "crossLinkCancelBtn": "ሰርዝ",
+    "brand": "የዕቃው ብራንድ / ሞዴል",
+    "color": "ቀለም",
+    "serialNumber": "የሴሪያል / መለያ ቁጥር",
+    "claimedNotice": "ይህ ዕቃ በባለቤትነት የተጠየቀ ወይም ከካምፓስ ደህንነት ጋር በማረጋገጥ ሂደት ላይ ያለ ነው።",
+    "returnedNotice": "ይህ ንብረት ለትክክለኛው ባለቤት በይፋ ተላልፏል።",
+    "reportLostMatchBtn": "ተዛማጅ የጠፋብኝን ዕቃ ሪፖርት አድርግ",
+    "physicalVerifiedCustody": "ዕቃው በዩኒቨርሲቲው ደህንነት ጥበቃ ቁጥጥር ስር መሆኑ ተረጋግጧል",
+    "trackPlaceholder": "ለምሳሌ፡ WU-2024-001234",
+    "highValueTooltip": "ከፍተኛ ዋጋ ያለው ዕቃ (>5,000 ብር)",
+    "clickToCopyRef": "የማጣቀሻ ኮዱን ለመገልበጥ ይጫኑ",
+    "itemDetailsLifecycle": "የዕቃው ዝርዝር እና የሂደት ሁኔታ",
+    "updateOperationalStatus": "የዕቃውን የሥራ ሁኔታ አዘምን",
+    "deleteConfirmation": "ዕቃውን የማጥፋት ማረጋገጫ",
+    "targetItem": "ተፈላጊ ዕቃ",
+    "newOperationalStatus": "አዲስ የክንውን ሁኔታ",
+    "auditRemarks": "የኦዲት አስተያየት / ምክንያት"
   },
   "claims": {
     "status": {
@@ -564,7 +720,12 @@ export const am = {
       "submittedDate": "የቀረበበት ቀን",
       "verificationStatus": "የውሳኔ ሁኔታ",
       "claimDetails": "የይገባኛል ጥያቄ ዝርዝር",
-      "reviewedAt": "የተገመገመበት ቀን"
+      "reviewedAt": "የተገመገመበት ቀን",
+      "totalClaims": "አጠቃላይ የባለቤትነት ጥያቄዎች",
+      "pendingAdjudication": "በውሳኔ ሂደት ላይ ያሉ",
+      "approvedForHandover": "ለርክክብ የፀደቁ",
+      "rejectedInvalid": "ውድቅ የተደረጉ",
+      "searchPlaceholder": "በጥያቄ መለያ፣ በእቃ ስም ወይም በጠያቂው ይፈልጉ..."
     },
     "actions": {
       "review": "ጥያቄውን መርምር",
@@ -593,7 +754,17 @@ export const am = {
     "handoverRecord": "የአካል ርክክብ መዝገብ",
     "conditionOnReturn": "ሲረከብ የነበረበት ሁኔታ",
     "receiptConfirmed": "ርክክቡ በባለቤቱ ተረጋግጧል",
-    "receiptPending": "የባለቤቱን ማረጋገጫ በመጠባበቅ ላይ"
+    "receiptPending": "የባለቤቱን ማረጋገጫ በመጠባበቅ ላይ",
+    "myClaims": {
+      "subtitle": "ያቀረቧቸውን የባለቤትነት ይገባኛል ጥያቄዎች ሁኔታ እና የማረጋገጫ ዝርዝሮች ይከታተሉ።"
+    },
+    "reviewNoteLabel": "የሰራተኛ ግምገማ ማስታወሻ፦",
+    "searchPlaceholder": "በይገባኛል መለያ፣ የዕቃ ስም ወይም መለያ ቁጥር ይፈልጉ...",
+    "proofAndExplanation": "ማስረጃ እና ማብራሪያ፦",
+    "evidenceAttached": "{count} የማስረጃ ፋይል(ሎች) ተያይዟል",
+    "noEvidenceAttached": "ምንም የተያያዘ ማስረጃ የለም",
+    "numericIdPlaceholder": "ለምሳሌ፡ 1",
+    "adjudicationStatus": "የፍርድ ውሳኔ ሁኔታ"
   },
   "returns": {
     "processedSuccess": "የዕቃው ርክክብ በተሳካ ሁኔታ ተጠናቋል።",
@@ -686,7 +857,28 @@ export const am = {
     "registrarOffice": "የሬጅስትራር ቢሮ ማከማቻ",
     "ictHelpdesk": "የኢንፎርሜሽን ቴክኖሎጂ ቢሮ",
     "libraryCirculation": "የዋና ቤተ-መጽሐፍት ማስረከቢያ",
-    "otherLocation": "በተፈቀደለት ሰራተኛ እጅ ያለ / ሌላ"
+    "otherLocation": "በተፈቀደለት ሰራተኛ እጅ ያለ / ሌላ",
+    "searchPlaceholder": "በእቃ ስም፣ በካዝና፣ በኃላፊ ወይም በማስታወሻ ይፈልጉ...",
+    "selectLocationPlaceholder": "የማስቀመጫ ቦታ ይምረጡ",
+    "loadingLocations": "ቦታዎችን በመጫን ላይ...",
+    "movementEvents": "የይዞታ ዝውውር ክንውኖች",
+    "intakeActiveStorage": "የገቡ እና በማቆያ ያሉ እቃዎች",
+    "activeVaultFacilities": "ንቁ የካዝና ማዕከላት",
+    "authorizedCustodians": "የተፈቀደላቸው ኃላፊዎች",
+    "refreshedSuccess": "የይዞታ ክንውኖች በተሳካ ሁኔታ ታድሰዋል",
+    "refreshFailed": "የይዞታ ክንውኖችን ማደስ አልተቻለም",
+    "noRecordsExport": "የሚላክ የይዞታ መዝገብ የለም",
+    "eventTypes": {
+      "all": "ሁሉም የኩነት ዓይነቶች",
+      "deposited": "ገቢ የተደረገ",
+      "transferred": "የተዘዋወረ",
+      "released": "ወጪ የተደረገ",
+      "inspected": "የተፈተሸ",
+      "inventoried": "ቆጠራ የተደረገ",
+      "returned": "ለባለቤቱ የተመለሰ",
+      "withdrawn": "የተነሳ",
+      "disposed": "የተወገደ"
+    }
   },
   "admin": {
     "campuses": {
@@ -713,7 +905,12 @@ export const am = {
       "deactivateBtn": "አቦዝን",
       "activateBtn": "አንቃ",
       "noCampuses": "ምንም ካምፓስ አልተገኘም። አዲስ ካምፓስ ከላይ ይመዝግቡ።",
-      "editCampus": "ካምፓስ አርትዕ"
+      "editCampus": "ካምፓስ አርትዕ",
+      "all": "ሁሉም ግቢዎች",
+      "totalCampuses": "ጠቅላላ ካምፓሶች",
+      "activeCampuses": "ንቁ የማስተማሪያ ግቢዎች",
+      "branchCampuses": "ቅርንጫፍ ካምፓሶች",
+      "regionalLocations": "ቀጣናዊ አካባቢዎች"
     },
     "units": {
       "title": "የተቋሙ መዋቅራዊ ክፍሎች",
@@ -756,9 +953,22 @@ export const am = {
       "noTypes": "ምንም የተመዘገቡ የክፍል ዓይነቶች አልተገኙም።",
       "isRoot": "ዋና ደረጃ",
       "level": "ደረጃ",
-      "actions": "እርምጃዎች"
+      "actions": "እርምጃዎች",
+      "unitType": "የክፍል አይነት",
+      "parentUnit": "ዋና ክፍል (አማራጭ)",
+      "noneRootLevel": "የለም (ዋና ደረጃ)",
+      "unitNameEn": "የክፍል ስም (በእንግሊዝኛ)",
+      "unitNameAm": "የክፍል ስም (በአማርኛ)",
+      "shortCode": "አጭር ኮድ",
+      "activeUnitLabel": "ንቁ ክፍል (በምዝገባ እና ፎርሞች ላይ የሚታይ)",
+      "createUnit": "ክፍል ፍጠር",
+      "typeCode": "የአይነት ኮድ",
+      "typeNameEn": "የአይነት ስም (በእንግሊዝኛ)",
+      "typeNameAm": "የአይነት ስም (በአማርኛ)",
+      "isRootLabel": "ዋና ደረጃ ነው (በቀጥታ በካምፓስ ስር የሚገኝ)",
+      "activeTypeLabel": "ንቁ አይነት",
+      "createType": "አይነት ፍጠር"
     },
-
     "departments": {
       "title": "የክፍሎችና ኮሌጆች አስተዳደር",
       "subtitle": "የአካዳሚክ ኮሌጆችን፣ ትምህርት ቤቶችን፣ ኢንስቲትዩቶችንና የስራ ክፍሎችን ያስተዳድሩ።",
@@ -831,7 +1041,13 @@ export const am = {
       "activateBtn": "አግብር",
       "noLocations": "ምንም የማከማቻ ቦታዎች አልተገኙም",
       "addLocation": "አዲስ የማከማቻ ቦታ አክል",
-      "editLocation": "የማከማቻ ቦታ አርትዕ"
+      "editLocation": "የማከማቻ ቦታ አርትዕ",
+      "slots": "ቦታዎች",
+      "itemsCount": "ዕቃዎች",
+      "totalVaults": "ጠቅላላ የማከማቻ ክፍሎች",
+      "activeVaults": "ንቁ የማከማቻ ክፍሎች",
+      "totalCapacity": "አጠቃላይ የማከማቻ አቅም",
+      "inCustody": "በጥበቃ ላይ ያሉ ዕቃዎች"
     },
     "categories": {
       "requiredError": "የምድብ ስም ግዴታ ነው።",
@@ -841,7 +1057,7 @@ export const am = {
       "deleteTitle": "ምድብ ሰርዝ",
       "deleteConfirm": "ይህን ምድብ ለመሰረዝ እርግጠኛ ነዎት?",
       "placeholders": {
-        "name": "ለምሳሌ፡ ኤሌክትሮኒክስ፣ ሰነዶች፣ ቁልፎች",
+        "name": "ለምሳሌ፡ ላፕቶፕ፣ ስማርትፎን፣ ቦርሳ፣ መጽሐፍ",
         "icon": "laptop, file-text, key"
       },
       "title": "የዕቃ ምድቦች",
@@ -852,7 +1068,11 @@ export const am = {
       "icon": "አይኮን",
       "createBtn": "ምድብ መዝግብ",
       "noCategories": "ምንም የተመዘገበ ምድብ የለም።",
-      "editCategory": "ምድብ አርትዕ"
+      "editCategory": "ምድብ አርትዕ",
+      "totalCategories": "ጠቅላላ ምድቦች",
+      "activeTaxonomies": "ንቁ የምድብ አይነቶች",
+      "documentTypes": "የሰነድ ዓይነቶች",
+      "valuablesGear": "ውድ ዕቃዎችና መሣሪያዎች"
     },
     "locations": {
       "requiredError": "የቦታው ስም፣ ኮድ እና ግቢ ግዴታ ናቸው።",
@@ -883,7 +1103,11 @@ export const am = {
       "deactivatedSuccess": "ቦታው በተሳካ ሁኔታ ታግዷል።",
       "activatedSuccess": "ቦታው በተሳካ ሁኔታ ነቅቷል።",
       "code": "የቦታው መለያ ኮድ",
-      "editLocation": "ቦታ አርትዕ"
+      "editLocation": "ቦታ አርትዕ",
+      "totalLocations": "ጠቅላላ የተለዩ ቦታዎች",
+      "activeSpots": "ንቁ መገኛዎች",
+      "distinctBuildings": "የተለያዩ ህንፃዎች",
+      "campusesCovered": "የተሸፈኑ ካምፓሶች"
     },
     "reports": {
       "loadError": "የተዘጋጁ ሪፖርቶችን ዝርዝር መጫን አልተቻለም።",
@@ -902,7 +1126,17 @@ export const am = {
       "downloadedSuccess": "ሪፖርቱ በተሳካ ሁኔታ ወርዷል።",
       "dateFrom": "ከቀን",
       "dateTo": "እስከ ቀን",
-      "generate": "ሪፖርት አውጣ"
+      "generate": "ሪፖርት አውጣ",
+      "searchPlaceholder": "ሪፖርቶችን በመለያ ቁጥር፣ ዓይነት ወይም ተጠቃሚ ይፈልጉ...",
+      "allDocuments": "ሁሉም የተዘጋጁ የኤክስፖርት ሰነዶች",
+      "queuedExports": "በሂደት ላይ ያሉ የኤክስፖርት ስራዎች",
+      "verifiedRatio": "የተረጋገጠ የርክክብ ምጣኔ",
+      "totalReports": "አጠቃላይ ሪፖርቶች",
+      "readyToDownload": "ለማውረድ ዝግጁ",
+      "readyDescription": "ተዘጋጅቶ ለኤክስፖርት ዝግጁ የሆነ",
+      "processingQueue": "በሂደት ላይ ያለ ወረፋ",
+      "recoveryRate": "የመልሶ ማግኛ ምጣኔ",
+      "format": "የፋይል ቅርጸት"
     },
     "auditLogs": {
       "title": "የደህንነትና የኦዲት መዝገብ",
@@ -933,11 +1167,13 @@ export const am = {
       "payloadTitle": "የኦዲት ዝርዝር መረጃ",
       "export": "መዝገቡን በ-CSV አውርድ",
       "noLogsToExport": "ወደ ፋይል የሚወጣ የኦዲት መዝገብ የለም።",
-      "exportSuccess": "የኦዲት መዝገቡ በተሳካ ሁኔታ ተልኳል።"
+      "exportSuccess": "የኦዲት መዝገቡ በተሳካ ሁኔታ ተልኳል።",
+      "eventDetails": "የኦዲት ክስተት ዝርዝሮች"
     },
     "settings": {
       "updatedSuccess": "የተቋሙ ስርዓት ቅንብሮች በተሳካ ሁኔታ ተሻሽለዋል።",
-      "subtitle": "የስርዓቱን አጠቃላይ መመሪያዎች፣ የማቆያ ጊዜ እና ቅንብሮች ያስተካክሉ"
+      "subtitle": "የስርዓቱን አጠቃላይ መመሪያዎች፣ የማቆያ ጊዜ እና ቅንብሮች ያስተካክሉ",
+      "uploadNewLogo": "አዲስ አርማ ይጫኑ"
     },
     "users": {
       "invalidId": "ትክክለኛ ያልሆነ የተጠቃሚ መለያ",
@@ -975,11 +1211,47 @@ export const am = {
       "edit": "መረጃ አሻሽል",
       "assignRoles": "ሚና መድብ",
       "directPermissions": "ቀጥተኛ ፈቃዶች",
-      "sendPasswordReset": "የይለፍ ቃል መቀየሪያ ላክ"
+      "sendPasswordReset": "የይለፍ ቃል መቀየሪያ ላክ",
+      "searchPermissions": "ፈቃዶችን በስም ወይም በአቅም ይፈልጉ...",
+      "roleGrantedTooltip": "በተመደበው ሚና በኩል በራስ-ሰር የተሰጠ",
+      "directGrantedTooltip": "ለዚህ ተጠቃሚ በተለይ የተሰጠ",
+      "createTitle": "አዲስ የተጠቃሚ መለያ ፍጠር",
+      "editTitle": "የተጠቃሚውን ዝርዝር አርትዕ",
+      "assignRoleTitle": "የስርዓት ሚና መድብ",
+      "placeholders": {
+        "fullName": "ለምሳሌ፡ አበበ ቢቂላ",
+        "universityId": "ለምሳሌ፡ UGR/1234/14",
+        "name": "ለምሳሌ፡ አበበ ቢቂላ",
+        "studentStaffId": "ለምሳሌ፡ UGR/1234/14",
+        "email": "ለምሳሌ፡ abebe@wollo.edu.et",
+        "password": "ቢያንስ 8 ፊደላት/ቁጥሮች",
+        "phone": "ለምሳሌ፡ +251 91 234 5678",
+        "searchPermissions": "ፈቃዶችን ይፈልጉ..."
+      },
+      "createUserTitle": "አዲስ የተጠቃሚ መለያ ፍጠር",
+      "editUserTitle": "የተጠቃሚ ዝርዝሮችን አርትዕ",
+      "perUserOverrides": "የግል ተጠቃሚ ፈቃዶች ማስተካከያ",
+      "grantAll": "ሁሉንም ስጥ",
+      "resetToRoleDefaults": "ወደ ሚና ነባሪ መልስ",
+      "saveUserPermissions": "የተጠቃሚ ፈቃዶችን መዝግብ",
+      "directUserGrant": "ቀጥታ የተጠቃሚ ፈቃድ",
+      "fullName": "ሙሉ ስም",
+      "universityId": "የዩኒቨርሲቲ / የተማሪ መለያ",
+      "email": "የኢሜይል አድራሻ",
+      "temporaryPassword": "ጊዜያዊ የይለፍ ቃል",
+      "phone": "ስልክ ቁጥር",
+      "organizationalUnit": "ተቋማዊ / የትምህርት ክፍል",
+      "activeAccountImmediate": "ንቁ መለያ (ተጠቃሚው ወዲያውኑ መግባት ይችላል)",
+      "createBtn": "ተጠቃሚ ፍጠር",
+      "activeAccount": "ንቁ መለያ",
+      "assignRoleFor": "ሚና እና የመዳረሻ ፈቃዶችን ይመድቡ ለ",
+      "updateRole": "ሚና አዘምን",
+      "user": "ተጠቃሚ",
+      "baseRole": "መሰረታዊ ሚና",
+      "permissionsInheritedDesc": "በ\"ሚና\" ምልክት የተደረገባቸው ፈቃዶች በራስ-ሰር የሚወረሱ ናቸው። ለዚህ ተጠቃሚ ልዩ ቀጥተኛ ፈቃድ ለመስጠት ሳጥኖቹን ይምረጡ።",
+      "directGrants": "ቀጥታ የተሰጡ"
     },
     "dashboardTitle": "የአስተዳዳሪ ማጠቃለያ",
-
-
     "dashboardSubtitle": "የፖርታሉ ስራዎች፣ የንብረት መልሶ ማግኛ ምጣኔ እና የደህንነት ቁጥጥር መረጃዎች።",
     "dashboard": {
       "systemAdmin": "የሲስተም አስተዳደር",
@@ -1029,7 +1301,17 @@ export const am = {
       "activityFeedTitle": "የቅርብ ጊዜ የስራ ክንውኖች",
       "activityFeedSubtitle": "የቅርብ ጊዜ የተመዘገቡ ዕቃዎች፣ የቀረቡ ጥያቄዎችና የተፈጸሙ ርክክቦች",
       "noActivity": "ምንም የቅርብ ጊዜ እንቅስቃሴ አልተመዘገበም።",
-      "subtitle": "የስርዓት አስተዳደር መቆጣጠሪያ፣ ውቅረት እና ክትትል"
+      "subtitle": "የስርዓት አስተዳደር መቆጣጠሪያ፣ ውቅረት እና ክትትል",
+      "charts": {
+        "reportedLost": "የጠፋ ሪፖርት የተደረገ",
+        "reportedFound": "የተገኘ ሪፖርት የተደረገ",
+        "returnedToOwner": "ለባለቤቱ የተመለሰ",
+        "lostActive": "የጠፋ (ክፍት)",
+        "foundUnclaimed": "የተገኘ (ያልተጠየቀ)",
+        "claimedVerifying": "ተጠይቆ በማረጋገጥ ላይ",
+        "returnedOwner": "ለባለቤቱ የተመለሰ",
+        "refreshStatistics": "ስታቲስቲክስ አድስ"
+      }
     },
     "userManagementTitle": "የተጠቃሚዎች አስተዳደር እና መለያዎች",
     "userManagementSubtitle": "የተጠቃሚዎችን መዳረሻ፣ የስራ ሚና እና የአካውንት ሁኔታ ያስተዳድሩ።",
@@ -1113,7 +1395,8 @@ export const am = {
         "startsAt": "የሚጀምርበት ቀን (አማራጭ)",
         "endsAt": "የሚያበቃበት ቀን (አማራጭ)",
         "publishImmediately": "ወዲያውኑ በስርዓቱ ላይ ይሰራጭ"
-      }
+      },
+      "bulkDeleteConfirm": "የተመረጡትን {count} ማስታወቂያዎች በእርግጥ መሰረዝ ይፈልጋሉ?"
     },
     "auditLogsTitle": "የደህንነት እንቅስቃሴ መዝገብ",
     "auditLogsSubtitle": "የተጠቃሚዎች እንቅስቃሴዎች፣ የአስተዳዳሪ እርምጃዎች እና የንብረት ርክክቦች የማይለወጥ ይፋዊ መዝገብ።",
@@ -1268,10 +1551,58 @@ export const am = {
       "staff": "የደህንነት ሰራተኛ",
       "admin": "የስርዓት አስተዳዳሪ",
       "super_admin": "ዋና የስርዓት አስተዳዳሪ",
-      "statusUpdated": "የሚናው ሁኔታ በተሳካ ሁኔታ ተሻሽሏል።"
+      "statusUpdated": "የሚናው ሁኔታ በተሳካ ሁኔታ ተሻሽሏል።",
+      "allStatuses": "ሁሉም ሁኔታዎች",
+      "allTypes": "ሁሉም አይነቶች"
+    },
+    "universityDomains": {
+      "title": "የዩኒቨርሲቲ ዶሜይኖች",
+      "subtitle": "ለተማሪ እና ሠራተኞች ምዝገባ የተፈቀዱ ይፋዊ የዩኒቨርሲቲ ኢሜይል ዶሜይኖችን ያስተዳድሩ።",
+      "addDomain": "ዶሜይን አክል",
+      "editDomain": "የዩኒቨርሲቲ ዶሜይን አሻሽል",
+      "createDomain": "አዲስ የዩኒቨርሲቲ ዶሜይን አክል",
+      "domain": "ዶሜይን",
+      "domainLabel": "ዶሜይን (ለምሳሌ፡ wu.edu.et)",
+      "institutionName": "የተቋሙ ስም",
+      "campus": "ካምፓስ",
+      "allCampuses": "ሁሉም ካምፓሶች (ተቋማዊ)",
+      "associatedCampus": "ተዛማጅ ካምፓስ (አማራጭ)",
+      "description": "መግለጫ",
+      "descriptionOptional": "መግለጫ (አማራጭ)",
+      "activeForRegistration": "ለምዝገባ ክፍት የሆነ",
+      "searchPlaceholder": "በዶሜይን ወይም በተቋም ስም ይፈልጉ...",
+      "noDomains": "ምንም የተመዘገበ የዩኒቨርሲቲ ዶሜይን የለም። ለመጨመር \"ዶሜይን አክል\" የሚለውን ይጫኑ።",
+      "registeredSuccess": "የዩኒቨርሲቲ ዶሜይን በተሳካ ሁኔታ ተመዝግቧል።",
+      "updatedSuccess": "የዩኒቨርሲቲ ዶሜይን በተሳካ ሁኔታ ተሻሽሏል።",
+      "removedSuccess": "የዩኒቨርሲቲ ዶሜይን ተሰርዟል።",
+      "toggleSuccess": "ዶሜይን {domain} አሁን {status} ሆኗል።",
+      "deleteConfirm": "ዶሜይን @{domain}ን መሰረዝ እንደሚፈልጉ እርግጠኛ ነዎት?",
+      "requiredFields": "እባክዎ ዶሜይን እና የተቋሙን ስም ያስገቡ።",
+      "placeholders": {
+        "domain": "wu.edu.et",
+        "institution": "ለምሳሌ፡ ወሎ ዩኒቨርሲቲ",
+        "description": "የዶሜይኑ አጭር መግለጫ..."
+      }
+    },
+    "items": {
+      "transitionReasonPlaceholder": "የዚህን ሁኔታ ለውጥ ምክንያት ያስገቡ (ለምሳሌ፡ በዋናው ማከማቻ ለባለቤቱ ተላልፏል)..."
+    },
+    "orgUnits": {
+      "placeholders": {
+        "name": "ለምሳሌ፡ የኮምፒውተር ሳይንስ ትምህርት ክፍል",
+        "code": "ለምሳሌ፡ CS ወይም FOE",
+        "nameAm": "ለምሳሌ፡ የኮምፒውተር ሳይንስ ትምህርት ክፍል",
+        "description": "ስለ ተቋማዊ ክፍሉ አጭር መግለጫ...",
+        "levelCode": "ለምሳሌ፡ ኮሌጅ፣ ዲፓርትመንት፣ ትምህርት ቤት",
+        "levelName": "ለምሳሌ፡ ኮሌጅ ወይም ትምህርት ክፍል",
+        "levelNameAm": "ለምሳሌ፡ ኮሌጅ ወይም ትምህርት ክፍል",
+        "levelDescription": "ስለዚህ የክፍል ደረጃ መግለጫ...",
+        "amharicName": "ለምሳሌ፡ የኮምፒውተር ሳይንስ ትምህርት ክፍል",
+        "levelType": "ለምሳሌ፡ ኮሌጅ፣ ትምህርት ክፍል",
+        "levelAmharicName": "ለምሳሌ፡ ኮሌጅ ወይም ትምህርት ክፍል"
+      }
     }
   },
-
   "staffDashboard": {
     "operations": "የሰራተኞችና የደህንነት ስራዎች",
     "operationsSubtitle": "የተማሪዎችን የባለቤትነት ጥያቄዎች ይመርምሩ፣ የካዝና ማከማቻዎችን ያስተዳድሩ እና ይፋዊ ርክክቦችን ይመዝግቡ።",
@@ -1321,7 +1652,10 @@ export const am = {
     "noMatchesDesc": "ከተመረጠው ማጣሪያ ጋር የሚዛመድ ምንም የተዛምዶ ጥቆማ የለም።",
     "lostUnavailable": "የጠፋው ዕቃ መረጃ አልተገኘም",
     "foundUnavailable": "የተገኘው ዕቃ መረጃ አልተገኘም",
-    "markedSuccess": "የንጽጽር ግምገማው በተሳካ ሁኔታ ተመዝግቧል።"
+    "markedSuccess": "የንጽጽር ግምገማው በተሳካ ሁኔታ ተመዝግቧል።",
+    "textMatch": "የጽሑፍ ተዛምዶ",
+    "reference": "መለያ",
+    "points": "ነጥብ"
   },
   "reportWizard": {
     "step1": "ደረጃ 1፡ አጠቃላይ የዕቃው መረጃ",
@@ -1351,7 +1685,40 @@ export const am = {
     "custodyHeldAt": "የሚገኝበት ማከማቻ",
     "attachedPhotos": "የተያያዙ ፎቶዎች",
     "photosAttached": "ፎቶዎች ተያይዘዋል",
-    "duplicateWarningDesc": "ተመሳሳይ ዕቃዎች በዚህ አካባቢ ተመዝግበዋል። እባክዎ ከማስገባትዎ በፊት ያረጋግጡ።"
+    "duplicateWarningDesc": "ተመሳሳይ ዕቃዎች በዚህ አካባቢ ተመዝግበዋል። እባክዎ ከማስገባትዎ በፊት ያረጋግጡ።",
+    "step1DescFound": "የተገኘውን ንብረት ገላጭ እና መለያ መረጃ ያስገቡ።",
+    "step1DescLost": "የጠፋብዎትን ንብረት ዋና ዋና መለያ ዝርዝሮች ያስገቡ።",
+    "step2DescFound": "የእቃውን የይዞታ ሁኔታ፣ የተገኘበትን ቦታ እና ፎቶዎችን ያክሉ።",
+    "step2DescLost": "የጠፋበትን ቦታ፣ ልዩ ምልክቶችን እና ማጣቀሻ ፎቶዎችን ያክሉ።",
+    "step3DescFound": "እባክዎ ከመመዝገብዎ በፊት ያስገቧቸውን መረጃዎች በጥንቃቄ ይገምግሙ።",
+    "step3DescLost": "እባክዎ ሪፖርቱን ከማስገባትዎ በፊት ዝርዝሩን በጥንቃቄ ይገምግሙ።",
+    "liveOverview": "የሂደቱ ቅጽበታዊ እይታ",
+    "foundSummary": "የተገኘ እቃ ሪፖርት",
+    "lostSummary": "የጠፋ እቃ ሪፖርት",
+    "untitledFound": "ያልተሰየመ የተገኘ እቃ",
+    "untitledLost": "ያልተሰየመ የጠፋ እቃ",
+    "lastKnown": "የመጨረሻ የታየበት",
+    "priority": "ቅድሚያ",
+    "highValuePriority": "ከፍተኛ ዋጋ ያለው እቃ",
+    "custodyDepotGuidelines": "የዕቃዎች ማቆያ መመሪያዎች",
+    "lostPropertyTips": "የጠፉ እቃዎች ጠቃሚ ምክሮች",
+    "foundTip1": "የተረከቡ ዕቃዎች በግቢው የደህንነት ካዝና ውስጥ ተመዝግበው አውቶማቲክ የባለቤት ፍለጋ ይካሄድባቸዋል።",
+    "foundTip2": "የግቢው የደህንነት ጽ/ቤቶች ለንብረት ርክክብ ከሰኞ እስከ አርብ ከጠዋቱ 2:00 እስከ 11:00 ክፍት ናቸው።",
+    "foundTip3": "ግልጽ ፎቶዎችን እና መለያ ቁጥሮችን ማያያዝ ትክክለኛውን ባለቤት በ 80% ፍጥነት ለማግኘት ይረዳል።",
+    "lostTip1": "ወዲያውኑ ሪፖርት ማድረግ አዲስ ከተገኙ የካምፓስ ዕቃዎች ጋር አውቶማቲክ ፍለጋ እንዲጀመር ያደርጋል።",
+    "lostTip2": "ተመሳሳይ ንብረት በደህንነት ጽ/ቤት ሲመዘገብ ወዲያውኑ ማሳወቂያ ይደርስዎታል።",
+    "lostTip3": "የባለቤትነት ማረጋገጫውን ለማፋጠን መለያ ቁጥሮችን ወይም ልዩ ምልክቶችን ይጥቀሱ።",
+    "placeholders": {
+      "foundTitle": "ለምሳሌ፡ ሳይንቲፊክ ካልኩሌተር Casio fx-991EX",
+      "lostTitle": "ለምሳሌ፡ ጥቁር የቆዳ የኪስ ቦርሳ ከተማሪ መታወቂያ ጋር",
+      "brandFound": "ለምሳሌ፡ Casio, HP, Lenovo",
+      "brandLost": "ለምሳሌ፡ Casio, Dell, Samsung",
+      "colorFound": "ለምሳሌ፡ ብርማ / ግራጫ",
+      "colorLost": "ለምሳሌ፡ ጥቁር / ብርማ",
+      "serialNumber": "ለምሳሌ፡ SN-894829",
+      "locationDetail": "ለምሳሌ፡ ከቤተ-መጽሐፍት መግቢያ አጠገብ፣ ወንበር #3",
+      "trackCode": "ለምሳሌ፡ WU-2024-001234"
+    }
   },
   "greetings": {
     "morning": "እንደምን አደሩ",
@@ -1382,7 +1749,55 @@ export const am = {
     "emailExpiryWarning": "ዕቃው የቆይታ ጊዜው ሊያበቃ 5 ቀናት ሲቀረው ኢሜይል ይላክ",
     "emailItemExpired": "የዕቃው የቆይታ ጊዜ ሲያበቃ ኢሜይል ይላክ",
     "emailSystemAnnouncements": "ለኦፊሴላዊ የዩኒቨርሲቲ ማስታወቂያዎች ኢሜይል ይላክ",
-    "preferencesSaved": "የማሳወቂያ ምርጫዎች በተሳካ ሁኔታ ተዘምነዋል።"
+    "preferencesSaved": "የማሳወቂያ ምርጫዎች በተሳካ ሁኔታ ተዘምነዋል።",
+    "liveLabel": "ቀጥታ",
+    "liveStreamActive": "የቀጥታ ዝመናዎች ንቁ ናቸው",
+    "error": "ማሳወቂያዎችን መጫን አልተቻለም።",
+    "retry": "እንደገና ሞክር",
+    "loadMore": "ተጨማሪ ጫን",
+    "types": {
+      "claim_submitted": "የባለቤትነት ጥያቄ ቀርቧል",
+      "claim_approved": "የባለቤትነት ጥያቄ ጸድቋል",
+      "claim_rejected": "የባለቤትነት ጥያቄ ውድቅ ተደርጓል",
+      "item_match": "ተቀራራቢ ዕቃ ተገኝቷል",
+      "item_returned": "ዕቃው ተላልፏል",
+      "return_confirmed": "ርክክብ ተረጋግጧል",
+      "item_reported": "ዕቃ ተመዝግቧል",
+      "item_status_changed": "ሁኔታው ተቀይሯል",
+      "item_expiring": "የቆይታ ማስጠንቀቂያ",
+      "item_expired": "የቆይታ ጊዜው አብቅቷል",
+      "report_generated": "ሪፖርት ተዘጋጅቷል",
+      "report_failed": "ሪፖርት ማመንጨት አልተሳካም",
+      "custody_transferred": "ይዞታ ተላልፏል"
+    },
+    "messages": {
+      "claim_submitted_claimant": "ለ\"{title}\" (መለያ: {reference_code}) ያቀረቡት የባለቤትነት ጥያቄ ደርሶ በግምገማ ላይ ነው።",
+      "claim_submitted_reporter": "ለዘገቡት ዕቃ \"{title}\" (መለያ: {reference_code}) አዲስ የባለቤትነት ጥያቄ ቀርቧል።",
+      "claim_submitted_staff": "ለዕቃ \"{title}\" (መለያ: {reference_code}) አዲስ የባለቤትነት ጥያቄ ቀርቧል።",
+      "claim_approved": "እንኳን ደስ አለዎት! ለ\"{title}\" (መለያ: {reference_code}) ያቀረቡት የባለቤትነት ጥያቄ ጸድቋል። እባክዎ ዕቃዎን ከጥበቃ ቢሮ ይውሰዱ።",
+      "claim_rejected": "ለ\"{title}\" (መለያ: {reference_code}) ያቀረቡት የባለቤትነት ጥያቄ ተቀባይነት አላገኘም።",
+      "claim_rejected_with_reason": "ለ\"{title}\" (መለያ: {reference_code}) ያቀረቡት የባለቤትነት ጥያቄ ተቀባይነት አላገኘም። ምክንያት: {reason}",
+      "item_match": "ለጠፋው ዕቃዎ \"{title}\" (መለያ: {reference_code}) ተቀራራቢ የሆነ ዕቃ ({score}% ተዛማጅነት) ተገኝቷል።",
+      "item_returned": "ዕቃዎ \"{title}\" (መለያ: {reference_code}) በአካል ተረክበዋል። እባክዎ መቀበልዎን ያረጋግጡ።",
+      "return_confirmed": "ተረካቢው የዕቃውን \"{title}\" (መለያ: {reference_code}) ርክክብ አረጋግጧል።",
+      "item_reported_lost": "የጠፋው ዕቃ \"{title}\" (መለያ: {reference_code}) ሪፖርት በተሳካ ሁኔታ ተመዝግቧል።",
+      "item_reported_found": "የተገኘው ዕቃ \"{title}\" (መለያ: {reference_code}) በዕቃዎች መዝገብ ላይ በተሳካ ሁኔታ ተመዝግቧል።",
+      "item_status_changed": "የዘገቡት ዕቃ \"{title}\" (መለያ: {reference_code}) ሁኔታ ወደ {new_status} ተቀይሯል።",
+      "item_expiring": "የዘገቡት ዕቃ \"{title}\" (መለያ: {reference_code}) ካልተጠየቀ በ{days_remaining} ቀናት ውስጥ ጊዜው ያበቃል።",
+      "item_expired": "የዘገቡት ዕቃ \"{title}\" (መለያ: {reference_code}) የቆይታ ጊዜው ስላበቃ ከንቁ ዝርዝር ተሰርዟል።",
+      "report_generated": "የ{report_type} ሪፖርትዎ ተዘጋጅቷል፤ አሁን ማውረድ ይችላሉ።",
+      "report_failed": "የ{report_type} ሪፖርት ማመንጨት አልተሳካም።",
+      "custody_transferred": "ለዕቃ \"{title}\" (መለያ: {reference_code}) ይዞታ ማስተላለፍ ተከናውኗል።"
+    }
+  },
+  "time": {
+    "justNow": "አሁን",
+    "minutesAgo": "ከ{count} ደቂቃ በፊት",
+    "minutesAgo_plural": "ከ{count} ደቂቃዎች በፊት",
+    "hoursAgo": "ከ{count} ሰዓት በፊት",
+    "hoursAgo_plural": "ከ{count} ሰዓታት በፊት",
+    "daysAgo": "ከ{count} ቀን በፊት",
+    "daysAgo_plural": "ከ{count} ቀናት በፊት"
   },
   "errors": {
     "401": {
@@ -1413,7 +1828,8 @@ export const am = {
     "invalidDate": "እባክዎ ትክክለኛ ቀን ይምረጡ።",
     "fileTooLarge": "የፋይሉ መጠን ከ{size}MB መብለጥ የለበትም።",
     "invalidFileType": "ትክክለኛ ያልሆነ የፋይል አይነት። የሚፈቀደው፡ JPG, PNG, WebP።",
-    "passwordComplexity": "የይለፍ ቃል ቢያንስ 8 ፊደላት እና ቁጥሮችን መያዝ አለበት"
+    "passwordComplexity": "የይለፍ ቃል ቢያንስ 8 ፊደላት እና ቁጥሮችን መያዝ አለበት",
+    "requiredFields": "እባክዎ ሁሉንም አስፈላጊ መስኮች ይሙሉ"
   },
   "profile": {
     "title": "የመገለጫ ቅንብሮች",
@@ -1433,5 +1849,58 @@ export const am = {
       "markedSuccess": "የተዛማጅነት ጥቆማው {status} ተብሎ ተመዝግቧል።",
       "markError": "የተዛማጅነት ጥቆማውን ወደ {status} መቀየር አልተቻለም።"
     }
+  },
+  "footer": {
+    "brandDescription": "በሁሉም የዩኒቨርሲቲው ግቢዎች ውስጥ ይበልጥ ደህንነቱ የተጠበቀ እና የተገናኘ ማህበረሰብ መገንባት።",
+    "quickLinks": "ፈጣን አገናኞች",
+    "resources": "ግብዓቶች",
+    "contactUs": "ያግኙን",
+    "about": "ስለ ፖርታሉ",
+    "helpSupport": "እርዳታ እና ድጋፍ",
+    "termsOfService": "የአገልግሎት ውሎች",
+    "privacyPolicy": "የግላዊነት ፖሊሲ",
+    "rightsReserved": "መብቱ በህግ የተጠበቀ ነው።",
+    "motto": "አንድ ላይ ለተሻለ ነገ",
+    "locationText": "{institution}፣ ኮምቦልቻ እና ደሴ ግቢዎች፣ አማራ ክልል፣ ኢትዮጵያ",
+    "socialFacebook": "ፌስቡክ",
+    "socialTwitter": "ትዊተር (X)",
+    "socialYoutube": "ዩቲዩብ",
+    "socialLinkedin": "ሊንክድኢን"
+  },
+  "myClaims": {
+    "totalClaimsFiled": "የቀረቡ ጥያቄዎች በሙሉ",
+    "underVerification": "በማረጋገጥ ሂደት ላይ",
+    "searchPlaceholder": "በጥያቄ መለያ፣ በዕቃ ስም ወይም በማጣቀሻ ይፈልጉ...",
+    "approvedReady": "የጸደቁ ጥያቄዎች",
+    "resolvedHandedOver": "ተረጋግጠው የተረከቡ",
+    "allStatuses": "ሁሉም የጥያቄ ሁኔታዎች"
+  },
+  "myItems": {
+    "totalReported": "አጠቃላይ የተመዘገቡ ዕቃዎች",
+    "lostInquiries": "የጠፉ ዕቃዎች ጥያቄዎች",
+    "foundRegistrations": "የተገኙ እቃዎች ምዝገባዎች",
+    "successfullyReturned": "በተሳካ ሁኔታ የተመለሱ",
+    "searchPlaceholder": "የተመዘገቡ እቃዎችን በርዕስ፣ በምድብ ወይም በካምፓስ ይፈልጉ...",
+    "foundTurnedIn": "የተገኙ እና የገቡ ዕቃዎች",
+    "reunitedReturned": "የተገናኙ እና የተመለሱ",
+    "allReports": "ሁሉም የዕቃ ሪፖርቶች",
+    "lostItems": "የጠፉ ዕቃዎች",
+    "foundItems": "የተገኙ ዕቃዎች"
+  },
+  "charts": {
+    "loadingBar": "የባር ቻርት በመጫን ላይ...",
+    "loadingDonut": "የዶናት ቻርት በመጫን ላይ...",
+    "loadingTrend": "የትሬንድ ቻርት በመጫን ላይ...",
+    "loadingSparkline": "የስፓርክላይን ቻርት በመጫን ላይ...",
+    "noDistributionData": "ምንም የስርጭት መረጃ የለም",
+    "noHistoricalRecords": "ምንም የታሪክ መዝገብ የለም",
+    "retryAnalytics": "ትንታኔውን በድጋሚ ሞክር",
+    "failedSparkline": "ስፓርክላይን መጫን አልተቻለም",
+    "noSparklineData": "ምንም የስፓርክላይን መረጃ የለም"
+  },
+  "landing": {
+    "heroSection": "የመግቢያ ክፍል",
+    "platformStats": "የስርዓቱ ስታቲስቲክስ"
   }
 };
+export default am;

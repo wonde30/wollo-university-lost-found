@@ -49,8 +49,6 @@ export const useAuthStore = defineStore('auth', () => {
   const canAccessStaffPortal = computed(() => 
     isStaff.value || 
     isAdmin.value || 
-    user.value?.role === 'security_supervisor' || 
-    user.value?.role === 'department_head' ||
     hasPermission.value('REVIEW_CLAIMS') || 
     hasPermission.value('MANAGE_CUSTODY') || 
     hasPermission.value('PROCESS_RETURNS') || 
@@ -124,29 +122,37 @@ export const useAuthStore = defineStore('auth', () => {
     initialized.value = true
   }
 
+  let _loginPromise: Promise<void> | null = null
+
   /**
-   * Login with email and password.
+   * Login with email and password (inflight guarded).
    */
   async function login(credentials: LoginCredentials): Promise<void> {
+    if (_loginPromise) return _loginPromise
+
     loading.value = true
-    try {
-      const response = await authApi.login(credentials)
-      user.value = response.user
-      initialized.value = true
-    } finally {
-      loading.value = false
-    }
+    _loginPromise = (async () => {
+      try {
+        const response = await authApi.login(credentials)
+        user.value = response.user
+        initialized.value = true
+      } finally {
+        loading.value = false
+        _loginPromise = null
+      }
+    })()
+
+    return _loginPromise
   }
 
   /**
-   * Register new user account.
+   * Register new user account (initiates OTP flow without logging in).
    */
-  async function register(registerData: RegisterData): Promise<void> {
+  async function register(registerData: RegisterData): Promise<{ email: string }> {
     loading.value = true
     try {
       const response = await authApi.register(registerData)
-      user.value = response.data.user
-      initialized.value = true
+      return { email: response.data.email }
     } finally {
       loading.value = false
     }

@@ -3,7 +3,7 @@ import { onMounted, ref, reactive, computed } from 'vue'
 import { useReferencesStore } from '@/features/lookups/stores/references.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getErrorMessage } from '@/utils/error-handler'
-import { currentLocale, t } from '@/i18n'
+import { t, getLocalizedName } from '@/i18n'
 import { getExportFilename } from '@/stores/settings.store'
 import type { Category } from '@/types/common.types'
 import AppInput from '@/components/ui/AppInput.vue'
@@ -235,7 +235,7 @@ function exportCategoriesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Categories
+            {{ t('admin.categories.totalCategories') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalCount }}
@@ -250,7 +250,7 @@ function exportCategoriesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Active Taxonomies
+            {{ t('admin.categories.activeTaxonomies') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ activeCount }}
@@ -265,7 +265,7 @@ function exportCategoriesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Document Types
+            {{ t('admin.categories.documentTypes') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ documentTypesCount }}
@@ -280,7 +280,7 @@ function exportCategoriesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Valuables & Gear
+            {{ t('admin.categories.valuablesGear') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ valuablesCount }}
@@ -333,7 +333,7 @@ function exportCategoriesCsv() {
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportCategoriesCsv"
         >
@@ -343,7 +343,7 @@ function exportCategoriesCsv() {
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -463,14 +463,15 @@ function exportCategoriesCsv() {
             <!-- Icon -->
             <td class="px-4 py-3.5">
               <div class="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-700 dark:text-slate-300">
-                {{ cat.icon || '📦' }}
+                <span v-if="cat.icon">{{ cat.icon }}</span>
+                <Package v-else class="h-4 w-4 text-slate-500 dark:text-slate-400" />
               </div>
             </td>
 
             <!-- Category Name (Clean Text) -->
             <td class="px-4 py-3.5">
               <p class="font-bold text-slate-900 dark:text-white">
-                {{ (currentLocale === 'am' && (cat as any).display_name_am) ? (cat as any).display_name_am : cat.name }}
+                {{ getLocalizedName(cat) }}
               </p>
             </td>
 
@@ -544,7 +545,7 @@ function exportCategoriesCsv() {
         <AppInput
           id="modal-cat-icon"
           :label="t('admin.categories.icon')"
-          placeholder="e.g. 📱 or 💻 or 📄"
+          :placeholder="t('admin.categories.placeholders.icon')"
           :model-value="form.icon"
           @update:model-value="form.icon = $event"
         />

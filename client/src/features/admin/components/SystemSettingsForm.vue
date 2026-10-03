@@ -198,7 +198,7 @@ onMounted(fetchSettings)
             <button
               type="button"
               class="absolute -bottom-1 -right-1 p-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow text-slate-700 dark:text-slate-200 hover:scale-105 transition-transform cursor-pointer"
-              title="Upload New Logo"
+              :title="t('admin.settings.uploadNewLogo')"
               @click="triggerLogoInput"
             >
               <Upload class="h-3 w-3" />
@@ -211,7 +211,7 @@ onMounted(fetchSettings)
                 {{ previewInstitutionName }}
               </span>
               <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded text-white" :style="{ backgroundColor: previewPrimaryColor }">
-                Live Preview
+                {{ t('common.livePreview') }}
               </span>
             </div>
             <p class="text-xs font-semibold text-slate-300 truncate">

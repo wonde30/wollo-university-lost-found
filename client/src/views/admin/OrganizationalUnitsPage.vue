@@ -997,12 +997,12 @@ function exportUnitsCsv(): void {
     <!-- MODAL: Create/Edit Organizational Unit -->
     <AppModal
       v-model:open="isUnitModalOpen"
-      :title="unitModalMode === 'create' ? (t('admin.units.addUnit') || 'Add Organizational Unit') : 'Edit Organizational Unit'"
+      :title="unitModalMode === 'create' ? t('admin.units.addUnit') : t('admin.units.editUnit')"
     >
       <form class="space-y-4" @submit.prevent="handleUnitSubmit">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Campus *</label>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ t('admin.units.campus') }} *</label>
             <AppSelect
               v-model="unitForm.campus_id"
               :options="campusSelectOptions"
@@ -1011,7 +1011,7 @@ function exportUnitsCsv(): void {
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Unit Type *</label>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ t('admin.units.unitType') }} *</label>
             <AppSelect
               v-model="unitForm.type_id"
               :options="unitTypeSelectOptions"
@@ -1022,19 +1022,19 @@ function exportUnitsCsv(): void {
 
         <div v-if="potentialParents.length > 0">
           <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-            Parent Unit (Optional)
+            {{ t('admin.units.parentUnit') }}
           </label>
           <AppSelect
             v-model="unitForm.parent_id"
-            :options="[{ value: '', label: 'None (Root Level)' }, ...potentialParents]"
+            :options="[{ value: '', label: t('admin.units.noneRootLevel') }, ...potentialParents]"
           />
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <AppInput
             id="unit-name"
-            label="Unit Name (English) *"
-            placeholder="e.g. Department of Computer Science"
+            :label="t('admin.units.unitNameEn') + ' *'"
+            :placeholder="t('admin.orgUnits.placeholders.name')"
             :model-value="unitForm.name"
             required
             @update:model-value="unitForm.name = $event"
@@ -1042,8 +1042,8 @@ function exportUnitsCsv(): void {
 
           <AppInput
             id="unit-code"
-            label="Short Code *"
-            placeholder="e.g. CS or FOE"
+            :label="t('admin.units.shortCode') + ' *'"
+            :placeholder="t('admin.orgUnits.placeholders.code')"
             :model-value="unitForm.short_code"
             required
             @update:model-value="unitForm.short_code = $event"
@@ -1052,18 +1052,18 @@ function exportUnitsCsv(): void {
 
         <AppInput
           id="unit-name-am"
-          label="Unit Name (Amharic)"
-          placeholder="e.g. የኮምፒውተር ሳይንስ ትምህርት ክፍል"
+          :label="t('admin.units.unitNameAm')"
+          :placeholder="t('admin.orgUnits.placeholders.amharicName')"
           :model-value="unitForm.name_am"
           @update:model-value="unitForm.name_am = $event"
         />
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Description</label>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ t('common.description') }}</label>
           <textarea
             v-model="unitForm.description"
             rows="3"
-            placeholder="Brief description of the organizational unit..."
+            :placeholder="t('admin.orgUnits.placeholders.description')"
             class="w-full p-3 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B5D3B]"
           ></textarea>
         </div>
@@ -1072,7 +1072,7 @@ function exportUnitsCsv(): void {
           <AppCheckbox
             id="unit-is-active"
             :model-value="unitForm.is_active"
-            label="Active Unit (Visible across registration & forms)"
+            :label="t('admin.units.activeUnitLabel')"
             @update:model-value="unitForm.is_active = $event"
           />
         </div>
@@ -1084,7 +1084,7 @@ function exportUnitsCsv(): void {
             size="sm"
             @click="isUnitModalOpen = false"
           >
-            {{ t('common.cancel') || 'Cancel' }}
+            {{ t('common.cancel') }}
           </AppButton>
 
           <AppButton
@@ -1093,7 +1093,7 @@ function exportUnitsCsv(): void {
             size="sm"
             :loading="isSubmittingUnit"
           >
-            {{ unitModalMode === 'create' ? 'Create Unit' : 'Save Changes' }}
+            {{ unitModalMode === 'create' ? t('admin.units.createUnit') : t('common.save') }}
           </AppButton>
         </div>
       </form>
@@ -1102,14 +1102,14 @@ function exportUnitsCsv(): void {
     <!-- MODAL: Create/Edit Unit Type -->
     <AppModal
       v-model:open="isTypeModalOpen"
-      :title="typeModalMode === 'create' ? (t('admin.units.addType') || 'Add Unit Type') : 'Edit Unit Type'"
+      :title="typeModalMode === 'create' ? t('admin.units.addType') : t('admin.units.editType')"
     >
       <form class="space-y-4" @submit.prevent="handleTypeSubmit">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <AppInput
             id="type-code"
-            label="Type Code *"
-            placeholder="e.g. college, department, school"
+            :label="t('admin.units.typeCode') + ' *'"
+            :placeholder="t('admin.orgUnits.placeholders.levelType')"
             :model-value="typeForm.code"
             required
             @update:model-value="typeForm.code = $event"
@@ -1117,8 +1117,8 @@ function exportUnitsCsv(): void {
 
           <AppInput
             id="type-name"
-            label="Type Name (English) *"
-            placeholder="e.g. College or Department"
+            :label="t('admin.units.typeNameEn') + ' *'"
+            :placeholder="t('admin.orgUnits.placeholders.levelName')"
             :model-value="typeForm.name"
             required
             @update:model-value="typeForm.name = $event"
@@ -1127,18 +1127,18 @@ function exportUnitsCsv(): void {
 
         <AppInput
           id="type-name-am"
-          label="Type Name (Amharic)"
-          placeholder="e.g. ኮሌጅ or ትምህርት ክፍል"
+          :label="t('admin.units.typeNameAm')"
+          :placeholder="t('admin.orgUnits.placeholders.levelAmharicName')"
           :model-value="typeForm.name_am"
           @update:model-value="typeForm.name_am = $event"
         />
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Description</label>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{{ t('common.description') }}</label>
           <textarea
             v-model="typeForm.description"
             rows="2"
-            placeholder="Description of this unit level..."
+            :placeholder="t('admin.orgUnits.placeholders.levelDescription')"
             class="w-full p-3 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B5D3B]"
           ></textarea>
         </div>
@@ -1147,14 +1147,14 @@ function exportUnitsCsv(): void {
           <AppCheckbox
             id="type-is-root"
             :model-value="typeForm.is_root"
-            label="Is Root Level (Directly under Campus, e.g. College/Division)"
+            :label="t('admin.units.isRootLabel')"
             @update:model-value="typeForm.is_root = $event"
           />
 
           <AppCheckbox
             id="type-is-active"
             :model-value="typeForm.is_active"
-            label="Active Type"
+            :label="t('admin.units.activeTypeLabel')"
             @update:model-value="typeForm.is_active = $event"
           />
         </div>
@@ -1166,7 +1166,7 @@ function exportUnitsCsv(): void {
             size="sm"
             @click="isTypeModalOpen = false"
           >
-            {{ t('common.cancel') || 'Cancel' }}
+            {{ t('common.cancel') }}
           </AppButton>
 
           <AppButton
@@ -1175,7 +1175,7 @@ function exportUnitsCsv(): void {
             size="sm"
             :loading="isSubmittingType"
           >
-            {{ typeModalMode === 'create' ? 'Create Type' : 'Save Changes' }}
+            {{ typeModalMode === 'create' ? t('admin.units.createType') : t('common.save') }}
           </AppButton>
         </div>
       </form>

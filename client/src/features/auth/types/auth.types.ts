@@ -32,6 +32,7 @@ export interface User {
   role_id: number
   language: string
   is_active: boolean
+  must_change_password?: boolean
   profile_photo: string | null
   profile_photo_url?: string | null
   avatar_url?: string | null
@@ -58,8 +59,6 @@ export interface RegisterData {
   full_name: string
   university_id: string
   email: string
-  password: string
-  password_confirmation?: string
   phone?: string
   organizational_unit_id?: number | null
 }
@@ -91,6 +90,31 @@ export interface ResetPasswordData {
 }
 
 // ==========================================
+// University Domain Types
+// ==========================================
+
+export interface PublicUniversityDomain {
+  domain: string
+  institution_name: string
+}
+
+export interface UniversityDomain {
+  id: number
+  domain: string
+  institution_name: string
+  campus_id?: number | null
+  campus?: {
+    id: number
+    name: string
+    code: string
+  }
+  is_active: boolean
+  description?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+// ==========================================
 // Response Types
 // ==========================================
 
@@ -102,7 +126,8 @@ export interface LoginResponse {
 export interface RegisterResponse {
   message: string
   data: {
-    user: User
+    email: string
+    user?: User
   }
 }
 

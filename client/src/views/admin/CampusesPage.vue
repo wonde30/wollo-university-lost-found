@@ -290,7 +290,7 @@ function exportCampusesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Institutional Campuses
+            {{ t('admin.campuses.totalCampuses') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalCount }}
@@ -305,7 +305,7 @@ function exportCampusesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Active Instructional Sites
+            {{ t('admin.campuses.activeCampuses') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ activeCount }}
@@ -320,7 +320,7 @@ function exportCampusesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Branch Campuses
+            {{ t('admin.campuses.branchCampuses') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ branchSitesCount }}
@@ -335,7 +335,7 @@ function exportCampusesCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Regional Locations
+            {{ t('admin.campuses.regionalLocations') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             Dessie & Kombolcha
@@ -395,7 +395,7 @@ function exportCampusesCsv() {
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -404,7 +404,7 @@ function exportCampusesCsv() {
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportCampusesCsv"
         >
@@ -414,7 +414,7 @@ function exportCampusesCsv() {
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"

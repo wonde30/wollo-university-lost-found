@@ -4,13 +4,40 @@ import { am } from './locales/am'
 
 export type Locale = 'en' | 'am'
 
-export const currentLocale = ref<Locale>(
-  (typeof localStorage !== 'undefined' ? (localStorage.getItem('wu_locale') as Locale) : null) || 'en'
-)
+export interface LocaleMeta {
+  code: Locale
+  name: string
+  nativeName: string
+  dir: 'ltr' | 'rtl'
+  flag?: string
+}
 
-const dictionaries = {
+export const SUPPORTED_LOCALES: Record<Locale, LocaleMeta> = {
+  en: { code: 'en', name: 'English', nativeName: 'English', dir: 'ltr' },
+  am: { code: 'am', name: 'Amharic', nativeName: 'አማርኛ', dir: 'ltr' },
+}
+
+const initialLocale: Locale =
+  (typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function'
+    ? (localStorage.getItem('wu_locale') as Locale)
+    : null) || 'en'
+
+export const currentLocale = ref<Locale>(initialLocale)
+
+// Synchronize document attributes on load in browser environment
+if (typeof document !== 'undefined' && document.documentElement) {
+  document.documentElement.setAttribute('lang', initialLocale)
+  document.documentElement.setAttribute('dir', SUPPORTED_LOCALES[initialLocale]?.dir || 'ltr')
+}
+
+const dictionaries: Record<string, any> = {
   en,
   am,
+}
+
+export function registerLocale(code: string, meta: LocaleMeta, dict: any): void {
+  (SUPPORTED_LOCALES as Record<string, LocaleMeta>)[code] = meta
+  dictionaries[code] = dict
 }
 
 function getNestedValue(obj: any, path: string): string | undefined {
@@ -50,11 +77,52 @@ export function t(path: string, params?: Record<string, any>): string {
   return template
 }
 
+/**
+ * Universal entity name resolver.
+ * Eliminates scattered `if (currentLocale === 'am')` checks across the codebase.
+ * Prioritizes localized fields (name_am, display_name_am, title_am) when currentLocale is 'am',
+ * with seamless fallback to English defaults, or vice versa.
+ */
+export function getLocalizedName(
+  entity: Record<string, any> | null | undefined,
+  fallback = ''
+): string {
+  if (!entity) return fallback
+
+  const loc = currentLocale.value
+  if (loc === 'am') {
+    return (
+      entity.display_name_am ||
+      entity.name_am ||
+      entity.title_am ||
+      entity.display_name ||
+      entity.name ||
+      entity.title ||
+      fallback
+    )
+  }
+
+  return (
+    entity.display_name ||
+    entity.name ||
+    entity.title ||
+    entity.display_name_am ||
+    entity.name_am ||
+    fallback
+  )
+}
+
 export function setLocale(newLocale: Locale): void {
   currentLocale.value = newLocale
   if (typeof window !== 'undefined') {
-    localStorage.setItem('wu_locale', newLocale)
-    document.documentElement.setAttribute('lang', newLocale)
+    if (typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
+      localStorage.setItem('wu_locale', newLocale)
+    }
+    const meta = SUPPORTED_LOCALES[newLocale]
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.setAttribute('lang', newLocale)
+      document.documentElement.setAttribute('dir', meta?.dir || 'ltr')
+    }
   }
 }
 
@@ -69,11 +137,15 @@ export function useI18n() {
   })
 
   const isAmharic = computed(() => currentLocale.value === 'am')
+  const currentMeta = computed(() => SUPPORTED_LOCALES[currentLocale.value] || SUPPORTED_LOCALES.en)
 
   return {
     locale,
     isAmharic,
+    currentMeta,
+    supportedLocales: SUPPORTED_LOCALES,
     t,
+    getLocalizedName,
     setLocale,
     toggleLocale,
   }

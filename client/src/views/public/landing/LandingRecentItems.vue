@@ -3,14 +3,13 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Item } from '@/features/items/types/item.types'
 import { formatDate } from '@/utils/date'
+import { t, getLocalizedName } from '@/i18n'
 import AppSkeleton from '@/components/ui/AppSkeleton.vue'
-import AppButton from '@/components/ui/AppButton.vue'
 import {
   MapPin,
   Calendar,
   ArrowRight,
   Package,
-  Sparkles,
 } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -25,8 +24,8 @@ const displayItems = computed(() => {
   return props.items.slice(0, 5).map(item => ({
     id: item.id,
     title: item.title,
-    categoryName: item.category?.name || 'General',
-    locationName: item.location?.name || item.campus?.name || 'Campus Grounds',
+    categoryName: getLocalizedName(item.category, t('home.recentItems.generalCategory')),
+    locationName: getLocalizedName(item.location || item.campus, t('home.recentItems.campusGrounds')),
     date: item.incident_date || item.created_at,
     status: item.status || 'found',
     image: item.primary_photo?.photo_url || item.primary_photo?.url || (item.photos && (item.photos[0]?.photo_url || item.photos[0]?.url)) || null,
@@ -56,13 +55,13 @@ function handleImageError(event: Event) {
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
       <div class="space-y-1.5">
         <span class="text-xs font-black uppercase tracking-wider text-[#0B5D3B] dark:text-[#75bd97]">
-          RECENT FOUND ITEMS
+          {{ t('home.recentItems.tag') }}
         </span>
         <h2 id="recent-found-heading" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Recently Found Items
+          {{ t('home.recentItems.title') }}
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          These items were recently found on campus and are in university custody awaiting their owners.
+          {{ t('home.recentItems.subtitle') }}
         </p>
       </div>
 
@@ -71,7 +70,7 @@ function handleImageError(event: Event) {
         class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B5D3B] dark:text-[#75bd97] hover:text-[#084C30] dark:hover:text-emerald-300 transition-colors group cursor-pointer self-start sm:self-auto"
         @click="router.push('/browse?type=found')"
       >
-        <span>View All Found Items</span>
+        <span>{{ t('home.recentItems.viewAll') }}</span>
         <ArrowRight class="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
       </button>
     </div>
@@ -129,7 +128,7 @@ function handleImageError(event: Event) {
 
           <!-- Status Badge -->
           <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#0B5D3B] text-white shadow-sm">
-            Found
+            {{ t('home.recentItems.statusFound') }}
           </span>
         </div>
 
@@ -158,25 +157,12 @@ function handleImageError(event: Event) {
       </article>
     </div>
 
-    <!-- Honest Empty State when Database Has No Items -->
+    <!-- Empty State -->
     <div
       v-else
-      class="p-10 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 text-center space-y-3"
+      class="p-10 text-center bg-white dark:bg-[#111827] rounded-2xl border border-slate-200 dark:border-slate-800"
     >
-      <div class="h-12 w-12 rounded-full bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] flex items-center justify-center mx-auto">
-        <Sparkles class="h-6 w-6" />
-      </div>
-      <h3 class="text-base font-bold text-slate-900 dark:text-white">
-        No Found Items Currently in Custody
-      </h3>
-      <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-        All reported items have been reunited or verified. If you recently found or lost property on campus, please submit a report.
-      </p>
-      <div class="pt-2">
-        <AppButton variant="primary" size="sm" @click="router.push('/report-found')">
-          Report a Found Item
-        </AppButton>
-      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('home.recentItems.noItems') }}</p>
     </div>
   </section>
 </template>

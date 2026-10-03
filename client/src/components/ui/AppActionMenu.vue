@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { t } from '@/i18n'
 import { MoreVertical } from 'lucide-vue-next'
 
 interface Props {
@@ -60,10 +61,18 @@ function updatePosition() {
   menuStyle.value = style
 }
 
-function toggle(event?: Event) {
-  if (event) {
-    event.stopPropagation()
-  }
+function open() {
+  if (isOpen.value) return
+  isOpen.value = true
+  nextTick(() => updatePosition())
+}
+
+function close() {
+  if (!isOpen.value) return
+  isOpen.value = false
+}
+
+function toggle() {
   if (isOpen.value) {
     close()
   } else {
@@ -71,31 +80,13 @@ function toggle(event?: Event) {
   }
 }
 
-function open() {
-  isOpen.value = true
-  updatePosition()
-  nextTick(() => {
-    updatePosition()
-  })
-}
-
-function close() {
-  isOpen.value = false
-}
-
 function handleClickOutside(event: MouseEvent) {
   if (!isOpen.value) return
-  const target = event.target as Node | null
-  if (
-    triggerRef.value &&
-    (triggerRef.value === target || triggerRef.value.contains(target))
-  ) {
+  const target = event.target as Node
+  if (triggerRef.value && triggerRef.value.contains(target)) {
     return
   }
-  if (
-    menuRef.value &&
-    (menuRef.value === target || menuRef.value.contains(target))
-  ) {
+  if (menuRef.value && menuRef.value.contains(target)) {
     return
   }
   close()
@@ -151,7 +142,7 @@ defineExpose({
               ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white ring-2 ring-[#0B5D3B]/30 dark:ring-[#75bd97]/30'
               : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white',
           ]"
-          aria-label="Actions"
+          :aria-label="t('common.actions')"
         >
           <MoreVertical class="h-4 w-4" />
         </button>

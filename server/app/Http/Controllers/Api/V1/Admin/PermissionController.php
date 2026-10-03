@@ -28,6 +28,8 @@ class PermissionController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
+        $this->authorize('viewAny', Permission::class);
+
         if ($request->boolean('all')) {
             $permissions = $this->permissionService->getAllPermissions();
             return response()->json([
@@ -46,6 +48,8 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request): JsonResponse
     {
+        $this->authorize('create', Permission::class);
+
         $permission = $this->permissionService->createPermission($request->validated());
 
         AuditLogger::log('permission.created', null, [], $permission->toArray(), $request->user());
@@ -60,6 +64,8 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission): PermissionResource
     {
+        $this->authorize('view', $permission);
+
         return new PermissionResource($permission);
     }
 
@@ -68,6 +74,8 @@ class PermissionController extends Controller
      */
     public function update(UpdatePermissionRequest $request, Permission $permission): PermissionResource
     {
+        $this->authorize('update', $permission);
+
         $oldData = $permission->toArray();
         $updated = $this->permissionService->updatePermission($permission, $request->validated());
 
@@ -81,6 +89,8 @@ class PermissionController extends Controller
      */
     public function destroy(Request $request, Permission $permission): JsonResponse
     {
+        $this->authorize('delete', $permission);
+
         try {
             $oldData = $permission->toArray();
             $this->permissionService->deletePermission($permission);
@@ -102,6 +112,8 @@ class PermissionController extends Controller
      */
     public function toggleActive(Request $request, Permission $permission): PermissionResource
     {
+        $this->authorize('update', $permission);
+
         $updated = $this->permissionService->toggleActive($permission);
 
         AuditLogger::log('permission.toggle_active', null, [

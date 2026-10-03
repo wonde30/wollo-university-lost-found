@@ -3,6 +3,7 @@ import type { ItemStatusHistory } from '../types/item.types'
 import type { User } from '@/features/auth/types/auth.types'
 import { formatDateTime } from '@/utils/date'
 import { formatStatus } from '@/utils/formatters'
+import { t } from '@/i18n'
 
 interface Props {
   histories?: ItemStatusHistory[]
@@ -35,10 +36,12 @@ function resolveChangerRole(h: ItemStatusHistory): string | null {
 
 <template>
   <div class="space-y-4">
-    <h4 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Status History & Audit</h4>
+    <h4 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+      {{ t('items.timeline.statusHistoryAudit') }}
+    </h4>
 
     <div v-if="histories.length === 0" class="text-xs text-slate-400 dark:text-slate-500">
-      No status transitions recorded yet.
+      {{ t('items.timeline.noTransitions') }}
     </div>
 
     <ol v-else class="relative border-l border-slate-200 dark:border-slate-800 ml-3 space-y-6">
@@ -53,12 +56,16 @@ function resolveChangerRole(h: ItemStatusHistory): string | null {
           <span class="text-[11px] text-slate-400 dark:text-slate-500">{{ formatDateTime(h.created_at) }}</span>
         </div>
         <p v-if="h.previous_status || h.from_status" class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-          From: {{ formatStatus(h.previous_status || h.from_status) }}
+          {{ t('items.timeline.from') }}: {{ formatStatus(h.previous_status || h.from_status) }}
         </p>
-        <p v-if="h.reason" class="text-xs text-slate-600 dark:text-slate-300 mt-1">Reason: {{ h.reason }}</p>
-        <p v-if="h.notes" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Notes: {{ h.notes }}</p>
+        <p v-if="h.reason" class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+          {{ t('items.timeline.reason') }}: {{ h.reason }}
+        </p>
+        <p v-if="h.notes" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          {{ t('items.timeline.notes') }}: {{ h.notes }}
+        </p>
         <span v-if="resolveChanger(h)" class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 block">
-          By: {{ resolveChanger(h) }}
+          {{ t('items.timeline.by', { name: resolveChanger(h) }) }}
           <span v-if="resolveChangerRole(h)">({{ resolveChangerRole(h) }})</span>
         </span>
       </li>

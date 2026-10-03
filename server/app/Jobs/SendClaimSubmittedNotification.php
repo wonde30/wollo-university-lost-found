@@ -33,7 +33,7 @@ class SendClaimSubmittedNotification implements ShouldQueue
                 'item_id'        => $item->id,
                 'reference_code' => $item->reference_code,
                 'title'          => $item->title,
-                'message'        => "Your claim for \"{$item->title}\" (Ref: {$item->reference_code}) has been submitted and is under review.",
+                'sub_type'       => 'claimant',
             ]
         ));
 
@@ -55,7 +55,7 @@ class SendClaimSubmittedNotification implements ShouldQueue
                     'item_id'        => $item->id,
                     'reference_code' => $item->reference_code,
                     'title'          => $item->title,
-                    'message'        => "A new claim has been submitted for your reported item \"{$item->title}\" (Ref: {$item->reference_code}).",
+                    'sub_type'       => 'reporter',
                 ]
             ));
         }
@@ -72,7 +72,7 @@ class SendClaimSubmittedNotification implements ShouldQueue
                         'item_id'        => $item->id,
                         'reference_code' => $item->reference_code,
                         'title'          => $item->title,
-                        'message'        => "New ownership claim submitted for item \"{$item->title}\" (Ref: {$item->reference_code}).",
+                        'sub_type'       => 'staff',
                     ]
                 ));
             }

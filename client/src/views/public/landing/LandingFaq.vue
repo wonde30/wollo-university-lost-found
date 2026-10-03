@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings.store'
+import { t } from '@/i18n'
 import { ChevronDown } from 'lucide-vue-next'
 
 const settingsStore = useSettingsStore()
@@ -13,41 +14,41 @@ function toggleFaq(index: number) {
   openItems.value[index] = !openItems.value[index]
 }
 
-const faqCol1 = [
+const faqCol1 = computed(() => [
   {
     id: 0,
-    q: 'How do I report a lost item?',
-    a: `Click "Report Lost Item", sign in with your ${settingsStore.institutionName} student or staff account, and submit details including the category, incident location (e.g. Block, Hall, or Lab), and descriptive photos. Our system will immediately check active custody inventories for matching items.`,
+    q: t('home.faq.q1'),
+    a: t('home.faq.a1', { institution: settingsStore.institutionName }),
   },
   {
     id: 1,
-    q: 'How do I claim a found item listed on the platform?',
-    a: 'Browse the found items catalog, click "Claim This Item", and provide proof of ownership (such as serial numbers, unique markings, purchase receipts, or unlock codes). Campus property custody officers review claims within 24 business hours.',
+    q: t('home.faq.q2'),
+    a: t('home.faq.a2', { institution: settingsStore.institutionName }),
   },
   {
     id: 2,
-    q: 'Where are property custody offices located on campus?',
-    a: `Found items are kept securely in custody vaults at the Dessie Main Campus Administration & Security Division and the Kombolcha Institute of Technology (KIoT) Main Gate Security Office.`,
+    q: t('home.faq.q3'),
+    a: t('home.faq.a3', { institution: settingsStore.institutionName }),
   },
-]
+])
 
-const faqCol2 = [
+const faqCol2 = computed(() => [
   {
     id: 3,
-    q: 'How long are found items kept in custody?',
-    a: 'Found items are held in verified custody vaults for up to 90 calendar days. Owners of matching items receive periodic notifications before standard university property disposition committee reviews.',
+    q: t('home.faq.q4'),
+    a: t('home.faq.a4', { institution: settingsStore.institutionName }),
   },
   {
     id: 4,
-    q: 'Can campus visitors or guests report items without an account?',
-    a: 'Yes. Visitors can search public listings and track items using reference codes without logging in. Submitting a new lost or found report requires basic registration to maintain verification security.',
+    q: t('home.faq.q5'),
+    a: t('home.faq.a5', { institution: settingsStore.institutionName }),
   },
   {
     id: 5,
-    q: 'Is my personal and contact information kept confidential?',
-    a: `Yes. Your contact information is never published publicly. Only authorized ${settingsStore.institutionName} security and custody officers have access to verified claim details during the handover process.`,
+    q: t('home.faq.q6'),
+    a: t('home.faq.a6', { institution: settingsStore.institutionName }),
   },
-]
+])
 </script>
 
 <template>
@@ -55,13 +56,13 @@ const faqCol2 = [
     <!-- Header -->
     <div class="text-left mb-10 space-y-2">
       <span class="text-xs font-black uppercase tracking-wider text-[#0B5D3B] dark:text-[#75bd97]">
-        FAQ
+        {{ t('home.faq.tag') }}
       </span>
       <h2 id="faq-heading" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-        Frequently Asked Questions
+        {{ t('home.faq.title') }}
       </h2>
       <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-        Answers to common questions regarding lost property custody and recovery at {{ settingsStore.institutionName }}.
+        {{ t('home.faq.subtitle', { institution: settingsStore.institutionName }) }}
       </p>
     </div>
 

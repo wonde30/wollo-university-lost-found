@@ -51,6 +51,7 @@ export const ROUTE_NAMES = {
   ADMIN_ANNOUNCEMENTS: 'admin-announcements',
   ADMIN_ROLES: 'admin-roles',
   ADMIN_PERMISSIONS: 'admin-permissions',
+  ADMIN_UNIVERSITY_DOMAINS: 'admin-university-domains',
 
   // Profile
   PROFILE: 'profile',

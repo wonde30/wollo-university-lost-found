@@ -29,6 +29,8 @@ class RoleController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
+        $this->authorize('viewAny', Role::class);
+
         if ($request->boolean('all')) {
             $roles = $this->roleService->getAllActiveRoles();
             return response()->json([
@@ -47,6 +49,8 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request): JsonResponse
     {
+        $this->authorize('create', Role::class);
+
         $role = $this->roleService->createRole(
             $request->validated(),
             $request->input('permission_ids', [])
@@ -64,6 +68,8 @@ class RoleController extends Controller
      */
     public function show(Role $role): RoleResource
     {
+        $this->authorize('view', $role);
+
         return new RoleResource($role->load('permissions')->loadCount('users'));
     }
 
@@ -72,6 +78,8 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role): RoleResource
     {
+        $this->authorize('update', $role);
+
         $oldData = $role->toArray();
         $updated = $this->roleService->updateRole(
             $role,
@@ -89,6 +97,8 @@ class RoleController extends Controller
      */
     public function destroy(Request $request, Role $role): JsonResponse
     {
+        $this->authorize('delete', $role);
+
         try {
             $oldData = $role->toArray();
             $this->roleService->deleteRole($role);
@@ -110,6 +120,8 @@ class RoleController extends Controller
      */
     public function syncPermissions(SyncRolePermissionsRequest $request, Role $role): RoleResource
     {
+        $this->authorize('update', $role);
+
         $oldPerms = $role->permissions->pluck('name')->all();
         $updated = $this->roleService->syncPermissions($role, $request->input('permission_ids', []));
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { t } from '@/i18n'
 import {
   FileText,
   Search,
@@ -7,54 +9,54 @@ import {
   ArrowRight,
 } from 'lucide-vue-next'
 
-const steps = [
+const steps = computed(() => [
   {
     step: 1,
-    title: 'Report',
-    description: 'Submit details about your lost or found item with photos.',
+    title: t('home.howItWorks.step1Title'),
+    description: t('home.howItWorks.step1Desc'),
     icon: FileText,
     badgeBg: 'bg-[#0B5D3B] text-white',
     iconColor: 'text-[#0B5D3B] dark:text-[#75bd97]',
   },
   {
     step: 2,
-    title: 'Search & Match',
-    description: 'Our system helps match items using smart search and AI.',
+    title: t('home.howItWorks.step2Title'),
+    description: t('home.howItWorks.step2Desc'),
     icon: Search,
-    badgeBg: 'bg-[#B7791F] text-white',
-    iconColor: 'text-[#B7791F] dark:text-[#D4AF37]',
+    badgeBg: 'bg-[#084C30] text-white',
+    iconColor: 'text-[#0B5D3B] dark:text-[#75bd97]',
   },
   {
     step: 3,
-    title: 'Get Notified',
-    description: 'Receive updates when a potential match is found.',
+    title: t('home.howItWorks.step3Title'),
+    description: t('home.howItWorks.step3Desc'),
     icon: Bell,
-    badgeBg: 'bg-emerald-700 text-white',
-    iconColor: 'text-emerald-700 dark:text-emerald-400',
+    badgeBg: 'bg-[#063D27] text-white',
+    iconColor: 'text-[#0B5D3B] dark:text-[#75bd97]',
   },
   {
     step: 4,
-    title: 'Reunite',
-    description: 'Complete the verification process and get your item back.',
+    title: t('home.howItWorks.step4Title'),
+    description: t('home.howItWorks.step4Desc'),
     icon: CheckCircle2,
-    badgeBg: 'bg-[#084C30] text-[#D4AF37]',
-    iconColor: 'text-[#0B5D3B] dark:text-[#75bd97]',
+    badgeBg: 'bg-[#0B5D3B] text-[#D4AF37]',
+    iconColor: 'text-[#D4AF37]',
   },
-]
+])
 </script>
 
 <template>
-  <section id="how-it-works" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-24">
+  <section id="how-it-works" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-24" aria-labelledby="how-it-works-heading">
     <!-- Section Header -->
     <div class="text-center max-w-3xl mx-auto mb-14 space-y-2.5">
       <span class="text-xs font-black uppercase tracking-wider text-[#0B5D3B] dark:text-[#75bd97]">
-        HOW IT WORKS
+        {{ t('home.howItWorks.tag') }}
       </span>
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-        Simple Steps, Real Results
+      <h2 id="how-it-works-heading" class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+        {{ t('home.howItWorks.title') }}
       </h2>
       <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-        Reuniting items with their owners is easy.
+        {{ t('home.howItWorks.subtitle') }}
       </p>
     </div>
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Services;
 
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
@@ -77,6 +78,7 @@ class PermissionService
         ]);
 
         \Illuminate\Support\Facades\Cache::forget('permissions.all');
+        User::flushPermissionCache();
 
         return $permission;
     }
@@ -106,6 +108,7 @@ class PermissionService
 
         $permission->update($payload);
         \Illuminate\Support\Facades\Cache::forget('permissions.all');
+        User::flushPermissionCache();
 
         return $permission->fresh(['permissionGroup']);
     }
@@ -121,6 +124,7 @@ class PermissionService
 
         $deleted = (bool) $permission->delete();
         \Illuminate\Support\Facades\Cache::forget('permissions.all');
+        User::flushPermissionCache();
 
         return $deleted;
     }
@@ -132,6 +136,7 @@ class PermissionService
     {
         $permission->update(['is_active' => ! $permission->is_active]);
         \Illuminate\Support\Facades\Cache::forget('permissions.all');
+        User::flushPermissionCache();
 
         return $permission->fresh(['permissionGroup']);
     }

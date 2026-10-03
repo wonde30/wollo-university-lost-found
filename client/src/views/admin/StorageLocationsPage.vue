@@ -356,7 +356,7 @@ function exportVaultsCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Storage Vaults
+            {{ t('admin.storageLocations.totalVaults') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalVaults }}
@@ -371,7 +371,7 @@ function exportVaultsCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Active Vaults
+            {{ t('admin.storageLocations.activeVaults') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ activeVaults }}
@@ -386,10 +386,10 @@ function exportVaultsCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Storage Capacity
+            {{ t('admin.storageLocations.totalCapacity') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ totalCapacity }} <span class="text-xs font-bold text-slate-400">slots</span>
+            {{ totalCapacity }} <span class="text-xs font-bold text-slate-400">{{ t('admin.storageLocations.slots') }}</span>
           </h3>
         </div>
         <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
@@ -401,10 +401,10 @@ function exportVaultsCsv() {
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Items in Custody
+            {{ t('admin.storageLocations.inCustody') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
-            {{ totalOccupancy }} <span class="text-xs font-bold text-slate-400">items</span>
+            {{ totalOccupancy }} <span class="text-xs font-bold text-slate-400">{{ t('admin.storageLocations.itemsCount') }}</span>
           </h3>
         </div>
         <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
@@ -461,7 +461,7 @@ function exportVaultsCsv() {
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filters') }}</span>
         </button>
       </div>
 
@@ -470,7 +470,7 @@ function exportVaultsCsv() {
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportVaultsCsv"
         >
@@ -480,7 +480,7 @@ function exportVaultsCsv() {
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refresh')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -671,13 +671,13 @@ function exportVaultsCsv() {
               {{ vault.campus?.name || '—' }}
             </td>
 
-            <!-- Capacity & Occupancy -->
+            <!-- Current Occupancy / Capacity -->
             <td class="px-4 py-3.5">
               <div class="flex items-center gap-2">
                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
                   {{ vault.current_occupancy || 0 }} / {{ vault.capacity || 25 }}
                 </span>
-                <span class="text-[11px] text-slate-400">items</span>
+                <span class="text-[11px] text-slate-400">{{ t('admin.storageLocations.itemsCount') }}</span>
               </div>
             </td>
 
@@ -773,7 +773,7 @@ function exportVaultsCsv() {
           <AppInput
             id="modal-vault-name"
             :label="t('admin.storageLocations.name') + ' *'"
-            placeholder="e.g. Main Library Vault #1"
+            :placeholder="t('admin.storageLocations.placeholders.name')"
             :model-value="form.name"
             required
             @update:model-value="form.name = $event"
@@ -782,7 +782,7 @@ function exportVaultsCsv() {
           <AppInput
             id="modal-vault-code"
             :label="t('admin.storageLocations.code')"
-            placeholder="e.g. LIB-VAULT-01"
+            :placeholder="t('admin.storageLocations.placeholders.code')"
             :model-value="form.code"
             @update:model-value="form.code = $event"
           />
@@ -799,7 +799,7 @@ function exportVaultsCsv() {
         <AppInput
           id="modal-vault-desc"
           :label="t('admin.storageLocations.description')"
-          placeholder="Building, room number, or custodian notes..."
+          :placeholder="t('admin.storageLocations.placeholders.description')"
           :model-value="form.description"
           @update:model-value="form.description = $event"
         />

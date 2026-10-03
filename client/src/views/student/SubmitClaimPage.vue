@@ -26,7 +26,7 @@ onMounted(async () => {
     <div>
       <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">{{ t('claims.submitClaim') }}</h1>
       <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
-        Prove that this found item belongs to you by providing evidence of ownership.
+        {{ t('claims.submitClaimSubtitle') }}
       </p>
     </div>
 

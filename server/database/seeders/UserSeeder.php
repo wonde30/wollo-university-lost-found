@@ -37,6 +37,17 @@ class UserSeeder extends Seeder
             ['display_name' => 'Academic Department Head', 'is_system' => false, 'is_active' => true]
         );
 
+        // Ensure seeder avatar assets are deployed to public storage
+        $adminAvatarSource = database_path('seeders/assets/admin_avatar.png');
+        $adminAvatarStoragePath = 'avatars/admin_avatar.png';
+        if (file_exists($adminAvatarSource)) {
+            $destPath = storage_path('app/public/' . $adminAvatarStoragePath);
+            if (!is_dir(dirname($destPath))) {
+                @mkdir(dirname($destPath), 0755, true);
+            }
+            @copy($adminAvatarSource, $destPath);
+        }
+
         $users = [
             // 1. Admin
             [
@@ -48,6 +59,7 @@ class UserSeeder extends Seeder
                 'phone' => '+251911000001',
                 'language' => 'en',
                 'is_active' => true,
+                'profile_photo' => $adminAvatarStoragePath,
                 'profile' => [
                     'gender' => 'male',
                     'home_town' => 'Dessie',

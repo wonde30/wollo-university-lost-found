@@ -22,6 +22,8 @@ class ClaimController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Claim::class);
+
         $user = $request->user();
         $perPage = min(100, max(1, $request->integer('per_page', 10)));
 
@@ -56,6 +58,8 @@ class ClaimController extends Controller
 
     public function store(StoreClaimRequest $request): JsonResponse
     {
+        $this->authorize('create', Claim::class);
+
         $user = $request->user();
         $itemId = $request->integer('item_id');
 

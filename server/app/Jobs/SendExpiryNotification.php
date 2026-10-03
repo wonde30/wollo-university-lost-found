@@ -33,7 +33,6 @@ class SendExpiryNotification implements ShouldQueue
                 'item_id'        => $item->id,
                 'reference_code' => $item->reference_code,
                 'title'          => $item->title,
-                'message'        => "Your reported item \"{$item->title}\" (Ref: {$item->reference_code}) has expired and is no longer listed. Please contact the security office if it is still relevant.",
             ]
         ));
 

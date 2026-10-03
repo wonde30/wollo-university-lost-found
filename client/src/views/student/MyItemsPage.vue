@@ -7,7 +7,7 @@ import { getErrorMessage } from '@/utils/error-handler'
 import { formatDate } from '@/utils/date'
 import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
-import type { Item } from '@/features/items/types/item.types'
+import type { Item, ItemType } from '@/features/items/types/item.types'
 import AppModal from '@/components/ui/AppModal.vue'
 import AppActionMenu from '@/components/ui/AppActionMenu.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -92,9 +92,9 @@ function toggleSelectItem(id: number) {
 }
 
 const typeFilterOptions = computed(() => [
-  { label: 'All Item Reports', value: 'all' },
-  { label: 'Lost Items', value: 'lost' },
-  { label: 'Found Items', value: 'found' },
+  { label: t('myItems.allReports'), value: 'all' },
+  { label: t('myItems.lostItems'), value: 'lost' },
+  { label: t('myItems.foundItems'), value: 'found' },
 ])
 
 async function load(page = 1) {
@@ -106,7 +106,7 @@ async function load(page = 1) {
         mine: true,
         page,
         per_page: perPage.value,
-        type: selectedType.value === 'all' ? undefined : (selectedType.value as any),
+        type: selectedType.value === 'all' ? undefined : (selectedType.value as ItemType),
         search: searchQuery.value.trim() || undefined,
       }, true),
     ])
@@ -288,7 +288,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Reported Items
+            {{ t('myItems.totalReported') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalCount }}
@@ -303,7 +303,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Lost Item Inquiries
+            {{ t('myItems.lostInquiries') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ lostCount }}
@@ -318,7 +318,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Found Items Turned In
+            {{ t('myItems.foundTurnedIn') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ foundCount }}
@@ -333,7 +333,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Reunited & Returned
+            {{ t('myItems.reunitedReturned') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ returnedCount }}
@@ -369,7 +369,7 @@ onMounted(() => load())
         <div class="relative flex-1">
           <AppInput
             id="my-items-search"
-            placeholder="Search my reported items by title, category, campus..."
+            :placeholder="t('myItems.searchPlaceholder')"
             :model-value="searchQuery"
             class="w-full text-sm"
             @update:model-value="onSearchChange"
@@ -393,7 +393,7 @@ onMounted(() => load())
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filters') }}</span>
         </button>
       </div>
 
@@ -402,7 +402,7 @@ onMounted(() => load())
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportItemsCsv"
         >
@@ -412,7 +412,7 @@ onMounted(() => load())
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refresh')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"

@@ -255,7 +255,7 @@ function handleBulkDelete(): void {
   if (selectedIds.value.length === 0) return
   uiStore.showConfirm({
     title: t('admin.announcements.deleteTitle'),
-    message: `Are you sure you want to delete ${selectedIds.value.length} selected announcements?`,
+    message: t('admin.announcements.bulkDeleteConfirm', { count: selectedIds.value.length }),
     variant: 'danger',
     confirmText: t('common.delete'),
     onConfirm: async () => {
@@ -554,7 +554,7 @@ function getTypeIcon(type: string) {
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filters') }}</span>
         </button>
       </div>
 
@@ -562,7 +562,7 @@ function getTypeIcon(type: string) {
       <div class="flex items-center gap-2 shrink-0">
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportAnnouncementsCsv"
         >
@@ -571,7 +571,7 @@ function getTypeIcon(type: string) {
 
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refresh')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="fetchList(true)"
@@ -682,7 +682,7 @@ function getTypeIcon(type: string) {
           <button
             type="button"
             class="p-1 rounded-md text-slate-400 hover:text-white transition-colors cursor-pointer ml-1"
-            title="Clear Selection"
+            :title="t('common.clearSelection')"
             @click="selectedIds = []"
           >
             <X class="h-4 w-4" />

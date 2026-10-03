@@ -7,7 +7,7 @@
 
 import { apiClient } from '@/lib/http/client'
 import { initCsrf } from '@/lib/http/csrf'
-import { AUTH, PROFILE } from '@/lib/api/endpoints'
+import { AUTH, PROFILE, PUBLIC, ADMIN } from '@/lib/api/endpoints'
 import type {
   LoginCredentials,
   LoginResponse,
@@ -21,6 +21,8 @@ import type {
   VerifyPasswordResetResponse,
   ResetPasswordData,
   MessageResponse,
+  PublicUniversityDomain,
+  UniversityDomain,
 } from '../types/auth.types'
 
 /**
@@ -131,4 +133,73 @@ export interface UserSummaryData {
 export async function getUserSummary(): Promise<UserSummaryData> {
   const { data } = await apiClient.get<{ data: UserSummaryData }>(PROFILE.SUMMARY)
   return data.data
+}
+
+/**
+ * Get active university domains for registration discovery.
+ */
+export async function getPublicUniversityDomains(): Promise<PublicUniversityDomain[]> {
+  const { data } = await apiClient.get<{ data: PublicUniversityDomain[] }>(PUBLIC.UNIVERSITY_DOMAINS)
+  return data.data
+}
+
+/**
+ * Admin: Get university domains list with pagination and search.
+ */
+export async function getAdminUniversityDomains(params?: {
+  page?: number
+  per_page?: number
+  search?: string
+  is_active?: boolean
+  all?: boolean
+}): Promise<{ data: UniversityDomain[]; meta?: any }> {
+  const { data } = await apiClient.get(ADMIN.UNIVERSITY_DOMAINS, { params })
+  return data
+}
+
+/**
+ * Admin: Create university domain.
+ */
+export async function createAdminUniversityDomain(domainData: {
+  domain: string
+  institution_name: string
+  campus_id?: number | null
+  is_active?: boolean
+  description?: string | null
+}): Promise<{ message: string; data: UniversityDomain }> {
+  const { data } = await apiClient.post(ADMIN.UNIVERSITY_DOMAINS, domainData)
+  return data
+}
+
+/**
+ * Admin: Update university domain.
+ */
+export async function updateAdminUniversityDomain(
+  id: number,
+  domainData: Partial<{
+    domain: string
+    institution_name: string
+    campus_id?: number | null
+    is_active?: boolean
+    description?: string | null
+  }>
+): Promise<{ message: string; data: UniversityDomain }> {
+  const { data } = await apiClient.put(ADMIN.UNIVERSITY_DOMAIN(id), domainData)
+  return data
+}
+
+/**
+ * Admin: Delete university domain.
+ */
+export async function deleteAdminUniversityDomain(id: number): Promise<{ message: string }> {
+  const { data } = await apiClient.delete(ADMIN.UNIVERSITY_DOMAIN(id))
+  return data
+}
+
+/**
+ * Admin: Toggle university domain active status.
+ */
+export async function toggleAdminUniversityDomainActive(id: number): Promise<{ message: string; data: UniversityDomain }> {
+  const { data } = await apiClient.patch(ADMIN.UNIVERSITY_DOMAIN_TOGGLE_ACTIVE(id))
+  return data
 }

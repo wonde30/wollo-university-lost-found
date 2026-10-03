@@ -46,6 +46,7 @@ class User extends Authenticatable
         'phone',
         'language',
         'is_active',
+        'must_change_password',
         'profile_photo',
         'failed_login_attempts',
         'locked_until',
@@ -63,6 +64,7 @@ class User extends Authenticatable
             'email_verified_at'    => 'datetime',
             'password'             => 'hashed',
             'is_active'            => 'boolean',
+            'must_change_password' => 'boolean',
             'failed_login_attempts' => 'integer',
             'locked_until'         => 'datetime',
         ];
@@ -242,10 +244,10 @@ class User extends Authenticatable
                 $names = Permission::where('is_active', true)->pluck('name')->all();
                 if (empty($names)) {
                     $names = [
-                        'REPORT_LOST', 'REPORT_FOUND', 'EDIT_OWN_ITEM', 'DELETE_OWN_ITEM',
+                        'ACCESS_ADMIN_DASHBOARD', 'REPORT_LOST', 'REPORT_FOUND', 'EDIT_OWN_ITEM', 'DELETE_OWN_ITEM',
                         'MANAGE_ALL_ITEMS', 'CHANGE_ITEM_STATUS', 'SUBMIT_CLAIM',
                         'REVIEW_CLAIMS', 'REVERSE_CLAIMS', 'MANAGE_CUSTODY',
-                        'MOVE_ITEM_CUSTODY', 'PROCESS_RETURNS', 'MANAGE_USERS',
+                        'MOVE_ITEM_CUSTODY', 'PROCESS_RETURNS', 'MANAGE_USERS', 'SUSPEND_USERS',
                         'MANAGE_CAMPUSES', 'MANAGE_CATEGORIES', 'MANAGE_LOCATIONS',
                         'GENERATE_REPORTS', 'MANAGE_SETTINGS', 'VIEW_AUDIT_LOGS',
                         'MANAGE_PERMISSIONS',
@@ -354,6 +356,17 @@ class User extends Authenticatable
         return in_array($permissionName, $this->getPermissionNames(), true);
     }
 
+    public function hasAnyPermission(array $permissionNames): bool
+    {
+        $userPerms = $this->getPermissionNames();
+        foreach ($permissionNames as $perm) {
+            if (in_array($perm, $userPerms, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Resolve the role name from the loaded relation or a single query.
      */
@@ -389,7 +402,9 @@ class User extends Authenticatable
         }
 
         return $this->hasPermission('REVIEW_CLAIMS')
+            || $this->hasPermission('REVERSE_CLAIMS')
             || $this->hasPermission('MANAGE_CUSTODY')
+            || $this->hasPermission('MOVE_ITEM_CUSTODY')
             || $this->hasPermission('PROCESS_RETURNS')
             || $this->hasPermission('MANAGE_ALL_ITEMS');
     }

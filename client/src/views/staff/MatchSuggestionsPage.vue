@@ -127,9 +127,9 @@ onMounted(() => {
             </div>
 
             <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 flex-wrap">
-              <span v-if="item.category_score">{{ t('items.myItems.category') }}: {{ item.category_score }}pts</span>
-              <span v-if="item.text_score">Text: {{ Math.round(item.text_score) }}pts</span>
-              <span v-if="item.location_score">{{ t('nav.locations') }}: +{{ item.location_score }}pts</span>
+              <span v-if="item.category_score">{{ t('items.myItems.category') }}: {{ item.category_score }} {{ t('matchSuggestions.points') }}</span>
+              <span v-if="item.text_score">{{ t('matchSuggestions.textMatch') }}: {{ Math.round(item.text_score) }} {{ t('matchSuggestions.points') }}</span>
+              <span v-if="item.location_score">{{ t('nav.locations') }}: +{{ item.location_score }} {{ t('matchSuggestions.points') }}</span>
               <span>&bull; {{ formatDate(item.created_at) }}</span>
             </div>
           </div>
@@ -156,7 +156,7 @@ onMounted(() => {
 
               <div v-if="item.lost_item">
                 <h3 class="font-bold text-slate-900 dark:text-white text-sm">{{ item.lost_item.title }}</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">Ref: {{ item.lost_item.reference_code }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ t('matchSuggestions.reference') }}: {{ item.lost_item.reference_code }}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 line-clamp-2">{{ item.lost_item.description }}</p>
                 <div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-amber-200/40 dark:border-amber-800/40 text-[11px] text-slate-600 dark:text-slate-300">
                   <div><strong>{{ t('items.myItems.category') }}:</strong> {{ (currentLocale === 'am' && item.lost_item.category?.display_name_am) ? item.lost_item.category.display_name_am : (item.lost_item.category?.display_name || item.lost_item.category?.name || t('items.category')) }}</div>
@@ -188,7 +188,7 @@ onMounted(() => {
 
               <div v-if="item.found_item">
                 <h3 class="font-bold text-slate-900 dark:text-white text-sm">{{ item.found_item.title }}</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">Ref: {{ item.found_item.reference_code }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ t('matchSuggestions.reference') }}: {{ item.found_item.reference_code }}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 line-clamp-2">{{ item.found_item.description }}</p>
                 <div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-emerald-200/40 dark:border-emerald-800/40 text-[11px] text-slate-600 dark:text-slate-300">
                   <div><strong>{{ t('items.myItems.category') }}:</strong> {{ (currentLocale === 'am' && item.found_item.category?.display_name_am) ? item.found_item.category.display_name_am : (item.found_item.category?.display_name || item.found_item.category?.name || t('items.category')) }}</div>

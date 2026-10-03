@@ -11,6 +11,7 @@ import { formatDateTime } from '@/utils/date'
 import { formatStatus } from '@/utils/formatters'
 import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
+import type { CustodyEventType } from '@/features/custody/types/custody.types'
 import {
   Package,
   Plus,
@@ -41,7 +42,7 @@ const transferItemTitle = ref<string>('')
 const showFilters = ref(false)
 const searchQuery = ref('')
 const selectedEventType = ref<string>('all')
-const perPage = ref(10)
+const perPage = ref(15)
 const currentPage = ref(1)
 
 // Multi-Selection State
@@ -54,7 +55,7 @@ function closeCustodyMenu() {
 // Metrics Computation
 const totalEventsCount = computed(() => pagination.value?.total || events.value.length)
 const checkedInCount = computed(() => events.value.filter(e => e.event_type?.toLowerCase().includes('in') || e.event_type?.toLowerCase().includes('intake') || e.event_type?.toLowerCase().includes('received') || e.event_type === 'deposited').length || Math.max(1, Math.floor(events.value.length * 0.6)))
-const distinctVaultsCount = computed(() => new Set(events.value.map(e => e.storage_location?.name || (e as any).storage_location_id).filter(Boolean)).size || 3)
+const distinctVaultsCount = computed(() => new Set(events.value.map(e => e.storage_location?.name || (e.storage_location_id ? String(e.storage_location_id) : '')).filter(Boolean)).size || 3)
 const distinctOfficersCount = computed(() => new Set(events.value.map(e => e.actor?.id || e.performed_by?.id).filter(Boolean)).size || 2)
 
 // Selection Helpers
@@ -88,22 +89,22 @@ function toggleSelectEvent(id: number) {
  * deposited | transferred | released | disposed | inventoried | inspected | withdrawn | returned
  */
 const eventTypeOptions = computed(() => [
-  { label: 'All Event Types', value: 'all' },
-  { label: 'Deposited (Checked In)', value: 'deposited' },
-  { label: 'Transferred', value: 'transferred' },
-  { label: 'Released (Checked Out)', value: 'released' },
-  { label: 'Inspected', value: 'inspected' },
-  { label: 'Inventoried', value: 'inventoried' },
-  { label: 'Returned to Owner', value: 'returned' },
-  { label: 'Withdrawn', value: 'withdrawn' },
-  { label: 'Disposed', value: 'disposed' },
+  { label: t('custody.eventTypes.all'), value: 'all' },
+  { label: t('custody.eventTypes.deposited'), value: 'deposited' },
+  { label: t('custody.eventTypes.transferred'), value: 'transferred' },
+  { label: t('custody.eventTypes.released'), value: 'released' },
+  { label: t('custody.eventTypes.inspected'), value: 'inspected' },
+  { label: t('custody.eventTypes.inventoried'), value: 'inventoried' },
+  { label: t('custody.eventTypes.returned'), value: 'returned' },
+  { label: t('custody.eventTypes.withdrawn'), value: 'withdrawn' },
+  { label: t('custody.eventTypes.disposed'), value: 'disposed' },
 ])
 
 async function load(page = 1) {
   currentPage.value = page
   try {
     await loadEvents({
-      event_type: selectedEventType.value === 'all' ? undefined : (selectedEventType.value as any),
+      event_type: selectedEventType.value === 'all' ? undefined : (selectedEventType.value as CustodyEventType),
       search: searchQuery.value.trim() || undefined,
       page,
       per_page: perPage.value,
@@ -122,8 +123,8 @@ function onSearchChange(val: string) {
   }, 350)
 }
 
-function onEventTypeChange(val: any) {
-  selectedEventType.value = val
+function onEventTypeChange(val: string | number | boolean) {
+  selectedEventType.value = String(val)
   load(1)
 }
 
@@ -211,7 +212,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Custody Movement Events
+            {{ t('custody.movementEvents') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalEventsCount }}
@@ -226,7 +227,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Intake & Active Storage
+            {{ t('custody.intakeActiveStorage') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ checkedInCount }}
@@ -241,7 +242,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Active Vault Facilities
+            {{ t('custody.activeVaultFacilities') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ distinctVaultsCount }}
@@ -256,7 +257,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Authorized Custodians
+            {{ t('custody.authorizedCustodians') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ distinctOfficersCount }}
@@ -292,7 +293,7 @@ onMounted(() => load())
         <div class="relative flex-1">
           <AppInput
             id="custody-search"
-            placeholder="Search by item title, vault, officer, or note..."
+            :placeholder="t('custody.searchPlaceholder')"
             :model-value="searchQuery"
             class="w-full text-sm"
             @update:model-value="onSearchChange"
@@ -316,7 +317,7 @@ onMounted(() => load())
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filters') }}</span>
         </button>
       </div>
 
@@ -325,7 +326,7 @@ onMounted(() => load())
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportCustodyCsv"
         >
@@ -335,7 +336,7 @@ onMounted(() => load())
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refresh')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -360,7 +361,7 @@ onMounted(() => load())
     >
       <div>
         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-          Movement Event Type
+          {{ t('custody.eventType') }}
         </label>
         <AppSelect
           :options="eventTypeOptions"
@@ -602,7 +603,7 @@ onMounted(() => load())
             class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             @click="load(currentPage - 1)"
           >
-            &lt; Previous
+            &lt; {{ t('common.previous') }}
           </button>
 
           <template v-for="p in (pagination?.last_page || 1)" :key="p">
@@ -626,7 +627,7 @@ onMounted(() => load())
             class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             @click="load(currentPage + 1)"
           >
-            Next &gt;
+            {{ t('common.next') }} &gt;
           </button>
         </div>
       </div>

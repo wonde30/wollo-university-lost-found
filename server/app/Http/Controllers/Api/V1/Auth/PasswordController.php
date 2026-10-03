@@ -42,9 +42,10 @@ class PasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Update password
+            // Update password and clear must_change_password requirement
             $user->update([
-                'password' => Hash::make($request->new_password),
+                'password'             => Hash::make($request->new_password),
+                'must_change_password' => false,
             ]);
         });
 

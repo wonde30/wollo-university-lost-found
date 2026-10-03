@@ -30,4 +30,19 @@ class UserPolicy
     {
         return ($user->isAdmin() || $user->hasPermission('MANAGE_USERS')) && $user->id !== $model->id;
     }
+
+    public function updateRole(User $user, User $model): bool
+    {
+        return ($user->isAdmin() || $user->hasPermission('MANAGE_USERS')) && $user->id !== $model->id;
+    }
+
+    public function syncPermissions(User $user, User $model): bool
+    {
+        return ($user->isAdmin() || $user->hasPermission('MANAGE_PERMISSIONS') || $user->hasPermission('MANAGE_USERS')) && $user->id !== $model->id;
+    }
+
+    public function toggleActive(User $user, User $model): bool
+    {
+        return ($user->isAdmin() || $user->hasPermission('MANAGE_USERS')) && $user->id !== $model->id;
+    }
 }

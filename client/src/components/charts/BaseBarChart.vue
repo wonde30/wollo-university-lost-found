@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { t } from '@/i18n'
 import {
   Chart,
   BarController,
@@ -243,7 +244,7 @@ watch(
       v-if="loading"
       class="w-full rounded-2xl bg-slate-100 dark:bg-slate-800/80 animate-pulse p-4 space-y-4"
       :style="{ height: `${height}px` }"
-      aria-label="Loading bar chart"
+      :aria-label="t('charts.loadingBar')"
     >
       <div v-for="n in 4" :key="n" class="space-y-1.5">
         <div class="flex justify-between items-center">
@@ -261,14 +262,14 @@ watch(
       :style="{ height: `${height}px` }"
     >
       <AlertCircle class="h-7 w-7 text-rose-500 mb-2" />
-      <p class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1">Failed to load chart metrics</p>
+      <p class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-1">{{ t('common.chartError') }}</p>
       <p class="text-[11px] text-rose-600/80 dark:text-rose-400/80 mb-3">{{ error }}</p>
       <button
         type="button"
         class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-900 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 rounded-lg hover:bg-rose-50 cursor-pointer shadow-2xs transition-colors"
         @click="emit('retry')"
       >
-        Retry Analytics
+        {{ t('charts.retryAnalytics') }}
       </button>
     </div>
 
@@ -279,7 +280,7 @@ watch(
       :style="{ height: `${height}px` }"
     >
       <BarChart2 class="h-7 w-7 text-slate-400 mb-2" />
-      <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">No Distribution Data</p>
+      <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">{{ t('charts.noDistributionData') }}</p>
       <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ emptyText }}</p>
     </div>
 

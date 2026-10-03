@@ -74,7 +74,14 @@ class OrganizationalUnitController extends Controller
 
         $validated = $request->validate([
             'campus_id'   => ['required', 'integer', 'exists:campuses,id'],
-            'parent_id'   => ['nullable', 'integer', 'exists:organizational_units,id'],
+            'parent_id'   => [
+                'nullable',
+                'integer',
+                \Illuminate\Validation\Rule::exists('organizational_units', 'id')->when(
+                    $request->filled('campus_id'),
+                    fn ($rule) => $rule->where('campus_id', $request->input('campus_id'))
+                ),
+            ],
             'type_id'     => ['required', 'integer', 'exists:organizational_unit_types,id'],
             'name'        => ['required', 'string', 'max:255'],
             'name_am'     => ['nullable', 'string', 'max:255'],
@@ -83,10 +90,7 @@ class OrganizationalUnitController extends Controller
             'is_active'   => ['nullable', 'boolean'],
         ]);
 
-        $unit = DB::transaction(function () use ($validated) {
-            return OrganizationalUnit::create($validated);
-        });
-
+        $unit = OrganizationalUnit::create($validated);
         \Illuminate\Support\Facades\Cache::forget('org_units.all');
 
         return response()->json([
@@ -110,9 +114,19 @@ class OrganizationalUnitController extends Controller
         $unit = OrganizationalUnit::findOrFail($id);
         $this->authorize('update', $unit);
 
+        $targetCampusId = $request->input('campus_id', $unit->campus_id);
+
         $validated = $request->validate([
             'campus_id'   => ['sometimes', 'integer', 'exists:campuses,id'],
-            'parent_id'   => ['nullable', 'integer', 'exists:organizational_units,id'],
+            'parent_id'   => [
+                'nullable',
+                'integer',
+                \Illuminate\Validation\Rule::notIn([$id]),
+                \Illuminate\Validation\Rule::exists('organizational_units', 'id')->when(
+                    !empty($targetCampusId),
+                    fn ($rule) => $rule->where('campus_id', $targetCampusId)
+                ),
+            ],
             'type_id'     => ['sometimes', 'integer', 'exists:organizational_unit_types,id'],
             'name'        => ['sometimes', 'string', 'max:255'],
             'name_am'     => ['nullable', 'string', 'max:255'],
@@ -138,14 +152,15 @@ class OrganizationalUnitController extends Controller
         $unit = OrganizationalUnit::findOrFail($id);
         $this->authorize('delete', $unit);
 
-        DB::transaction(function () use ($unit) {
-            $unit->delete();
-        });
+        // BUG-03 fix: hard delete causes a 500 when the unit has children
+        // (parent_id FK: RESTRICT) or enrolled users (organizational_unit_id FK: RESTRICT).
+        // Soft-deactivate to match CampusController pattern.
+        $unit->update(['is_active' => false]);
 
         \Illuminate\Support\Facades\Cache::forget('org_units.all');
 
         return response()->json([
-            'message' => 'Organizational unit deleted successfully',
+            'message' => 'Organizational unit deactivated successfully',
         ]);
     }
 }

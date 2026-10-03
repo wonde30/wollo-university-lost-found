@@ -18,7 +18,14 @@ class StoreLostItemRequest extends FormRequest
             'description' => ['required', 'string', 'min:20', 'max:2000'], // FR-14 (20-2000 chars)
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'campus_id' => ['nullable', 'integer', 'exists:campuses,id'],
-            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'location_id' => [
+                'nullable',
+                'integer',
+                \Illuminate\Validation\Rule::exists('locations', 'id')->when(
+                    $this->filled('campus_id'),
+                    fn ($rule) => $rule->where('campus_id', $this->input('campus_id'))
+                ),
+            ],
             'location_detail' => ['nullable', 'string', 'max:255'],
             'brand' => ['nullable', 'string', 'max:80'],
             'color' => ['nullable', 'string', 'max:60'],

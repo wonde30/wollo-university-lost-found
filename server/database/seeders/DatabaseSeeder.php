@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
             ReportSeeder::class,
             SearchLogAndAnalyticsSeeder::class,
             SystemSettingSeeder::class,
+            UniversityDomainSeeder::class,
         ]);
 
         Cache::forget('admin.statistics');

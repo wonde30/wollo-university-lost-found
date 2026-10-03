@@ -16,9 +16,15 @@ class RealtimeNotificationController extends Controller
     /**
      * Stream real-time notifications for the authenticated user via Server-Sent Events (SSE).
      *
-     * This is a one-shot SSE response: it sends any pending notifications and closes.
-     * The browser will automatically reconnect after `retry` milliseconds.
-     * A 30-second retry interval prevents overwhelming the single-threaded PHP dev server.
+     * DEPLOYMENT-AWARE ARCHITECTURE:
+     * - LOCAL DEVELOPMENT (Windows / single-threaded `php artisan serve`):
+     *   Executes a non-blocking one-shot burst with `retry: 30000` (30s) and terminates immediately.
+     *   This prevents worker starvation and single-thread deadlock.
+     *
+     * - PRODUCTION (Nginx + PHP-FPM, Laravel Octane, or FrankenPHP):
+     *   Keeps the SSE stream open in a persistent 55-second loop with periodic heartbeat pings
+     *   (`: ping\n\n` every 15s) and pushes new notifications instantly (sub-second latency) with
+     *   fast client reconnect (`retry: 3000`).
      */
     public function stream(Request $request): StreamedResponse
     {
@@ -27,7 +33,7 @@ class RealtimeNotificationController extends Controller
             abort(401, 'Unauthenticated.');
         }
 
-        $userId = $user->id;
+        $userId = (int) $user->id;
 
         // Determine starting ID: from Last-Event-ID header, query param, or current latest ID
         $lastEventId = $request->header('Last-Event-ID') ?: $request->query('last_id');
@@ -38,7 +44,10 @@ class RealtimeNotificationController extends Controller
             $lastId = (int) (Notification::where('user_id', $userId)->max('id') ?? 0);
         }
 
-        $response = new StreamedResponse(function () use ($userId, $lastId, $request) {
+        $isProduction = app()->environment('production') || $request->header('X-SSE-Mode') === 'persistent';
+        $isLocalWindowsDev = PHP_OS_FAMILY === 'Windows' && app()->environment('local', 'testing') && $request->header('X-SSE-Mode') !== 'persistent';
+
+        $response = new StreamedResponse(function () use ($userId, $lastId, $request, $isProduction, $isLocalWindowsDev) {
             // CRITICAL: Release PHP session lock immediately so concurrent requests execute without delay
             if (session_status() === PHP_SESSION_ACTIVE) {
                 session_write_close();
@@ -54,32 +63,87 @@ class RealtimeNotificationController extends Controller
                 ob_end_clean();
             }
 
-            // Send initial connection packet.
-            // PERFORMANCE FIX: retry set to 30 seconds (was 3 seconds).
-            // On a single-threaded PHP dev server, each SSE reconnection blocks all other
-            // HTTP requests. 30s reduces server thread occupation by 10x vs 3s.
+            $currentLastId = $lastId;
+
+            // Send initial connection handshake
             echo ": connected\n\n";
-            echo "retry: 30000\n\n";
-            flush();
 
-            // Fetch any new notifications for this user created after $lastId
-            $newNotifications = Notification::where('user_id', $userId)
-                ->where('id', '>', $lastId)
-                ->orderBy('id', 'asc')
-                ->get();
-
-            if ($newNotifications->isNotEmpty()) {
-                foreach ($newNotifications as $notification) {
-                    $payload = json_encode((new NotificationResource($notification))->toArray($request));
-                    echo "id: {$notification->id}\n";
-                    echo "event: notification\n";
-                    echo "data: {$payload}\n\n";
-                }
+            if ($isLocalWindowsDev || ! $isProduction) {
+                // Local development mode: send mode and initial burst, then send close event so client closes EventSource cleanly
+                echo "event: mode\n";
+                echo "data: {\"mode\":\"local_dev\"}\n\n";
                 flush();
+
+                $newNotifications = Notification::where('user_id', $userId)
+                    ->where('id', '>', $currentLastId)
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+                if ($newNotifications->isNotEmpty()) {
+                    foreach ($newNotifications as $notification) {
+                        $payload = json_encode((new NotificationResource($notification))->toArray($request));
+                        echo "id: {$notification->id}\n";
+                        echo "event: notification\n";
+                        echo "data: {$payload}\n\n";
+                    }
+                    flush();
+                }
+
+                // Send explicit close event so client terminates EventSource without native reconnect looping
+                echo "event: close\n";
+                echo "data: {\"closed\":true}\n\n";
+                flush();
+
+                DB::disconnect();
+                return;
             }
 
-            // Release DB connection immediately so it is available for other requests
-            DB::disconnect();
+            // Production mode: persistent streaming loop with 3s interval and 15s heartbeat pings
+            echo "retry: 3000\n\n";
+            echo "event: mode\n";
+            echo "data: {\"mode\":\"persistent\"}\n\n";
+            flush();
+
+            $startTime = time();
+            $lastPing = $startTime;
+
+            while (time() - $startTime < 55) {
+                if (connection_aborted()) {
+                    break;
+                }
+
+                // Optimize: check existence before querying full models
+                $hasNew = Notification::where('user_id', $userId)
+                    ->where('id', '>', $currentLastId)
+                    ->exists();
+
+                if ($hasNew) {
+                    $newNotifications = Notification::where('user_id', $userId)
+                        ->where('id', '>', $currentLastId)
+                        ->orderBy('id', 'asc')
+                        ->get();
+
+                    foreach ($newNotifications as $notification) {
+                        $payload = json_encode((new NotificationResource($notification))->toArray($request));
+                        echo "id: {$notification->id}\n";
+                        echo "event: notification\n";
+                        echo "data: {$payload}\n\n";
+                        $currentLastId = max($currentLastId, (int) $notification->id);
+                    }
+                    flush();
+                }
+
+                // Heartbeat ping every 15s to keep proxy connections alive
+                if (time() - $lastPing >= 15) {
+                    echo ": ping\n\n";
+                    flush();
+                    $lastPing = time();
+                }
+
+                // Sleep for 3 seconds before next cycle, releasing DB connection
+                DB::disconnect();
+                sleep(3);
+            }
         });
 
         $response->headers->set('Content-Type', 'text/event-stream');

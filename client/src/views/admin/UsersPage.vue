@@ -9,6 +9,8 @@ import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { currentLocale, t } from '@/i18n'
 import { getExportFilename } from '@/stores/settings.store'
 import type { User, UserRole } from '@/features/auth/types/auth.types'
+import type { StoreUserData, UpdateUserData } from '@/features/admin/types/admin.types'
+import { getErrorMessage } from '@/utils/error-handler'
 import * as adminApi from '@/features/admin/api/admin.api'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
@@ -327,7 +329,7 @@ async function handleSaveEditUser() {
 
   isSubmittingUser.value = true
   try {
-    const payload: any = {
+    const payload: UpdateUserData = {
       full_name: editUserForm.full_name.trim(),
       university_id: editUserForm.university_id.trim() || undefined,
       phone: editUserForm.phone.trim() || null,
@@ -336,8 +338,8 @@ async function handleSaveEditUser() {
     await updateUser(editingUser.value.id, payload)
     uiStore.success(`User "${editUserForm.full_name}" updated successfully.`)
     isEditModalOpen.value = false
-  } catch (err: any) {
-    uiStore.error(err.response?.data?.message || err.message || 'Failed to update user')
+  } catch (err: unknown) {
+    uiStore.error(getErrorMessage(err, 'Failed to update user'))
   } finally {
     isSubmittingUser.value = false
   }
@@ -360,8 +362,8 @@ async function handleSaveAssignedRole() {
     }
     uiStore.success(`${assignRoleUser.value.full_name}: Role updated to ${selectedRoleToAssign.value.toUpperCase()}`)
     isAssignRoleModalOpen.value = false
-  } catch (err: any) {
-    uiStore.error(err.response?.data?.message || err.message || 'Failed to update role')
+  } catch (err: unknown) {
+    uiStore.error(getErrorMessage(err, 'Failed to update role'))
   } finally {
     isSubmittingUser.value = false
   }
@@ -417,8 +419,8 @@ async function handleOpenUserPermissionsModal(user: User) {
     const data = await adminApi.getUserPermissions(user.id)
     userPermsData.value = data
     userPermsDirectIds.value = [...data.direct_permission_ids]
-  } catch (err: any) {
-    uiStore.error('Failed to load user permissions')
+  } catch (err: unknown) {
+    uiStore.error(getErrorMessage(err, 'Failed to load user permissions'))
     isUserPermsModalOpen.value = false
   } finally {
     userPermsLoading.value = false
@@ -433,8 +435,8 @@ async function handleSaveUserPerms() {
     uiStore.success(`Direct permissions updated for ${userPermsTarget.value.full_name}`)
     isUserPermsModalOpen.value = false
     await load(filters.page)
-  } catch (err: any) {
-    uiStore.error(err.response?.data?.message || err.message || 'Failed to save permissions')
+  } catch (err: unknown) {
+    uiStore.error(getErrorMessage(err, 'Failed to save permissions'))
   } finally {
     userPermsSubmitting.value = false
   }
@@ -550,7 +552,7 @@ async function handleSaveNewUser() {
     const roleObj = permissionsStore.roles.find(r => r.name === newUserForm.role)
     const roleId = roleObj ? roleObj.id : (newUserForm.role_id || 3)
 
-    const payload: any = {
+    const payload: StoreUserData = {
       full_name: newUserForm.full_name.trim(),
       university_id: newUserForm.university_id.trim(),
       email: newUserForm.email.trim(),
@@ -563,8 +565,8 @@ async function handleSaveNewUser() {
     await createUser(payload)
     uiStore.success(`User "${payload.full_name}" registered successfully.`)
     isCreateModalOpen.value = false
-  } catch (err: any) {
-    uiStore.error(err.response?.data?.message || err.message || 'Failed to create user')
+  } catch (err: unknown) {
+    uiStore.error(getErrorMessage(err, 'Failed to create user'))
   } finally {
     isSubmittingUser.value = false
   }
@@ -707,7 +709,7 @@ onMounted(async () => {
         >
           <X v-if="showFilters" class="h-4 w-4 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -716,7 +718,7 @@ onMounted(async () => {
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportUsersCsv"
         >
@@ -726,7 +728,7 @@ onMounted(async () => {
         <!-- Refresh Button (Fully Functional with Loading Spin) -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -739,7 +741,7 @@ onMounted(async () => {
           <template #icon-left>
             <Plus class="h-4 w-4 mr-1" />
           </template>
-          Create New
+          {{ t('admin.users.createUserTitle') }}
         </AppButton>
       </div>
     </div>
@@ -1115,15 +1117,15 @@ onMounted(async () => {
     <!-- Modal Form: Create User -->
     <AppModal
       v-model:open="isCreateModalOpen"
-      title="Create New User Account"
+      :title="t('admin.users.createUserTitle')"
       max-width="lg"
     >
       <div class="space-y-4 py-2">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <AppInput
             id="new-user-fullname"
-            label="Full Name *"
-            placeholder="e.g. Abebe Bikila"
+            :label="t('admin.users.fullName') + ' *'"
+            :placeholder="t('admin.users.placeholders.name')"
             :model-value="newUserForm.full_name"
             required
             @update:model-value="newUserForm.full_name = $event"
@@ -1131,8 +1133,8 @@ onMounted(async () => {
 
           <AppInput
             id="new-user-id"
-            label="University / Student ID *"
-            placeholder="e.g. UGR/1234/14"
+            :label="t('admin.users.universityId') + ' *'"
+            :placeholder="t('admin.users.placeholders.studentStaffId')"
             :model-value="newUserForm.university_id"
             required
             @update:model-value="newUserForm.university_id = $event"
@@ -1143,8 +1145,8 @@ onMounted(async () => {
           <AppInput
             id="new-user-email"
             type="email"
-            label="Email Address *"
-            placeholder="e.g. abebe@wollo.edu.et"
+            :label="t('admin.users.email') + ' *'"
+            :placeholder="t('admin.users.placeholders.email')"
             :model-value="newUserForm.email"
             required
             @update:model-value="newUserForm.email = $event"
@@ -1153,8 +1155,8 @@ onMounted(async () => {
           <AppInput
             id="new-user-pass"
             type="password"
-            label="Temporary Password *"
-            placeholder="Minimum 8 characters"
+            :label="t('admin.users.temporaryPassword') + ' *'"
+            :placeholder="t('admin.users.placeholders.password')"
             :model-value="newUserForm.password"
             required
             @update:model-value="newUserForm.password = $event"
@@ -1164,7 +1166,7 @@ onMounted(async () => {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Role *
+              {{ t('admin.users.role') }} *
             </label>
             <select
               v-model="newUserForm.role"
@@ -1176,8 +1178,8 @@ onMounted(async () => {
 
           <AppInput
             id="new-user-phone"
-            label="Phone Number"
-            placeholder="e.g. +251 91 234 5678"
+            :label="t('admin.users.phone')"
+            :placeholder="t('admin.users.placeholders.phone')"
             :model-value="newUserForm.phone"
             @update:model-value="newUserForm.phone = $event"
           />
@@ -1185,13 +1187,13 @@ onMounted(async () => {
 
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-            Organizational / Academic Unit
+            {{ t('admin.users.organizationalUnit') }}
           </label>
           <select
             v-model="newUserForm.organizational_unit_id"
             class="w-full h-10 px-3 text-xs font-semibold rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0B5D3B] cursor-pointer"
           >
-            <option value="">None / General</option>
+            <option value="">{{ t('common.noneGeneral') }}</option>
             <option v-for="u in referencesStore.organizationalUnits" :key="u.id" :value="u.id">
               {{ u.name }} ({{ u.short_code }})
             </option>
@@ -1201,7 +1203,7 @@ onMounted(async () => {
         <div class="pt-2">
           <AppCheckbox
             id="new-user-active"
-            label="Active Account (User can login immediately)"
+            :label="t('admin.users.activeAccountImmediate')"
             :model-value="newUserForm.is_active"
             @update:model-value="newUserForm.is_active = $event"
           />
@@ -1214,7 +1216,7 @@ onMounted(async () => {
             {{ t('common.cancel') }}
           </AppButton>
           <AppButton variant="primary" :loading="isSubmittingUser" @click="handleSaveNewUser">
-            Create User
+            {{ t('admin.users.createBtn') }}
           </AppButton>
         </div>
       </template>
@@ -1223,13 +1225,13 @@ onMounted(async () => {
     <!-- Modal Form: Edit User -->
     <AppModal
       v-model:open="isEditModalOpen"
-      title="Edit User Details"
+      :title="t('admin.users.editUserTitle')"
       max-width="md"
     >
       <div class="space-y-4 py-2">
         <AppInput
           id="edit-user-fullname"
-          label="Full Name *"
+          :label="t('admin.users.fullName') + ' *'"
           :model-value="editUserForm.full_name"
           required
           @update:model-value="editUserForm.full_name = $event"
@@ -1237,14 +1239,14 @@ onMounted(async () => {
 
         <AppInput
           id="edit-user-uid"
-          label="University / Student ID"
+          :label="t('admin.users.universityId')"
           :model-value="editUserForm.university_id"
           @update:model-value="editUserForm.university_id = $event"
         />
 
         <AppInput
           id="edit-user-phone"
-          label="Phone Number"
+          :label="t('admin.users.phone')"
           :model-value="editUserForm.phone"
           @update:model-value="editUserForm.phone = $event"
         />
@@ -1252,7 +1254,7 @@ onMounted(async () => {
         <div class="pt-2">
           <AppCheckbox
             id="edit-user-active"
-            label="Active Account"
+            :label="t('admin.users.activeAccount')"
             :model-value="editUserForm.is_active"
             @update:model-value="editUserForm.is_active = $event"
           />
@@ -1274,17 +1276,17 @@ onMounted(async () => {
     <!-- Modal Form: Assign Roles -->
     <AppModal
       v-model:open="isAssignRoleModalOpen"
-      title="Assign System Role"
+      :title="t('admin.users.assignRoleTitle')"
       max-width="sm"
     >
       <div class="space-y-4 py-2">
         <p class="text-xs text-slate-500 dark:text-slate-400">
-          Assign role and access permissions for <strong>{{ assignRoleUser?.full_name }}</strong>:
+          {{ t('admin.users.assignRoleFor') }} <strong>{{ assignRoleUser?.full_name }}</strong>:
         </p>
 
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-            System Role *
+            {{ t('admin.users.role') }} *
           </label>
           <select
             v-model="selectedRoleToAssign"
@@ -1301,7 +1303,7 @@ onMounted(async () => {
             {{ t('common.cancel') }}
           </AppButton>
           <AppButton variant="primary" :loading="isSubmittingUser" @click="handleSaveAssignedRole">
-            Update Role
+            {{ t('admin.users.updateRole') }}
           </AppButton>
         </div>
       </template>
@@ -1310,16 +1312,16 @@ onMounted(async () => {
     <!-- Modal: User Direct Permissions Management -->
     <AppModal
       v-model:open="isUserPermsModalOpen"
-      :title="`Direct Permissions: ${userPermsTarget?.full_name || 'User'}`"
+      :title="`${t('admin.users.directPermissions')}: ${userPermsTarget?.full_name || t('admin.users.user')}`"
       max-width="2xl"
     >
       <div class="space-y-4 py-2">
         <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 text-xs text-blue-900 dark:text-blue-200 flex items-start gap-2.5">
           <Shield class="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
           <div>
-            <p class="font-bold">Base Role: {{ userPermsTarget?.role?.toUpperCase() }}</p>
+            <p class="font-bold">{{ t('admin.users.baseRole') }}: {{ userPermsTarget?.role?.toUpperCase() }}</p>
             <p class="text-[11px] mt-0.5 text-blue-800 dark:text-blue-300">
-              Permissions marked with "Role" are automatically inherited. Check individual boxes below to grant custom direct permissions to this specific user.
+              {{ t('admin.users.permissionsInheritedDesc') }}
             </p>
           </div>
         </div>
@@ -1328,7 +1330,7 @@ onMounted(async () => {
           <div class="relative flex-1">
             <AppInput
               id="modal-user-perm-search"
-              placeholder="Search permissions..."
+              :placeholder="t('admin.users.placeholders.searchPermissions')"
               :model-value="userPermsSearch"
               class="w-full text-xs"
               @update:model-value="userPermsSearch = $event"
@@ -1339,7 +1341,7 @@ onMounted(async () => {
             </AppInput>
           </div>
           <span class="text-xs font-bold text-slate-500 shrink-0">
-            {{ userPermsDirectIds.length }} Direct Grants
+            {{ userPermsDirectIds.length }} {{ t('admin.users.directGrants') }}
           </span>
         </div>
 

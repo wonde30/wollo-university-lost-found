@@ -10,8 +10,11 @@ class EnsureUserIsActive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && !$request->user()->is_active) {
-            return response()->json(['message' => 'Your account is inactive.'], 403);
+        if ($request->user() && ! $request->user()->is_active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your account has been deactivated. Please contact the administrator.',
+            ], 403);
         }
 
         return $next($request);

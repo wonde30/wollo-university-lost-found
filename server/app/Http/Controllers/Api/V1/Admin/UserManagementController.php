@@ -23,6 +23,13 @@ class UserManagementController extends Controller
 
         $perPage = min(100, max(1, $request->integer('per_page', 10)));
 
+        $sortBy = $request->string('sort_by', $request->string('order_by', 'created_at'))->toString();
+        $sortDir = strtolower($request->string('sort_dir', $request->string('direction', 'desc'))->toString()) === 'asc' ? 'asc' : 'desc';
+        $allowedSorts = ['id', 'full_name', 'email', 'university_id', 'created_at', 'is_active'];
+        if (! in_array($sortBy, $allowedSorts, true)) {
+            $sortBy = 'created_at';
+        }
+
         $users = User::with(['profile', 'role.permissions', 'organizationalUnits', 'directPermissions'])
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = trim($request->string('search')->toString());
@@ -40,7 +47,7 @@ class UserManagementController extends Controller
             ->when($request->has('is_active'), function ($q) use ($request) {
                 $q->where('is_active', $request->boolean('is_active'));
             })
-            ->orderByDesc('created_at')
+            ->orderBy($sortBy, $sortDir)
             ->paginate($perPage);
 
         return response()->json([
@@ -76,7 +83,7 @@ class UserManagementController extends Controller
                 'full_name'     => $validated['full_name'],
                 'university_id' => $validated['university_id'],
                 'email'         => $validated['email'],
-                'password'      => bcrypt($validated['password']),
+                'password'      => $validated['password'],
                 'role_id'       => $validated['role_id'],
                 'phone'         => $validated['phone'] ?? null,
                 'is_active'     => $validated['is_active'] ?? true,
@@ -127,7 +134,7 @@ class UserManagementController extends Controller
     public function updateRole(UpdateUserRoleRequest $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $this->authorize('update', $user);
+        $this->authorize('updateRole', $user);
 
         if ($request->filled('role_id')) {
             $roleId = (int) $request->input('role_id');
@@ -159,7 +166,7 @@ class UserManagementController extends Controller
     public function toggleActive(Request $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $this->authorize('update', $user);
+        $this->authorize('toggleActive', $user);
 
         $oldStatus = $user->is_active;
         $newStatus = ! $oldStatus;
@@ -213,7 +220,7 @@ class UserManagementController extends Controller
     public function syncPermissions(Request $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $this->authorize('update', $user);
+        $this->authorize('syncPermissions', $user);
 
         $validated = $request->validate([
             'permission_ids'   => ['present', 'array'],

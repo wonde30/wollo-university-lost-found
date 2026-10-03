@@ -12,13 +12,13 @@ export const claimStatusLabels: Record<string, string> = {
 
 export function formatStatus(status: string | null | undefined): string {
   if (!status) return t('common.none')
-  if (claimStatusLabels[status]) return claimStatusLabels[status]
-  const itemKey = `items.statuses.${status}`
-  const trans = t(itemKey)
-  if (trans !== itemKey) return trans
   const claimKey = `claims.status.${status}`
   const claimTrans = t(claimKey)
   if (claimTrans !== claimKey) return claimTrans
+  const itemKey = `items.statuses.${status}`
+  const trans = t(itemKey)
+  if (trans !== itemKey) return trans
+  if (claimStatusLabels[status]) return claimStatusLabels[status]
   return status
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -31,7 +31,7 @@ export function formatCurrency(amount: number | null | undefined, currency: stri
 }
 
 export function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes || bytes === 0) return '0 B'
+  if (!bytes || bytes <= 0 || isNaN(bytes)) return '0 B'
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))

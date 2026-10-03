@@ -27,7 +27,10 @@ app.config.errorHandler = (err, instance, info) => {
 
 app.mount('#app')
 
-// Bootstrap public settings (non-blocking)
+// Bootstrap public settings and warm CSRF cookie (non-blocking)
 import { useSettingsStore } from '@/stores/settings.store'
+import { initCsrf } from '@/lib/http/csrf'
+
 const settingsStore = useSettingsStore()
 settingsStore.fetchSettings()
+initCsrf().catch(() => {})

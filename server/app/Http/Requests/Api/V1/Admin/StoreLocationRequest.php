@@ -16,11 +16,12 @@ class StoreLocationRequest extends FormRequest
         return [
             'campus_id' => ['required', 'integer', 'exists:campuses,id'],
             'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:40', 'unique:locations,code'],
+            'name_am' => ['nullable', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:50', 'unique:locations,code'],
             'building' => ['nullable', 'string', 'max:255'],
+            'zone' => ['nullable', 'string', 'max:255'],
             'floor' => ['nullable', 'string', 'max:50'],
-            'room_number' => ['nullable', 'string', 'max:50'],
-            'coordinates' => ['nullable', 'string', 'max:100'],
+            'sort_order' => ['nullable', 'integer'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

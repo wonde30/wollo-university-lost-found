@@ -336,7 +336,7 @@ onUnmounted(() => {
               <FileText class="h-3.5 w-3.5" />
             </div>
             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
-              Total Reports
+              {{ t('admin.reports.totalReports') }}
             </h3>
           </div>
           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/60">
@@ -347,7 +347,7 @@ onUnmounted(() => {
           <span class="text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">
             {{ totalReportsCount }}
           </span>
-          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">All generated export documents</p>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{{ t('admin.reports.allDocuments') }}</p>
         </div>
       </div>
 
@@ -359,7 +359,7 @@ onUnmounted(() => {
               <CheckCircle2 class="h-3.5 w-3.5" />
             </div>
             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
-              Ready to Download
+              {{ t('admin.reports.readyToDownload') }}
             </h3>
           </div>
           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
@@ -370,7 +370,7 @@ onUnmounted(() => {
           <span class="text-2xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400">
             {{ readyReportsCount }}
           </span>
-          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Processed & ready for export</p>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{{ t('admin.reports.readyDescription') }}</p>
         </div>
       </div>
 
@@ -382,7 +382,7 @@ onUnmounted(() => {
               <Clock class="h-3.5 w-3.5" />
             </div>
             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
-              Processing Queue
+              {{ t('admin.reports.processingQueue') }}
             </h3>
           </div>
           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
@@ -393,7 +393,7 @@ onUnmounted(() => {
           <span class="text-2xl font-black font-mono tracking-tight text-amber-600 dark:text-amber-400">
             {{ pendingReportsCount }}
           </span>
-          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Queued background exports</p>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{{ t('admin.reports.queuedExports') }}</p>
         </div>
       </div>
 
@@ -405,7 +405,7 @@ onUnmounted(() => {
               <Activity class="h-3.5 w-3.5" />
             </div>
             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200 leading-tight">
-              Recovery Rate
+              {{ t('admin.reports.recoveryRate') }}
             </h3>
           </div>
           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-[#E8F4EE] dark:bg-[#153C2D] text-[#0B5D3B] dark:text-[#75bd97] border border-emerald-200/80 dark:border-emerald-800/60">
@@ -416,7 +416,7 @@ onUnmounted(() => {
           <span class="text-2xl font-black font-mono tracking-tight text-[#0B5D3B] dark:text-[#75bd97]">
             {{ recoveryRate }}%
           </span>
-          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">Verified return ratio</p>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">{{ t('admin.reports.verifiedRatio') }}</p>
         </div>
       </div>
     </div>
@@ -445,7 +445,7 @@ onUnmounted(() => {
         <div class="relative flex-1">
           <AppInput
             id="report-search"
-            placeholder="Search reports by ID, type, or user..."
+            :placeholder="t('admin.reports.searchPlaceholder')"
             :model-value="searchQuery"
             class="w-full text-sm"
             @update:model-value="searchQuery = $event; currentPage = 1"
@@ -469,7 +469,7 @@ onUnmounted(() => {
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filters' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -478,7 +478,7 @@ onUnmounted(() => {
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || reportsLoading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -505,7 +505,7 @@ onUnmounted(() => {
         <!-- 1. Report Type -->
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-            Report Type
+            {{ t('admin.reports.reportType') }}
           </label>
           <AppSelect
             :options="reportTypeFilterOptions"
@@ -518,7 +518,7 @@ onUnmounted(() => {
         <!-- 2. Status -->
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-            Status
+            {{ t('common.status') }}
           </label>
           <AppSelect
             :options="statusFilterOptions"
@@ -531,7 +531,7 @@ onUnmounted(() => {
         <!-- 3. Date Created -->
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-            Date Created
+            {{ t('admin.reports.dateRange') }}
           </label>
           <AppSelect
             :options="dateRangeFilterOptions"
@@ -544,7 +544,7 @@ onUnmounted(() => {
         <!-- 4. File Format -->
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-            File Format
+            {{ t('admin.reports.format') }}
           </label>
           <AppSelect
             :options="formatFilterOptions"
@@ -562,7 +562,7 @@ onUnmounted(() => {
           @click="clearFilters"
         >
           <X class="h-3 w-3" />
-          <span>Reset All Filters</span>
+          <span>{{ t('common.clearAllFilters') }}</span>
         </button>
       </div>
     </div>
@@ -734,7 +734,7 @@ onUnmounted(() => {
                 <button
                   v-if="report.status === 'ready'"
                   type="button"
-                  title="Download Document"
+                  :title="t('common.downloadDocument')"
                   :disabled="downloadingId === report.id"
                   class="h-8 w-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
                   @click="handleDownload(report)"
@@ -749,7 +749,7 @@ onUnmounted(() => {
                     @click="close(); handleDownload(report)"
                   >
                     <Download class="h-4 w-4 text-emerald-500" />
-                    <span>Download ({{ (report.format || 'CSV').toUpperCase() }})</span>
+                    <span>{{ t('common.download') }} ({{ (report.format || 'CSV').toUpperCase() }})</span>
                   </button>
                   <div v-else class="px-3.5 py-2 text-slate-400 text-xs italic">
                     Status: {{ report.status }}

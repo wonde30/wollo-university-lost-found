@@ -9,6 +9,7 @@ export interface Notification {
   user_id: number
   type: string
   data: Record<string, any>
+  action_url?: string | null
   is_read?: boolean
   read_at: string | null
   created_at: string

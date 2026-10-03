@@ -61,7 +61,7 @@ apiClient.interceptors.response.use(
         retryAttempts.set(config, 1)
         
         try {
-          await initCsrf()
+          await initCsrf(true)
           return apiClient.request(config)
         } catch (csrfError) {
           return Promise.reject(normalizeError(csrfError))
@@ -72,6 +72,19 @@ apiClient.interceptors.response.use(
     // 422: Validation errors - preserve Laravel validation structure
     if (status === 422) {
       return Promise.reject(normalizeError(error))
+    }
+
+    // 429: Rate limited - display localized rate limit message
+    if (status === 429) {
+      const apiErr = normalizeError(error)
+      try {
+        const { useUiStore } = await import('@/stores/ui.store')
+        const uiStore = useUiStore()
+        uiStore.error(apiErr.message || 'Too many requests. Please wait before retrying.')
+      } catch {
+        // Fallback if store unavailable
+      }
+      return Promise.reject(apiErr)
     }
 
     // 500: Server errors

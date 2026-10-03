@@ -87,21 +87,21 @@ const trendChartSeries = computed(() => {
   if (!analytics.value?.timeline) return []
   return [
     {
-      name: 'Reported Lost',
+      name: t('admin.dashboard.charts.reportedLost'),
       key: 'lost',
       data: analytics.value.timeline.lost || [],
       color: 'var(--wu-danger-500, #f43f5e)',
       fillColor: 'var(--wu-danger-500, #f43f5e)',
     },
     {
-      name: 'Reported Found',
+      name: t('admin.dashboard.charts.reportedFound'),
       key: 'found',
       data: analytics.value.timeline.found || [],
       color: 'var(--wu-info-500, #3b82f6)',
       fillColor: 'var(--wu-info-500, #3b82f6)',
     },
     {
-      name: 'Returned to Owner',
+      name: t('admin.dashboard.charts.returnedToOwner'),
       key: 'returned',
       data: analytics.value.timeline.returned || [],
       color: 'var(--wu-primary-500, #107c4f)',
@@ -159,25 +159,25 @@ const statusDonutSegments = computed(() => {
   return [
     {
       id: 'lost',
-      label: 'Lost (Active)',
+      label: t('admin.dashboard.charts.lostActive'),
       value: stats.value.active_lost ?? stats.value.lost_items ?? 0,
       color: 'var(--wu-danger-500, #f43f5e)',
     },
     {
       id: 'found_unclaimed',
-      label: 'Found (Unclaimed)',
+      label: t('admin.dashboard.charts.foundUnclaimed'),
       value: stats.value.found_unclaimed ?? 0,
       color: 'var(--wu-info-500, #3b82f6)',
     },
     {
       id: 'claimed',
-      label: 'Claimed & Verifying',
+      label: t('admin.dashboard.charts.claimedVerifying'),
       value: stats.value.claimed_items ?? 0,
       color: 'var(--wu-warning-500, #f59e0b)',
     },
     {
       id: 'returned',
-      label: 'Returned to Owner',
+      label: t('admin.dashboard.charts.returnedOwner'),
       value: stats.value.returned_items ?? 0,
       color: 'var(--wu-success-500, #10b981)',
     },
@@ -313,7 +313,7 @@ const governanceLinks = computed(() => {
         <!-- Refresh Live Button -->
         <button
           type="button"
-          title="Refresh Statistics"
+          :title="t('admin.dashboard.charts.refreshStatistics')"
           :disabled="loading"
           class="h-9 w-9 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"

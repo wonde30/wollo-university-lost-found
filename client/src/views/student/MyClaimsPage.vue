@@ -6,7 +6,7 @@ import { useUiStore } from '@/stores/ui.store'
 import { getUserSummary, type UserSummaryData } from '@/features/auth/api/auth.api'
 import { getErrorMessage } from '@/utils/error-handler'
 import { t } from '@/i18n'
-import type { Claim } from '@/features/claims/types/claim.types'
+import type { Claim, ClaimStatus } from '@/features/claims/types/claim.types'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppModal from '@/components/ui/AppModal.vue'
@@ -89,7 +89,7 @@ function toggleSelectClaim(id: number) {
 const statusLabels = claimStatusLabels
 
 const statusFilterOptions = computed(() => [
-  { label: 'All Claim Statuses', value: 'all' },
+  { label: t('myClaims.allStatuses'), value: 'all' },
   { label: statusLabels.pending, value: 'pending' },
   { label: statusLabels.under_review, value: 'under_review' },
   { label: statusLabels.approved, value: 'approved' },
@@ -105,7 +105,7 @@ async function load(page = 1) {
       loadClaims({
         page,
         per_page: perPage.value,
-        status: selectedStatus.value === 'all' ? undefined : (selectedStatus.value as any),
+        status: selectedStatus.value === 'all' ? undefined : (selectedStatus.value as ClaimStatus),
         search: searchQuery.value.trim() || undefined,
       }, true),
     ])
@@ -126,8 +126,8 @@ function onSearchChange(val: string) {
   }, 350)
 }
 
-function onStatusChange(val: any) {
-  selectedStatus.value = val
+function onStatusChange(val: string | number | boolean) {
+  selectedStatus.value = String(val) as 'all' | 'pending' | 'approved' | 'rejected'
   load(1)
 }
 
@@ -232,7 +232,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Claims Filed
+            {{ t('myClaims.totalClaimsFiled') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalCount }}
@@ -247,7 +247,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Under Verification
+            {{ t('myClaims.underVerification') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ pendingCount }}
@@ -262,7 +262,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Approved Claims
+            {{ t('myClaims.approvedReady') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ approvedCount }}
@@ -277,7 +277,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Handed Over & Collected
+            {{ t('myClaims.resolvedHandedOver') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ resolvedCount }}
@@ -313,7 +313,7 @@ onMounted(() => load())
         <div class="relative flex-1">
           <AppInput
             id="claim-search"
-            placeholder="Search by claim ID, item name, or reference..."
+            :placeholder="t('myClaims.searchPlaceholder')"
             :model-value="searchQuery"
             class="w-full text-sm"
             @update:model-value="onSearchChange"
@@ -337,7 +337,7 @@ onMounted(() => load())
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filters') }}</span>
         </button>
       </div>
 
@@ -346,7 +346,7 @@ onMounted(() => load())
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportClaimsCsv"
         >
@@ -356,7 +356,7 @@ onMounted(() => load())
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refresh')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"

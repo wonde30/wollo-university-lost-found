@@ -15,24 +15,56 @@ use App\Http\Requests\Api\V1\Items\UpdateItemRequest;
 use App\Http\Resources\Api\V1\ItemDetailResource;
 use App\Http\Resources\Api\V1\ItemResource;
 use App\Jobs\SendItemConfirmationEmail;
+use App\Models\Campus;
 use App\Models\CustodyEvent;
 use App\Models\Item;
 use App\Models\ItemPhoto;
 use App\Models\ItemStatusHistory;
 use App\Models\ItemTag;
 use App\Models\ItemView;
+use App\Models\Location;
 use App\Models\SystemSetting;
+use App\Models\User;
 use App\Support\Helpers\ReferenceCode;
 use App\Support\Services\AuditLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ItemController extends Controller
 {
     public function __construct(
         protected DuplicateDetectionService $duplicateDetection
     ) {}
+
+    /**
+     * Resolve a valid active campus ID from input, location, or authenticated user campus.
+     * Throws 422 ValidationException if no valid active campus can be determined.
+     */
+    protected function resolveCampusId(?int $campusId, ?int $locationId = null, ?User $user = null): int
+    {
+        if ($campusId && Campus::where('id', $campusId)->where('is_active', true)->exists()) {
+            return $campusId;
+        }
+
+        if ($locationId) {
+            $locationCampusId = Location::where('id', $locationId)->value('campus_id');
+            if ($locationCampusId && Campus::where('id', $locationCampusId)->where('is_active', true)->exists()) {
+                return (int) $locationCampusId;
+            }
+        }
+
+        if ($user && isset($user->campus_id) && $user->campus_id) {
+            if (Campus::where('id', $user->campus_id)->where('is_active', true)->exists()) {
+                return (int) $user->campus_id;
+            }
+        }
+
+        throw ValidationException::withMessages([
+            'campus_id' => ['A valid active campus is required.'],
+        ]);
+    }
 
     /**
      * FR-15 / FR-28: Paginated items list with multi-criteria filtering,
@@ -44,7 +76,7 @@ class ItemController extends Controller
 
         $perPage = min(100, max(1, $request->integer('per_page', 10)));
 
-        $items = Item::with(['category', 'location', 'reporter', 'photos', 'tags'])
+        $items = Item::with(['category', 'location', 'campus', 'reporter', 'photos', 'tags'])
             ->where('is_deleted', false)
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->string('type')->toString()))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')->toString()))
@@ -98,20 +130,26 @@ class ItemController extends Controller
         $validated = $request->validated();
         $user = $request->user();
 
+        $campusId = $this->resolveCampusId(
+            isset($validated['campus_id']) ? (int) $validated['campus_id'] : null,
+            isset($validated['location_id']) ? (int) $validated['location_id'] : null,
+            $user
+        );
+
         // FR-21: Check for duplicates before creation
         $duplicate = $this->duplicateDetection->check(
             (int) $validated['category_id'],
-            isset($validated['campus_id']) ? (int) $validated['campus_id'] : null,
+            $campusId,
             $validated['serial_number'] ?? null
         );
 
-        $item = DB::transaction(function () use ($validated, $user, $request) {
+        $item = DB::transaction(function () use ($validated, $user, $campusId, $request) {
             $ref = ReferenceCode::generate('WU');
 
             $item = Item::create([
                 'reference_code' => $ref,
                 'reporter_id' => $user->id,
-                'campus_id' => $validated['campus_id'] ?? (int) SystemSetting::get('default_campus_id', 1),
+                'campus_id' => $campusId,
                 'type' => 'lost',
                 'status' => 'lost',
                 'title' => $validated['title'],
@@ -169,7 +207,7 @@ class ItemController extends Controller
             return $item;
         });
 
-        $item->load(['category', 'location', 'reporter', 'photos', 'tags']);
+        $item->load(['category', 'location', 'campus', 'reporter', 'photos', 'tags']);
 
         // FR-16: Dispatch confirmation email with reference code
         SendItemConfirmationEmail::dispatch($item);
@@ -213,21 +251,27 @@ class ItemController extends Controller
         $validated = $request->validated();
         $user = $request->user();
 
+        $campusId = $this->resolveCampusId(
+            isset($validated['campus_id']) ? (int) $validated['campus_id'] : null,
+            isset($validated['location_id']) ? (int) $validated['location_id'] : null,
+            $user
+        );
+
         // FR-21: Duplicate detection
         $duplicate = $this->duplicateDetection->check(
             (int) $validated['category_id'],
-            isset($validated['campus_id']) ? (int) $validated['campus_id'] : null,
+            $campusId,
             $validated['serial_number'] ?? null
         );
 
-        $item = DB::transaction(function () use ($validated, $user, $request) {
+        $item = DB::transaction(function () use ($validated, $user, $campusId, $request) {
             $ref = ReferenceCode::generate('WU');
             $heldAt = $validated['held_at'] ?? 'security_office';
 
             $item = Item::create([
                 'reference_code' => $ref,
                 'reporter_id' => $user->id,
-                'campus_id' => $validated['campus_id'] ?? (int) SystemSetting::get('default_campus_id', 1),
+                'campus_id' => $campusId,
                 'type' => 'found',
                 'status' => 'found_unclaimed',
                 'held_at' => $heldAt,
@@ -333,14 +377,25 @@ class ItemController extends Controller
      */
     public function show(Request $request, int $id): JsonResponse
     {
-        $item = Item::with(['category', 'location', 'reporter', 'photos', 'tags', 'statusHistories', 'custodyEvents'])
+        $viewer = $request->user();
+
+        $with = ['category', 'location', 'campus', 'reporter', 'photos', 'tags', 'statusHistories', 'custodyEvents'];
+
+        // BUG-02 fix: eager-load approved claim by viewer so ItemDetailResource
+        // can check canViewFullContact without firing an extra N+1 query per item.
+        if ($viewer) {
+            $viewerId = $viewer->id;
+            $with['approvedClaimByViewer'] = fn ($q) => $q->where('claimant_id', $viewerId)->where('status', 'approved');
+        }
+
+        $item = Item::with($with)
             ->withCount('claims')
             ->findOrFail($id);
 
         // FR-66: Record view
         ItemView::create([
             'item_id' => $item->id,
-            'user_id' => $request->user()?->id,
+            'user_id' => $viewer?->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'viewed_at' => now(),
@@ -442,7 +497,70 @@ class ItemController extends Controller
         ]);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function checkDuplicate(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'category_id'   => ['required', 'integer'],
+            'campus_id'     => ['nullable', 'integer'],
+            'serial_number' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $duplicate = $this->duplicateDetection->check(
+            (int) $validated['category_id'],
+            isset($validated['campus_id']) ? (int) $validated['campus_id'] : null,
+            $validated['serial_number'] ?? null
+        );
+
+        if ($duplicate) {
+            return response()->json([
+                'duplicate_found' => true,
+                'message'         => 'A similar item report was found recently.',
+                'similar_item_id' => $duplicate->id,
+            ]);
+        }
+
+        return response()->json([
+            'duplicate_found' => false,
+        ]);
+    }
+
+    /**
+     * Check if current user has existing reports that might conflict with a cross-link action.
+     * Used by frontend to show warnings before "I Found This" or "This Is Mine" actions.
+     */
+    public function checkCrossLinkEligibility(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'target_item_id' => ['required', 'integer', 'exists:items,id'],
+            'action'         => ['required', 'in:report_found,report_lost'],
+        ]);
+
+        $targetItem = Item::findOrFail($validated['target_item_id']);
+
+        // Check: Does user already have a report of the opposite type with same category?
+        $oppositeType = $validated['action'] === 'report_found' ? 'found' : 'lost';
+        $existingReport = Item::where('reporter_id', $user->id)
+            ->where('type', $oppositeType)
+            ->where('category_id', $targetItem->category_id)
+            ->where('is_deleted', false)
+            ->whereNotIn('status', ['withdrawn', 'cancelled', 'expired', 'disposed'])
+            ->where('created_at', '>=', now()->subDays(30))
+            ->first();
+
+        // Check: Is user the reporter of the target item? (can't cross-link own item)
+        $isOwnItem = (int) $targetItem->reporter_id === (int) $user->id;
+
+        return response()->json([
+            'eligible'     => ! $isOwnItem,
+            'has_existing' => (bool) $existingReport,
+            'existing_ref' => $existingReport?->reference_code,
+            'existing_id'  => $existingReport?->id,
+            'is_own_item'  => $isOwnItem,
+        ]);
+    }
+
+    public function destroy(int $id): \Illuminate\Http\Response
     {
         $item = Item::findOrFail($id);
         $this->authorize('delete', $item);
@@ -450,8 +568,6 @@ class ItemController extends Controller
         $item->delete();
         AuditLogger::log('item.deleted', $item, null, null, auth()->user());
 
-        return response()->json([
-            'message' => 'Item deleted successfully.',
-        ], JsonResponse::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

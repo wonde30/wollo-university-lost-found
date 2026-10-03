@@ -53,7 +53,7 @@ async function handleSubmit(): Promise<void> {
       id="reset-email"
       :label="t('auth.forgotPassword.email')"
       type="email"
-      placeholder="student@wu.edu.et"
+      :placeholder="t('auth.emailPlaceholder')"
       :model-value="form.email"
       :error="errors.email"
       required
@@ -63,7 +63,7 @@ async function handleSubmit(): Promise<void> {
     <AppInput
       id="reset-otp"
       :label="t('auth.verifyOtp.code')"
-      placeholder="e.g. 123456"
+      :placeholder="t('auth.otpPlaceholder')"
       :model-value="form.otp"
       :error="errors.otp"
       required

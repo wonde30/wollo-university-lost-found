@@ -106,7 +106,7 @@ async function handleSubmit(): Promise<void> {
     <AppInput
       id="profile-phone"
       :label="t('auth.register.phone')"
-      placeholder="+251 9XX XXX XXXX"
+      :placeholder="t('auth.phonePlaceholder')"
       :model-value="form.phone"
       :error="errors.phone"
       @update:model-value="form.phone = $event; clearError('phone')"

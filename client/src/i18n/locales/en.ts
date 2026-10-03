@@ -25,6 +25,7 @@ export const en = {
     "openMenu": "Open navigation menu",
     "closeMenu": "Close menu",
     "userMenu": "User Menu",
+    "user": "User",
     "switchLanguage": "Switch Language",
     "switchToEnglish": "Switch to English",
     "switchToAmharic": "Switch to Amharic",
@@ -34,7 +35,6 @@ export const en = {
     "portalTitle": "Property Recovery Portal",
     "export": "Export CSV",
     "loading": "Loading...",
-
     "processing": "Processing...",
     "saving": "Saving...",
     "saved": "Saved successfully",
@@ -133,7 +133,44 @@ export const en = {
     "allStatuses": "All Statuses",
     "createdOn": "Created on",
     "showingResults": "Showing {count} of {total} records",
-    "toggleStatus": "Toggle status"
+    "toggleStatus": "Toggle status",
+    "selected": "selected",
+    "refreshed": "Refreshed successfully",
+    "chartError": "Failed to load chart metrics",
+    "trendError": "Failed to load trend data",
+    "timePeriodSelector": "Time period selector",
+    "exitFullscreen": "Exit Fullscreen",
+    "fullscreen": "Fullscreen",
+    "sevenDays": "7 Days",
+    "thirtyDays": "30 Days",
+    "ninetyDays": "90 Days",
+    "twelveMonths": "12 Months",
+    "noHistoricalRecords": "No Historical Records",
+    "noDistributionData": "No Distribution Data",
+    "loadingChart": "Loading chart...",
+    "loadingTrendChart": "Loading trend chart",
+    "loadingDonutChart": "Loading donut chart",
+    "loadingBarChart": "Loading bar chart",
+    "loadingSparkline": "Loading sparkline",
+    "failedSparkline": "Failed to load sparkline",
+    "noSparklineData": "No sparkline data",
+    "retryAnalytics": "Retry Analytics",
+    "stepCount": "Step {current} of {total}",
+    "days7": "7 Days",
+    "days30": "30 Days",
+    "days90": "90 Days",
+    "months12": "12 Months",
+    "clearSelection": "Clear Selection",
+    "livePreview": "Live Preview",
+    "idPlaceholder": "e.g. 1",
+    "backToHome": "Back to Home",
+    "numericPlaceholder": "e.g. 1",
+    "hideFilters": "Hide Filters",
+    "refreshList": "Refresh List",
+    "downloadDocument": "Download Document",
+    "clearAllFilters": "Reset All Filters",
+    "allCategories": "All Categories",
+    "noneGeneral": "None / General"
   },
   "nav": {
     "menu": "MENU",
@@ -172,6 +209,7 @@ export const en = {
     "reports": "Reports",
     "auditLogs": "Audit Logs",
     "announcements": "System Announcements",
+    "universityDomains": "University Domains",
     "settings": "Settings",
     "helpAndSupport": "Help & Support",
     "reportLost": "Report Lost Item",
@@ -190,87 +228,146 @@ export const en = {
     "adminPortal": "Admin Portal",
     "notifications": "Notifications",
     "governance": "Governance & Analytics",
-    "portal": "Student Portal"
+    "portal": "Student Portal",
+    "browseItems": "Browse Items",
+    "about": "About",
+    "login": "Login",
+    "getStarted": "Get Started",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "analytics": "Analytics",
+    "staffOperations": "Staff Operations",
+    "itemsDirectory": "Items Directory"
   },
   "home": {
     "hero": {
-      "badge": "Official Campus Property Recovery System",
-      "title": "Lost Something on Campus?",
-      "subtitle": "We'll Help You Reclaim It.",
-      "description": "The verified property registry for students, instructors, and staff across campus locations.",
-      "browseBtn": "Browse Found Items",
-      "dashboardBtn": "Go to My Dashboard",
-      "reportBtn": "Report Lost Item",
-      "trackBtn": "Have a reference code? Track status directly"
+      "badge": "Together for a Safer Campus",
+      "title1": "Lost Something?",
+      "title2": "You're Not Alone.",
+      "description": "{institution} Lost & Found helps students, staff, and visitors reunite with their lost items. Report, search, and track items easily and securely.",
+      "reportLost": "Report Lost Item",
+      "browseFound": "Browse Found Items",
+      "secureReliable": "Secure & Reliable",
+      "universityCommunity": "University Community",
+      "realtimeUpdates": "Real-time Updates",
+      "quote": "Building a more caring and connected university community."
     },
-    "heroBadge": "Official Campus Property Recovery System",
-    "heroTitle": "Lost Something on Campus?",
-    "heroTitleHighlight": "We'll Help You Reclaim It.",
-    "heroSubtitle": "The verified property registry for students, instructors, and staff across campus locations.",
-    "browseFoundBtn": "Browse Found Items",
-    "myDashboardBtn": "Go to My Dashboard",
-    "createAccountBtn": "Create Student Account",
-    "trackLink": "Have a reference code? Track status directly",
     "stats": {
-      "campuses": "Campus Locations",
-      "dessieKombolcha": "2 Campuses - Dessie & Kombolcha",
-      "verifiedCustody": "Verified Staff Custody",
-      "vaultStorage": "100% Vault & Storage Tracked",
-      "fastVerification": "Fast Verification",
-      "claimSLA": "< 24h Claim Decision SLA",
-      "safeHandover": "Safe Handover",
-      "idCheck": "Verified ID & Signature Check"
+      "reported": "Items Reported",
+      "returned": "Items Returned",
+      "community": "Community Members",
+      "campuses": "Campuses",
+      "safeHandover": "Safe Handover Protocol"
     },
-    "statsCampuses": "Campus Locations",
-    "statsCampusesVal": "2 Campuses",
-    "statsCampusesDesc": "Dessie & Kombolcha",
-    "statsCustody": "Verified Staff Custody",
-    "statsCustodyVal": "100% Tracked",
-    "statsCustodyDesc": "Vault & Storage Registry",
-    "statsSla": "Fast Verification",
-    "statsSlaVal": "< 24 Hours",
-    "statsSlaDesc": "Claim Decision SLA",
-    "statsHandover": "Safe Handover",
-    "statsHandoverVal": "Verified",
-    "statsHandoverDesc": "ID & Signature Check",
-    "recentItems": {
-      "title": "Recently Found Items",
-      "subtitle": "Discovered on campus and awaiting verified owner retrieval",
-      "viewAll": "View All Items"
+    "features": {
+      "tag": "OUR FEATURES",
+      "title": "A Smarter Way to Find What Matters",
+      "subtitle": "Simple, secure, and efficient tools to help our university community.",
+      "smartSearchTitle": "Smart Search",
+      "smartSearchDesc": "Find lost or found items using advanced search filters, categories, and AI-assisted matching.",
+      "smartSearchAction": "Search Items",
+      "reportTitle": "Report Items",
+      "reportDesc": "Report lost or found items in minutes with photos, campus locations, and detailed descriptions.",
+      "reportAction": "Report Now",
+      "trackTitle": "Track Progress",
+      "trackDesc": "Get real-time updates on your reports, custody handovers, and claims through your dashboard.",
+      "trackAction": "Track Item",
+      "notifyTitle": "Get Notified",
+      "notifyDesc": "Receive instant multi-channel notifications when verified matches are found or item status updates.",
+      "notifyAction": "Learn More"
     },
-    "recentTitle": "Recently Found Items",
-    "recentSubtitle": "Discovered on campus and awaiting verified owner retrieval",
-    "viewAll": "View All Items",
-    "noPhoto": "No Photo Attached",
-    "foundProperty": "Found Property",
-    "lostReport": "Lost Report",
     "howItWorks": {
-      "title": "How Campus Recovery Works",
-      "subtitle": "A seamless 3-step digital protocol designed for speed, security, and verified student identity.",
-      "step1Title": "Report an Item",
-      "step1Desc": "Found or lost an item? Fill out our reporting form with photos, category, and campus location.",
-      "step2Title": "Browse & Match",
-      "step2Desc": "Search our real-time database with intelligent filtering by campus, date, and item characteristics.",
-      "step3Title": "Verify & Collect",
-      "step3Desc": "Submit proof of ownership. Campus security and staff verify details before coordinating a safe handover."
+      "tag": "HOW IT WORKS",
+      "title": "Simple Steps, Real Results",
+      "subtitle": "Reuniting items with their owners across Wollo University campuses is straightforward.",
+      "step1Title": "Report",
+      "step1Desc": "Submit details about your lost or found item with photos and campus location.",
+      "step2Title": "Search & Match",
+      "step2Desc": "Our system helps match items using smart search and automated property custody indexing.",
+      "step3Title": "Get Notified",
+      "step3Desc": "Receive immediate alerts when potential matches or verified reports are registered.",
+      "step4Title": "Reunite",
+      "step4Desc": "Complete the university custody verification process and safely claim your property."
     },
-    "howItWorksTitle": "How Campus Recovery Works",
-    "howItWorksSubtitle": "A seamless 3-step digital protocol designed for speed, security, and verified student identity.",
-    "step1Title": "Report an Item",
-    "step1Desc": "Found or lost an item? Fill out our reporting form with photos, category, and campus location.",
-    "step2Title": "Browse & Match",
-    "step2Desc": "Search our real-time database with intelligent filtering by campus, date, and item characteristics.",
-    "step3Title": "Verify & Collect",
-    "step3Desc": "Submit proof of ownership. Campus security and staff verify details before coordinating a safe handover.",
-    "cta": {
-      "title": "Get Started with Property Recovery",
-      "subtitle": "Register using your institutional credentials to report lost property, claim found items, and receive real-time notifications.",
-      "registerBtn": "Create Student Account"
+    "categories": {
+      "tag": "BROWSE BY CATEGORY",
+      "title": "Common Items on Campus",
+      "subtitle": "Explore lost and found items organized by official campus category.",
+      "viewAll": "View All Categories",
+      "noCategories": "No categories currently configured.",
+      "itemsCount": "({count} items)"
     },
-    "ctaTitle": "Get Started with Property Recovery",
-    "ctaSubtitle": "Register using your institutional credentials to report lost property, claim found items, and receive real-time notifications.",
-    "ctaBtn": "Register Student Account",
-    "noRecentItems": "No recent public items found at the moment."
+    "recentItems": {
+      "tag": "RECENT FOUND ITEMS",
+      "title": "Recently Found Items",
+      "subtitle": "These items were recently found on campus and are in university custody awaiting their owners.",
+      "viewAll": "View All Found Items",
+      "noItems": "No recent found items reported on campus at this time.",
+      "statusFound": "Found",
+      "campusGrounds": "Campus Grounds",
+      "generalCategory": "General"
+    },
+    "finalCta": {
+      "title": "Lost or Found Something?",
+      "subtitle": "Help us reunite items with their rightful owners across {institution}.",
+      "reportLost": "Report Lost Item",
+      "reportFound": "Report Found Item"
+    },
+    "testimonials": {
+      "tag": "TESTIMONIALS",
+      "title": "What Our Community Says",
+      "subtitle": "Real experiences from {institution} students, faculty, and campus staff.",
+      "t1": {
+        "name": "Aster Bekele",
+        "role": "Software Engineering Student, KIoT Campus",
+        "quote": "I recovered my lost smartphone through this platform! The custody team at Kombolcha gate verified my ownership within hours. Thank you {institution}!"
+      },
+      "t2": {
+        "name": "Daniel Tesfaye",
+        "role": "Instructor, College of Informatics, Dessie Campus",
+        "quote": "A transparent and dependable system for our academic community. It fosters integrity, accountability, and student trust across all campuses."
+      },
+      "t3": {
+        "name": "Mehari Worku",
+        "role": "Civil Engineering Student, Dessie Campus",
+        "quote": "I returned a found laptop bag with textbooks using this portal. The handover verification was smooth and safe. Proud of our university initiative!"
+      }
+    },
+    "faq": {
+      "tag": "FAQ",
+      "title": "Frequently Asked Questions",
+      "subtitle": "Answers to common questions regarding lost property custody and recovery at {institution}.",
+      "q1": "How do I report a lost item?",
+      "a1": "Click \"Report Lost Item\", sign in with your {institution} student or staff account, and submit details including the category, incident location (e.g. Block, Hall, or Lab), and descriptive photos. Our system will immediately check active custody inventories for matching items.",
+      "q2": "How do I claim a found item listed on the platform?",
+      "a2": "Browse the found items catalog, click \"Claim This Item\", and provide proof of ownership (such as serial numbers, unique markings, purchase receipts, or unlock codes). Campus property custody officers review claims within 24 business hours.",
+      "q3": "Where are property custody offices located on campus?",
+      "a3": "Found items are kept securely in custody vaults at the Dessie Main Campus Administration & Security Division and the Kombolcha Institute of Technology (KIoT) Main Gate Security Office.",
+      "q4": "How long are found items kept in custody?",
+      "a4": "Found items are held in verified custody vaults for up to 90 calendar days. Owners of matching items receive periodic notifications before standard university property disposition committee reviews.",
+      "q5": "Can campus visitors or guests report items without an account?",
+      "a5": "Yes. Visitors can search public listings and track items using reference codes without logging in. Submitting a new lost or found report requires basic registration to maintain verification security.",
+      "q6": "Is my personal and contact information kept confidential?",
+      "a6": "Yes. Your contact information is never published publicly. Only authorized {institution} security and custody officers have access to verified claim details during the handover process."
+    },
+    "noRecentItems": "No recent items found",
+    "trust": {
+      "tag": "INSTITUTIONAL INTEGRITY",
+      "title": "Campus Property Integrity & Recovery Standards",
+      "subtitle": "Official university standards governing verified custody, fair claims, and secure return operations across all Wollo campuses.",
+      "p1": {
+        "title": "Verified Chain of Custody",
+        "desc": "Every item turned in is logged with campus vault locations, officer timestamps, and immutable custody events."
+      },
+      "p2": {
+        "title": "Cryptographic Dual Confirmation",
+        "desc": "Physical returns require single-use security tokens or verified officer PIN confirmation with digital PDF handover receipts."
+      },
+      "p3": {
+        "title": "Identity & Data Privacy",
+        "desc": "Sensitive serial numbers, finder contact details, and proof documents remain securely masked from public catalogs."
+      }
+    }
   },
   "auth": {
     "registerSuccessOtp": "Account registered successfully! Please verify your email.",
@@ -280,6 +377,16 @@ export const en = {
     "resetSuccessSignIn": "Password reset successfully! Please sign in with your new password.",
     "passwordChangedSuccess": "Password changed successfully.",
     "profileUpdatedSuccess": "Profile updated successfully.",
+    "credentialsSent": "Your account credentials have been sent to your verified university email.",
+    "credentialsSentSubtitle": "A secure temporary password has been automatically generated and dispatched to your email address. Please check your inbox and sign in.",
+    "step1Title": "Institutional Details",
+    "step2Title": "OTP Verification",
+    "step3Title": "Credentials Delivered",
+    "allowedDomains": "Allowed Institutional Domains",
+    "mustChangePasswordTitle": "Security Requirement: Set Permanent Password",
+    "mustChangePasswordSubtitle": "You have logged in with an automatically generated temporary password. For account security, you must create a new permanent password before proceeding.",
+    "tempPassword": "Temporary Password",
+    "goToLogin": "Proceed to Sign In",
     "features": {
       "matchAlertsTitle": "Real-Time Match Alerts",
       "matchAlertsDesc": "Automated notification alerts when reported lost items match found property.",
@@ -362,7 +469,7 @@ export const en = {
     "email": "University Email",
     "emailPlaceholder": "name@wu.edu.et",
     "phone": "Phone Number",
-    "phonePlaceholder": "+251 91 234 5678",
+    "phonePlaceholder": "e.g. +251 911 234 567",
     "password": "Password",
     "passwordPlaceholder": "••••••••",
     "passwordConfirm": "Confirm Password",
@@ -383,7 +490,19 @@ export const en = {
     "otpCodePlaceholder": "6-digit code",
     "invalidCredentials": "The provided email or password is incorrect.",
     "registrationSuccess": "Account registered successfully. Please verify your email.",
-    "passwordResetSuccess": "Your password has been successfully updated. You can now sign in."
+    "passwordResetSuccess": "Your password has been successfully updated. You can now sign in.",
+    "domainRequirementNote": "Note: Registration requires an official institutional domain.",
+    "academicUnitOptional": "Academic Unit / College (Optional)",
+    "selectAcademicUnit": "Select College / Unit...",
+    "changeEmail": "Change Email",
+    "securityNotice": "Security Notice:",
+    "securityNoticeDesc": "Upon your first sign in using your temporary password, you will be required to set a new permanent password before accessing portal services.",
+    "accountActivationCheck": "Account Activation Security Check",
+    "tempPasswordPlaceholder": "Enter the temporary password from email",
+    "newPasswordPlaceholder": "Min 8 chars with uppercase, lowercase, numbers & symbols",
+    "repeatPasswordPlaceholder": "Repeat new password",
+    "idPlaceholder": "e.g. UGR/12345/14",
+    "otpPlaceholder": "e.g. 123456"
   },
   "browse": {
     "title": "Browse Lost & Found Items",
@@ -438,7 +557,9 @@ export const en = {
     "form": {
       "title": "Item Title / Name",
       "incidentDate": "Incident Date",
-      "description": "Detailed Description"
+      "description": "Detailed Description",
+      "locationDetail": "Specific Location Detail",
+      "titlePlaceholderFound": "e.g. Scientific Calculator Casio fx-991EX"
     },
     "report": {
       "lostTitle": "Report Lost Item",
@@ -463,7 +584,14 @@ export const en = {
     "isHighValue": "High Value or Sensitive Item",
     "primaryPhoto": "Primary Photo",
     "statusHistory": "Status History",
-    "timeline": "Item Timeline",
+    "timeline": {
+      "statusHistoryAudit": "Status History & Audit",
+      "noTransitions": "No status transitions recorded yet.",
+      "from": "From",
+      "reason": "Reason",
+      "notes": "Notes",
+      "by": "By: {name}"
+    },
     "reporter": "Reported By",
     "custodyStatus": "Custody Status",
     "heldAt": "Currently Stored At",
@@ -522,7 +650,35 @@ export const en = {
     "withdrawnSuccess": "Item report withdrawn successfully.",
     "editTitle": "Edit Reported Item",
     "titleLabel": "Item Title / Description",
-    "descriptionLabel": "Detailed Description"
+    "descriptionLabel": "Detailed Description",
+    "searchPlaceholder": "Search my reported items by title, category, campus...",
+    "iFoundThis": "I Found This Item",
+    "thisIsMine": "This Is Mine",
+    "crossLinkFoundBanner": "Pre-filled from lost report #{ref} — update details to match what you found",
+    "crossLinkLostBanner": "Pre-filled from found item #{ref} — describe your lost item",
+    "crossLinkExistingWarning": "You already have an active {type} report (Ref: #{ref}) in this category. Continue anyway?",
+    "crossLinkExistingTitle": "Existing Report Detected",
+    "crossLinkOwnItemError": "You cannot perform this action on your own reported item.",
+    "crossLinkTip": "Tip: Filing a lost report first strengthens your ownership claim",
+    "crossLinkMatchTip": "You reported a similar lost item (Ref: #{ref}) — this strengthens your claim!",
+    "crossLinkContinueBtn": "Continue Anyway",
+    "crossLinkCancelBtn": "Cancel",
+    "brand": "Brand / Model",
+    "color": "Color",
+    "serialNumber": "Serial / Identifier",
+    "claimedNotice": "This item has an active ownership claim approved or under verification with campus security.",
+    "returnedNotice": "This item has been officially verified and returned to its rightful owner.",
+    "reportLostMatchBtn": "Report My Matching Lost Item",
+    "physicalVerifiedCustody": "Physical property verified in university custody",
+    "trackPlaceholder": "e.g. WU-2024-001234",
+    "highValueTooltip": "High Value Item (>5,000 ETB)",
+    "clickToCopyRef": "Click to copy reference code",
+    "itemDetailsLifecycle": "Item Details & Lifecycle",
+    "updateOperationalStatus": "Update Item Operational Status",
+    "deleteConfirmation": "Delete Item Confirmation",
+    "targetItem": "Target Item",
+    "newOperationalStatus": "New Operational Status",
+    "auditRemarks": "Audit Remarks / Reason"
   },
   "claims": {
     "status": {
@@ -564,7 +720,12 @@ export const en = {
       "submittedDate": "Submission Date",
       "verificationStatus": "Decision Status",
       "claimDetails": "Claim Adjudication Details",
-      "reviewedAt": "Reviewed On"
+      "reviewedAt": "Reviewed On",
+      "totalClaims": "Total Claims",
+      "pendingAdjudication": "Pending Adjudication",
+      "approvedForHandover": "Approved for Handover",
+      "rejectedInvalid": "Rejected / Invalid",
+      "searchPlaceholder": "Search by claim ID, item, or claimant..."
     },
     "actions": {
       "review": "Review Claim",
@@ -593,7 +754,17 @@ export const en = {
     "handoverRecord": "Physical Handover Record",
     "conditionOnReturn": "Condition on Handover",
     "receiptConfirmed": "Receipt Acknowledged",
-    "receiptPending": "Pending Claimant Acknowledgment"
+    "receiptPending": "Pending Claimant Acknowledgment",
+    "myClaims": {
+      "subtitle": "Track the status and verification details of your submitted ownership claims."
+    },
+    "reviewNoteLabel": "Staff Review Note:",
+    "searchPlaceholder": "Search by claim ID, item name, or reference...",
+    "proofAndExplanation": "Proof & Explanation:",
+    "evidenceAttached": "{count} evidence file(s) attached",
+    "noEvidenceAttached": "No evidence attachments",
+    "numericIdPlaceholder": "e.g. 1",
+    "adjudicationStatus": "Adjudication Status"
   },
   "returns": {
     "processedSuccess": "Item return handed over and processed successfully.",
@@ -686,7 +857,28 @@ export const en = {
     "registrarOffice": "Registrar Office Storage",
     "ictHelpdesk": "ICT Directorate Helpdesk",
     "libraryCirculation": "Main Library Circulation Desk",
-    "otherLocation": "Authorized Staff Custody / Other"
+    "otherLocation": "Authorized Staff Custody / Other",
+    "searchPlaceholder": "Search by item title, vault, officer, or note...",
+    "selectLocationPlaceholder": "Select storage location",
+    "loadingLocations": "Loading locations...",
+    "movementEvents": "Custody Movement Events",
+    "intakeActiveStorage": "Intake & Active Storage",
+    "activeVaultFacilities": "Active Vault Facilities",
+    "authorizedCustodians": "Authorized Custodians",
+    "refreshedSuccess": "Custody events refreshed successfully",
+    "refreshFailed": "Failed to refresh custody events",
+    "noRecordsExport": "No custody records to export",
+    "eventTypes": {
+      "all": "All Event Types",
+      "deposited": "Deposited (Checked In)",
+      "transferred": "Transferred",
+      "released": "Released (Checked Out)",
+      "inspected": "Inspected",
+      "inventoried": "Inventoried",
+      "returned": "Returned to Owner",
+      "withdrawn": "Withdrawn",
+      "disposed": "Disposed"
+    }
   },
   "admin": {
     "campuses": {
@@ -713,7 +905,12 @@ export const en = {
       "deactivateBtn": "Deactivate",
       "activateBtn": "Activate",
       "noCampuses": "No campuses found. Add your first campus above.",
-      "editCampus": "Edit Campus"
+      "editCampus": "Edit Campus",
+      "all": "All Campuses",
+      "totalCampuses": "Total Campuses",
+      "activeCampuses": "Active Instructional Sites",
+      "branchCampuses": "Branch Campuses",
+      "regionalLocations": "Regional Locations"
     },
     "units": {
       "title": "Organizational Units",
@@ -756,9 +953,22 @@ export const en = {
       "noTypes": "No unit types found.",
       "isRoot": "Is Root Level",
       "level": "Level",
-      "actions": "Actions"
+      "actions": "Actions",
+      "unitType": "Unit Type",
+      "parentUnit": "Parent Unit (Optional)",
+      "noneRootLevel": "None (Root Level)",
+      "unitNameEn": "Unit Name (English)",
+      "unitNameAm": "Unit Name (Amharic)",
+      "shortCode": "Short Code",
+      "activeUnitLabel": "Active Unit (Visible across registration & forms)",
+      "createUnit": "Create Unit",
+      "typeCode": "Type Code",
+      "typeNameEn": "Type Name (English)",
+      "typeNameAm": "Type Name (Amharic)",
+      "isRootLabel": "Is Root Level (Directly under Campus, e.g. College/Division)",
+      "activeTypeLabel": "Active Type",
+      "createType": "Create Type"
     },
-
     "departments": {
       "title": "Department Management",
       "subtitle": "Configure academic colleges, schools, institutes, and administrative units.",
@@ -831,7 +1041,13 @@ export const en = {
       "activateBtn": "Activate",
       "noLocations": "No storage locations found",
       "addLocation": "Add Storage Location",
-      "editLocation": "Edit Storage Location"
+      "editLocation": "Edit Storage Location",
+      "slots": "slots",
+      "itemsCount": "items",
+      "totalVaults": "Total Storage Vaults",
+      "activeVaults": "Active Vaults",
+      "totalCapacity": "Total Storage Capacity",
+      "inCustody": "Items in Custody"
     },
     "categories": {
       "requiredError": "Category name is required.",
@@ -841,7 +1057,7 @@ export const en = {
       "deleteTitle": "Delete Category",
       "deleteConfirm": "Are you sure you want to delete this category?",
       "placeholders": {
-        "name": "e.g. Electronics, Documents, Keys",
+        "name": "e.g. laptop, smartphone, briefcase, book",
         "icon": "laptop, file-text, key"
       },
       "title": "Item Categories",
@@ -852,7 +1068,11 @@ export const en = {
       "icon": "Icon",
       "createBtn": "Create Category",
       "noCategories": "No categories registered yet.",
-      "editCategory": "Edit Category"
+      "editCategory": "Edit Category",
+      "totalCategories": "Total Categories",
+      "activeTaxonomies": "Active Taxonomies",
+      "documentTypes": "Document Types",
+      "valuablesGear": "Valuables & Gear"
     },
     "locations": {
       "requiredError": "Location name, code, and Campus are required.",
@@ -883,7 +1103,11 @@ export const en = {
       "deactivatedSuccess": "Location deactivated successfully.",
       "activatedSuccess": "Location activated successfully.",
       "code": "Location Code",
-      "editLocation": "Edit Location"
+      "editLocation": "Edit Location",
+      "totalLocations": "Total Specific Locations",
+      "activeSpots": "Active Spots",
+      "distinctBuildings": "Distinct Buildings",
+      "campusesCovered": "Campuses Covered"
     },
     "reports": {
       "loadError": "Failed to load generated reports list.",
@@ -902,7 +1126,17 @@ export const en = {
       "downloadedSuccess": "Report downloaded successfully.",
       "dateFrom": "From Date",
       "dateTo": "To Date",
-      "generate": "Generate Report"
+      "generate": "Generate Report",
+      "searchPlaceholder": "Search reports by ID, type, or user...",
+      "allDocuments": "All generated export documents",
+      "queuedExports": "Queued background exports",
+      "verifiedRatio": "Verified return ratio",
+      "totalReports": "Total Reports",
+      "readyToDownload": "Ready to Download",
+      "readyDescription": "Processed & ready for export",
+      "processingQueue": "Processing Queue",
+      "recoveryRate": "Recovery Rate",
+      "format": "File Format"
     },
     "auditLogs": {
       "title": "Security Audit Logs",
@@ -933,11 +1167,13 @@ export const en = {
       "payloadTitle": "Audit Event Details",
       "export": "Export Logs",
       "noLogsToExport": "No audit logs to export.",
-      "exportSuccess": "Audit records exported successfully."
+      "exportSuccess": "Audit records exported successfully.",
+      "eventDetails": "Audit Event Details"
     },
     "settings": {
       "updatedSuccess": "Institutional system settings updated successfully.",
-      "subtitle": "Configure platform parameters, retention policies, and integrations"
+      "subtitle": "Configure platform parameters, retention policies, and integrations",
+      "uploadNewLogo": "Upload new logo"
     },
     "users": {
       "invalidId": "Invalid user ID",
@@ -975,11 +1211,47 @@ export const en = {
       "edit": "Edit User",
       "assignRoles": "Assign Roles",
       "directPermissions": "Direct Permissions",
-      "sendPasswordReset": "Send Password Reset"
+      "sendPasswordReset": "Send Password Reset",
+      "searchPermissions": "Search permissions by name or capability...",
+      "roleGrantedTooltip": "Granted automatically via assigned role",
+      "directGrantedTooltip": "Specifically granted to this individual user",
+      "createTitle": "Create New User Account",
+      "editTitle": "Edit User Details",
+      "assignRoleTitle": "Assign System Role",
+      "placeholders": {
+        "fullName": "e.g. Abebe Bikila",
+        "universityId": "e.g. UGR/1234/14",
+        "name": "e.g. Abebe Bikila",
+        "studentStaffId": "e.g. UGR/1234/14",
+        "email": "e.g. abebe@wollo.edu.et",
+        "password": "Minimum 8 characters",
+        "phone": "e.g. +251 91 234 5678",
+        "searchPermissions": "Search permissions..."
+      },
+      "createUserTitle": "Create New User Account",
+      "editUserTitle": "Edit User Details",
+      "perUserOverrides": "Per-User Permission Overrides",
+      "grantAll": "Grant All",
+      "resetToRoleDefaults": "Reset to Role Defaults",
+      "saveUserPermissions": "Save User Permissions",
+      "directUserGrant": "Direct User Grant",
+      "fullName": "Full Name",
+      "universityId": "University / Student ID",
+      "email": "Email Address",
+      "temporaryPassword": "Temporary Password",
+      "phone": "Phone Number",
+      "organizationalUnit": "Organizational / Academic Unit",
+      "activeAccountImmediate": "Active Account (User can login immediately)",
+      "createBtn": "Create User",
+      "activeAccount": "Active Account",
+      "assignRoleFor": "Assign role and access permissions for",
+      "updateRole": "Update Role",
+      "user": "User",
+      "baseRole": "Base Role",
+      "permissionsInheritedDesc": "Permissions marked with \"Role\" are automatically inherited. Check individual boxes below to grant custom direct permissions to this specific user.",
+      "directGrants": "Direct Grants"
     },
     "dashboardTitle": "Administrative Overview",
-
-
     "dashboardSubtitle": "Operational portal metrics, recovery rates, and institutional audits.",
     "dashboard": {
       "systemAdmin": "System Administration",
@@ -1029,7 +1301,17 @@ export const en = {
       "activityFeedTitle": "Recent Operational Activity",
       "activityFeedSubtitle": "Latest reported property, submitted claims, and verified returns",
       "noActivity": "No recent activity recorded.",
-      "subtitle": "System administrative controls, configuration, and monitoring"
+      "subtitle": "System administrative controls, configuration, and monitoring",
+      "charts": {
+        "reportedLost": "Reported Lost",
+        "reportedFound": "Reported Found",
+        "returnedToOwner": "Returned to Owner",
+        "lostActive": "Lost (Active)",
+        "foundUnclaimed": "Found (Unclaimed)",
+        "claimedVerifying": "Claimed & Verifying",
+        "returnedOwner": "Returned to Owner",
+        "refreshStatistics": "Refresh Statistics"
+      }
     },
     "userManagementTitle": "User Governance & Accounts",
     "userManagementSubtitle": "Manage user access, role assignments, and campus account statuses.",
@@ -1113,7 +1395,8 @@ export const en = {
         "startsAt": "Start Schedule (Optional)",
         "endsAt": "End Schedule (Optional)",
         "publishImmediately": "Broadcast immediately upon save"
-      }
+      },
+      "bulkDeleteConfirm": "Are you sure you want to delete {count} selected announcements?"
     },
     "auditLogsTitle": "Security Audit Logs",
     "auditLogsSubtitle": "Immutable tracking of user activities, administrative actions, and property handovers.",
@@ -1268,10 +1551,58 @@ export const en = {
       "staff": "Staff / Officer",
       "admin": "System Administrator",
       "super_admin": "System Administrator",
-      "statusUpdated": "Role status updated successfully."
+      "statusUpdated": "Role status updated successfully.",
+      "allStatuses": "All Status",
+      "allTypes": "All Types"
+    },
+    "universityDomains": {
+      "title": "University Domains",
+      "subtitle": "Configure allowed institutional email domains for student and staff self-registration.",
+      "addDomain": "Add Domain",
+      "editDomain": "Edit University Domain",
+      "createDomain": "Add University Domain",
+      "domain": "Domain",
+      "domainLabel": "Domain (e.g. wu.edu.et)",
+      "institutionName": "Institution Name",
+      "campus": "Campus",
+      "allCampuses": "All Campuses (Institutional)",
+      "associatedCampus": "Associated Campus (Optional)",
+      "description": "Description",
+      "descriptionOptional": "Description (Optional)",
+      "activeForRegistration": "Active for Registration",
+      "searchPlaceholder": "Search by domain or institution...",
+      "noDomains": "No university domains configured. Click \"Add Domain\" to register one.",
+      "registeredSuccess": "University domain registered successfully.",
+      "updatedSuccess": "University domain updated successfully.",
+      "removedSuccess": "University domain removed.",
+      "toggleSuccess": "Domain {domain} is now {status}.",
+      "deleteConfirm": "Are you sure you want to remove domain @{domain}?",
+      "requiredFields": "Please enter domain and institution name.",
+      "placeholders": {
+        "domain": "wu.edu.et",
+        "institution": "e.g. Wollo University",
+        "description": "Domain description..."
+      }
+    },
+    "items": {
+      "transitionReasonPlaceholder": "Provide reason for this status transition (e.g. Returned to claimant at Central Depot)..."
+    },
+    "orgUnits": {
+      "placeholders": {
+        "name": "e.g. Department of Computer Science",
+        "code": "e.g. CS or FOE",
+        "nameAm": "e.g. የኮምፒውተር ሳይንስ ትምህርት ክፍል",
+        "description": "Brief description of the organizational unit...",
+        "levelCode": "e.g. college, department, school",
+        "levelName": "e.g. College or Department",
+        "levelNameAm": "e.g. ኮሌጅ ወይም ትምህርት ክፍል",
+        "levelDescription": "Description of this unit level...",
+        "amharicName": "e.g. የኮምፒውተር ሳይንስ ትምህርት ክፍል",
+        "levelType": "e.g. college, department, school",
+        "levelAmharicName": "e.g. ኮሌጅ or ትምህርት ክፍል"
+      }
     }
   },
-
   "staffDashboard": {
     "operations": "Staff & Security Operations",
     "operationsSubtitle": "Verify student ownership claims, manage vault storage locations, and record physical item handovers.",
@@ -1321,7 +1652,10 @@ export const en = {
     "noMatchesDesc": "There are currently no item pairs matching the selected review filter.",
     "lostUnavailable": "Lost item record unavailable",
     "foundUnavailable": "Found item record unavailable",
-    "markedSuccess": "Match review updated successfully."
+    "markedSuccess": "Match review updated successfully.",
+    "textMatch": "Text",
+    "reference": "Ref",
+    "points": "pts"
   },
   "reportWizard": {
     "step1": "Step 1: Item Overview",
@@ -1351,7 +1685,40 @@ export const en = {
     "custodyHeldAt": "Custody Held At",
     "attachedPhotos": "Attached Photos",
     "photosAttached": "Photos attached",
-    "duplicateWarningDesc": "Similar items have already been reported in this location. Please check before submitting."
+    "duplicateWarningDesc": "Similar items have already been reported in this location. Please check before submitting.",
+    "step1DescFound": "Provide identifying information and description of the found property.",
+    "step1DescLost": "Enter key identification details about your lost property.",
+    "step2DescFound": "Specify custody holding status, location found, and optional photos.",
+    "step2DescLost": "Specify location, distinctive markings, and attach reference photos.",
+    "step3DescFound": "Please review all submitted item details carefully before registration.",
+    "step3DescLost": "Please review all report details carefully before submitting.",
+    "liveOverview": "Live Overview",
+    "foundSummary": "Found Report",
+    "lostSummary": "Lost Report",
+    "untitledFound": "Untitled Found Item",
+    "untitledLost": "Untitled Lost Item",
+    "lastKnown": "Last Known",
+    "priority": "Priority",
+    "highValuePriority": "High-Value Item",
+    "custodyDepotGuidelines": "Custody Depot Guidelines",
+    "lostPropertyTips": "Lost Property Tips",
+    "foundTip1": "Surrendered items are cataloged in secure campus lockers with automated owner matching.",
+    "foundTip2": "Campus Security Depots operate Mon–Fri from 8:00 AM to 5:00 PM for physical handovers.",
+    "foundTip3": "Attaching clear photos and serial numbers speeds up owner verification by 80%.",
+    "lostTip1": "Filing an immediate report triggers automatic scanning across newly surrendered campus items.",
+    "lostTip2": "You will receive an instant notification as soon as matching property is registered by security.",
+    "lostTip3": "Include serial numbers or unique identifying marks to guarantee swift proof of ownership.",
+    "placeholders": {
+      "foundTitle": "e.g. Scientific Calculator Casio fx-991EX",
+      "lostTitle": "e.g. Black Leather Wallet with Student ID",
+      "brandFound": "e.g. Casio, HP, Lenovo",
+      "brandLost": "e.g. Casio, Dell, Samsung",
+      "colorFound": "e.g. Silver / Grey",
+      "colorLost": "e.g. Matte Black / Silver",
+      "serialNumber": "e.g. SN-894829",
+      "locationDetail": "e.g. Near Library entrance, bench #3",
+      "trackCode": "e.g. WU-2024-001234"
+    }
   },
   "greetings": {
     "morning": "Good morning",
@@ -1382,7 +1749,55 @@ export const en = {
     "emailExpiryWarning": "Email when an item is nearing expiration",
     "emailItemExpired": "Email when an item report expires",
     "emailSystemAnnouncements": "Email for official university announcements",
-    "preferencesSaved": "Notification preferences updated successfully."
+    "preferencesSaved": "Notification preferences updated successfully.",
+    "liveLabel": "Live",
+    "liveStreamActive": "Real-time updates active",
+    "error": "Failed to load notifications.",
+    "retry": "Try again",
+    "loadMore": "Load more",
+    "types": {
+      "claim_submitted": "Claim Submitted",
+      "claim_approved": "Claim Approved",
+      "claim_rejected": "Claim Rejected",
+      "item_match": "Potential Match Found",
+      "item_returned": "Item Handed Over",
+      "return_confirmed": "Handover Confirmed",
+      "item_reported": "Item Registered",
+      "item_status_changed": "Status Updated",
+      "item_expiring": "Expiry Notice",
+      "item_expired": "Item Expired",
+      "report_generated": "Report Ready",
+      "report_failed": "Report Failed",
+      "custody_transferred": "Custody Transferred"
+    },
+    "messages": {
+      "claim_submitted_claimant": "Your claim for \"{title}\" (Ref: {reference_code}) has been submitted and is under review.",
+      "claim_submitted_reporter": "A new claim has been submitted for your reported item \"{title}\" (Ref: {reference_code}).",
+      "claim_submitted_staff": "New ownership claim submitted for item \"{title}\" (Ref: {reference_code}).",
+      "claim_approved": "Great news! Your claim for \"{title}\" (Ref: {reference_code}) has been approved. Please visit the security office to collect your item.",
+      "claim_rejected": "Your claim for \"{title}\" (Ref: {reference_code}) was not approved.",
+      "claim_rejected_with_reason": "Your claim for \"{title}\" (Ref: {reference_code}) was not approved. Reason: {reason}",
+      "item_match": "A potential match ({score}% similarity) was found for your lost item \"{title}\" (Ref: {reference_code}).",
+      "item_returned": "Your item \"{title}\" (Ref: {reference_code}) has been handed over to you. Please confirm receipt.",
+      "return_confirmed": "Recipient confirmed physical handover for item \"{title}\" (Ref: {reference_code}).",
+      "item_reported_lost": "Lost item report for \"{title}\" (Ref: {reference_code}) has been successfully submitted.",
+      "item_reported_found": "Found item \"{title}\" (Ref: {reference_code}) has been successfully registered in inventory.",
+      "item_status_changed": "The status of your reported item \"{title}\" (Ref: {reference_code}) was updated to {new_status}.",
+      "item_expiring": "Your reported item \"{title}\" (Ref: {reference_code}) will expire in {days_remaining} days if unclaimed.",
+      "item_expired": "Your reported item \"{title}\" (Ref: {reference_code}) has expired and is no longer listed in active inventory.",
+      "report_generated": "Your {report_type} report has finished generating and is ready for download.",
+      "report_failed": "Your {report_type} report generation failed.",
+      "custody_transferred": "Custody transfer processed for item \"{title}\" (Ref: {reference_code})."
+    }
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{count} minute ago",
+    "minutesAgo_plural": "{count} minutes ago",
+    "hoursAgo": "{count} hour ago",
+    "hoursAgo_plural": "{count} hours ago",
+    "daysAgo": "{count} day ago",
+    "daysAgo_plural": "{count} days ago"
   },
   "errors": {
     "401": {
@@ -1413,7 +1828,8 @@ export const en = {
     "invalidDate": "Please select a valid date.",
     "fileTooLarge": "File size must not exceed {size}MB.",
     "invalidFileType": "Invalid file format. Allowed: JPG, PNG, WebP.",
-    "passwordComplexity": "Password must be at least 8 characters with letters and numbers"
+    "passwordComplexity": "Password must be at least 8 characters with letters and numbers",
+    "requiredFields": "Please fill in all required fields"
   },
   "profile": {
     "title": "Profile Settings",
@@ -1433,5 +1849,58 @@ export const en = {
       "markedSuccess": "Match suggestion marked as {status}.",
       "markError": "Failed to mark match as {status}."
     }
+  },
+  "footer": {
+    "brandDescription": "Building a safer, more connected university community across all campuses.",
+    "quickLinks": "Quick Links",
+    "resources": "Resources",
+    "contactUs": "Contact Us",
+    "about": "About",
+    "helpSupport": "Help & Support",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "rightsReserved": "All rights reserved.",
+    "motto": "Together for a Better Tomorrow",
+    "locationText": "{institution}, Kombolcha & Dessie Campuses, Amhara Region, Ethiopia",
+    "socialFacebook": "Facebook",
+    "socialTwitter": "Twitter (X)",
+    "socialYoutube": "YouTube",
+    "socialLinkedin": "LinkedIn"
+  },
+  "myClaims": {
+    "totalClaimsFiled": "Total Claims Filed",
+    "underVerification": "Under Verification",
+    "searchPlaceholder": "Search by claim ID, item name, or reference...",
+    "approvedReady": "Approved Claims",
+    "resolvedHandedOver": "Handed Over & Collected",
+    "allStatuses": "All Claim Statuses"
+  },
+  "myItems": {
+    "totalReported": "Total Reported Items",
+    "lostInquiries": "Lost Item Inquiries",
+    "foundRegistrations": "Found Item Registrations",
+    "successfullyReturned": "Successfully Returned",
+    "searchPlaceholder": "Search my reported items by title, category, campus...",
+    "foundTurnedIn": "Found Items Turned In",
+    "reunitedReturned": "Reunited & Returned",
+    "allReports": "All Item Reports",
+    "lostItems": "Lost Items",
+    "foundItems": "Found Items"
+  },
+  "charts": {
+    "loadingBar": "Loading bar chart",
+    "loadingDonut": "Loading donut chart",
+    "loadingTrend": "Loading trend chart",
+    "loadingSparkline": "Loading sparkline",
+    "noDistributionData": "No Distribution Data",
+    "noHistoricalRecords": "No Historical Records",
+    "retryAnalytics": "Retry Analytics",
+    "failedSparkline": "Failed to load sparkline",
+    "noSparklineData": "No sparkline data"
+  },
+  "landing": {
+    "heroSection": "Hero Section",
+    "platformStats": "Platform Statistics"
   }
 };
+export default en;

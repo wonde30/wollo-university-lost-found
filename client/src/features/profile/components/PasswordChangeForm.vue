@@ -81,7 +81,7 @@ async function handleSubmit(): Promise<void> {
       id="pw-current"
       :label="t('profile.currentPassword')"
       type="password"
-      placeholder="••••••••"
+      :placeholder="t('auth.placeholders.password')"
       :model-value="form.current_password"
       :error="errors.current_password"
       required

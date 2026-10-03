@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.store'
 import { validateLoginForm } from '../validation/auth.validation'
@@ -7,9 +7,14 @@ import type { LoginCredentials } from '../types/auth.types'
 import { getErrorMessage, getValidationErrors } from '@/utils/error-handler'
 import { useUiStore } from '@/stores/ui.store'
 import { t } from '@/i18n'
+import { initCsrf } from '@/lib/http/csrf'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppCheckbox from '@/components/ui/AppCheckbox.vue'
+
+onMounted(() => {
+  initCsrf().catch(() => {})
+})
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -26,6 +31,7 @@ const generalError = ref<string | null>(null)
 const loading = ref(false)
 
 async function handleSubmit(): Promise<void> {
+  if (loading.value) return
   generalError.value = null
   errors.value = validateLoginForm(form)
   if (Object.keys(errors.value).length > 0) return
@@ -68,7 +74,7 @@ async function handleSubmit(): Promise<void> {
       id="login-email"
       :label="t('auth.login.email')"
       type="email"
-      placeholder="student@wu.edu.et"
+      :placeholder="t('auth.emailPlaceholder')"
       :model-value="form.email"
       :error="errors.email"
       required

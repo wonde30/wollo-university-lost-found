@@ -39,10 +39,27 @@ export async function getItems(
 }
 
 /**
- * Get single item details (authenticated).
+ * Get single item details (authenticated with public fallback).
  */
 export async function getItem(id: number): Promise<Item> {
-  const { data } = await apiClient.get<ApiResponse<Item>>(ITEMS.SHOW(id))
+  const { useAuthStore } = await import('@/features/auth/stores/auth.store')
+  const authStore = useAuthStore()
+
+  if (authStore.isAuthenticated) {
+    try {
+      const { data } = await apiClient.get<ApiResponse<Item>>(ITEMS.SHOW(id))
+      return data.data!
+    } catch (err: any) {
+      const status = err?.status ?? err?.response?.status
+      if (status === 401 || status === 403) {
+        const { data } = await apiClient.get<ApiResponse<Item>>(PUBLIC.ITEM_DETAIL(id))
+        return data.data!
+      }
+      throw err
+    }
+  }
+
+  const { data } = await apiClient.get<ApiResponse<Item>>(PUBLIC.ITEM_DETAIL(id))
   return data.data!
 }
 
@@ -202,3 +219,21 @@ export async function checkDuplicate(payload: {
   )
   return data
 }
+
+/**
+ * Check eligibility for cross-linking (reporting found for a lost item or vice-versa).
+ */
+export async function checkCrossLinkEligibility(payload: {
+  target_item_id: number
+  action: 'report_found' | 'report_lost'
+}): Promise<{
+  eligible: boolean
+  has_existing: boolean
+  existing_ref?: string
+  existing_id?: number
+  is_own_item: boolean
+}> {
+  const { data } = await apiClient.post<any>(ITEMS.CROSS_LINK_CHECK, payload)
+  return data
+}
+

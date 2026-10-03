@@ -1,0 +1,1312 @@
+{
+    "total_routes": 145,
+    "unprotected_count": 0,
+    "unprotected_routes": [],
+    "routes": [
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/register",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\RegisterController@register",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/login",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\LoginController@login",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/verify-email",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\VerificationController@verify",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/resend-verification",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\VerificationController@resend",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/forgot-password",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\PasswordResetController@request",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/verify-password-reset",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\PasswordResetController@verifyOtp",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/reset-password",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\PasswordResetController@reset",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/items",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\PublicItemController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/items\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\PublicItemController@show",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\CategoryController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\LocationController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/announcements",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\AnnouncementController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/track\/{reference_code}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\TrackingController@track",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/settings",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\SettingController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/statistics",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\PublicStatisticsController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/public\/university-domains",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\UniversityDomainController@index",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/returns\/confirm-token\/{token}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@getByToken",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/returns\/confirm-token\/{token}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@confirmByToken",
+            "auth": false,
+            "role_middleware": false,
+            "active": false,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/auth\/me",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\LoginController@me",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": true
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/auth\/logout",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\LogoutController@logout",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": true
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/auth\/password",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Auth\\PasswordController@change",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": true
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/announcements\/active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\AnnouncementController@index",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/profile\/summary",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@summary",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/profile",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@update",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/profile\/avatar",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@uploadAvatar",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/items\/check-duplicate",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@checkDuplicate",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/items\/cross-link-check",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@checkCrossLinkEligibility",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/items",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@index",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/items\/lost",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@storeLost",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/items\/found",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@storeFound",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/items\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@show",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/items\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@update",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/items\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@destroy",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/items\/{id}\/status",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemStatusController@update",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/items\/{id}\/withdraw",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemController@withdraw",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/items\/{id}\/photos",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemPhotoController@store",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/items\/{id}\/photos\/{photoId}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Items\\ItemPhotoController@destroy",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/claims",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Claims\\ClaimController@index",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/claims",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Claims\\ClaimController@store",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/claims\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Claims\\ClaimController@show",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/claims\/{id}\/review",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Claims\\ClaimReviewController@review",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/claims\/{id}\/reverse",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Claims\\ClaimReviewController@reverse",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/notifications\/stream",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\RealtimeNotificationController@stream",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/notifications",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController@index",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/notifications\/unread-count",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController@unreadCount",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH|POST",
+            "uri": "api\/v1\/notifications\/{id}\/read",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController@markAsRead",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH|POST",
+            "uri": "api\/v1\/notifications\/read-all",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController@markAllAsRead",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/notifications\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationController@destroy",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/notifications\/preferences",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationPreferenceController@index",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/notifications\/preferences",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Notifications\\NotificationPreferenceController@update",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/returns\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@show",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/returns\/{id}\/confirm",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@confirm",
+            "auth": true,
+            "role_middleware": false,
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/custody",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\CustodyController@index",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/custody",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\CustodyController@store",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/custody\/items\/{itemId}\/move",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\CustodyController@move",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/custody\/storage-locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\StorageLocationController@index",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/custody\/storage-locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\StorageLocationController@store",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/custody\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\StorageLocationController@show",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/custody\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\StorageLocationController@update",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/custody\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Custody\\StorageLocationController@destroy",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/returns",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@index",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/returns",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@store",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/returns\/export\/csv",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Returns\\ReturnController@exportCsv",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/match-suggestions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\MatchSuggestionController@index",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/match-suggestions\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\MatchSuggestionController@update",
+            "auth": true,
+            "role_middleware": "role:staff,admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/dashboard\/statistics",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\DashboardController@statistics",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/campuses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/campuses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/campuses\/{campus}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/campuses\/{campus}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/campuses\/{campus}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/campuses\/{id}\/restore",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CampusController@restore",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/organizational-units",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/organizational-units",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/organizational-units\/{organizational_unit}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/organizational-units\/{organizational_unit}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/organizational-units\/{organizational_unit}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/organizational-unit-types",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitTypeController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/organizational-unit-types",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitTypeController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/organizational-unit-types\/{organizational_unit_type}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitTypeController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/organizational-unit-types\/{organizational_unit_type}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitTypeController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/organizational-unit-types\/{organizational_unit_type}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\OrganizationalUnitTypeController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CategoryController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CategoryController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CategoryController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CategoryController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\CategoryController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\LocationController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\LocationController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/locations\/{location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\LocationController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/locations\/{location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\LocationController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/locations\/{location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\LocationController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/storage-locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\StorageLocationController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/storage-locations",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\StorageLocationController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\StorageLocationController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\StorageLocationController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/storage-locations\/{storage_location}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\StorageLocationController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/users",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/users",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/users\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/admin\/users\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/users\/{id}\/role",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@updateRole",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/users\/{id}\/toggle-active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@toggleActive",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/users\/{id}\/permissions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@getPermissions",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/users\/{id}\/permissions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UserManagementController@syncPermissions",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/roles",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/roles",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/roles\/{role}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/roles\/{role}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/roles\/{role}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/roles\/{role}\/permissions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\RoleController@syncPermissions",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/permission-groups",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/permission-groups",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/permission-groups\/{permission_group}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/permission-groups\/{permission_group}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/permission-groups\/{permission_group}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/permission-groups\/{permissionGroup}\/toggle-active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionGroupController@toggleActive",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/permissions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/permissions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/permissions\/{permission}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/permissions\/{permission}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/permissions\/{permission}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/permissions\/{permission}\/toggle-active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\PermissionController@toggleActive",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/announcements\/bulk-toggle",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@bulkToggle",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/announcements\/bulk-delete",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@bulkDelete",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/announcements",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/announcements",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/announcements\/{announcement}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/announcements\/{announcement}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/announcements\/{announcement}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/announcements\/{id}\/toggle-active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AnnouncementController@toggleActive",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/settings",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\SystemSettingController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT",
+            "uri": "api\/v1\/admin\/settings\/{key}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\SystemSettingController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/settings\/upload-logo",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Public\\SettingController@uploadLogo",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/university-domains",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/university-domains",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@store",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/university-domains\/{university_domain}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@show",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PUT|PATCH",
+            "uri": "api\/v1\/admin\/university-domains\/{university_domain}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@update",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "DELETE",
+            "uri": "api\/v1\/admin\/university-domains\/{university_domain}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@destroy",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "PATCH",
+            "uri": "api\/v1\/admin\/university-domains\/{id}\/toggle-active",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\UniversityDomainController@toggleActive",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/reports",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\ReportController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "POST",
+            "uri": "api\/v1\/admin\/reports\/generate",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\ReportController@generate",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/reports\/{id}\/download",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\ReportController@download",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/audit-logs",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AuditLogController@index",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        },
+        {
+            "methods": "GET|HEAD",
+            "uri": "api\/v1\/admin\/audit-logs\/export",
+            "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\AuditLogController@exportCsv",
+            "auth": true,
+            "role_middleware": "role:admin",
+            "active": true,
+            "is_public": false
+        }
+    ]
+}

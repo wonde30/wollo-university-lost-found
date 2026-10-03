@@ -173,4 +173,232 @@ class NotificationTest extends TestCase
         // Email was NOT sent because preference is disabled
         \Illuminate\Support\Facades\Mail::assertNotSent(\App\Mail\Claims\ClaimApprovedMail::class);
     }
+
+    public function test_cross_user_idor_protection_prevents_marking_other_users_notification(): void
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        $notificationA = Notification::create([
+            'user_id' => $userA->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 1, 'item_id' => 2],
+            'is_read' => false,
+        ]);
+
+        // Acting as user B attempting to modify user A's notification
+        $this->actingAs($userB);
+        $response = $this->patchJson("/api/v1/notifications/{$notificationA->id}/read");
+
+        $response->assertNotFound();
+        $this->assertDatabaseHas('notifications', [
+            'id' => $notificationA->id,
+            'is_read' => false,
+        ]);
+    }
+
+    public function test_notification_resource_includes_resolved_action_url(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 10, 'item_id' => 20, 'sub_type' => 'claimant'],
+            'is_read' => false,
+        ]);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'report_generated',
+            'data' => ['report_id' => 5],
+            'is_read' => false,
+        ]);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'item_returned',
+            'data' => ['confirmation_token' => 'secure-token-123'],
+            'is_read' => false,
+        ]);
+
+        $response = $this->getJson('/api/v1/notifications');
+        $response->assertOk();
+
+        $data = $response->json('data');
+        $this->assertCount(3, $data);
+
+        $actionUrls = array_column($data, 'action_url');
+        $this->assertContains('/student/my-claims', $actionUrls);
+        $this->assertContains('/admin/reports', $actionUrls);
+        $this->assertContains('/confirm-return/secure-token-123', $actionUrls);
+    }
+
+    public function test_generate_report_creates_report_generated_notification_on_completion(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+
+        $admin = User::factory()->create();
+        $report = \App\Models\Report::create([
+            'requested_by' => $admin->id,
+            'report_type' => 'inventory',
+            'format' => 'csv',
+            'status' => 'pending',
+            'filters' => [],
+        ]);
+
+        $job = new \App\Jobs\GenerateReport($report);
+        $job->handle();
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $admin->id,
+            'type' => 'report_generated',
+        ]);
+
+        $notif = Notification::where('user_id', $admin->id)->where('type', 'report_generated')->first();
+        $this->assertNotNull($notif);
+        $this->assertEquals($report->id, $notif->data['report_id']);
+        $this->assertEquals('inventory', $notif->data['report_type']);
+    }
+
+    public function test_claim_submitted_job_stores_structured_payload_without_hardcoded_message(): void
+    {
+        $claimant = User::factory()->create();
+        $campus = \App\Models\Campus::firstOrCreate(
+            ['short_code' => 'MC2'],
+            ['name' => 'Main Campus 2', 'city' => 'Dessie', 'region' => 'Amhara']
+        );
+        $category = \App\Models\Category::firstOrCreate(
+            ['name' => 'Books'],
+            ['name_am' => 'መጻሕፍት']
+        );
+
+        $item = \App\Models\Item::create([
+            'reference_code' => 'WU-BK0001',
+            'reporter_id' => $claimant->id,
+            'campus_id' => $campus->id,
+            'category_id' => $category->id,
+            'type' => 'found',
+            'status' => 'found_unclaimed',
+            'title' => 'Calculus Textbook',
+            'description' => 'Math book',
+            'incident_date' => now(),
+        ]);
+
+        $claim = \App\Models\Claim::create([
+            'item_id' => $item->id,
+            'claimant_id' => $claimant->id,
+            'status' => 'submitted',
+            'explanation' => 'Left it in room 102',
+        ]);
+
+        $job = new \App\Jobs\SendClaimSubmittedNotification($claim);
+        $job->handle(app(\App\Domain\Notifications\Services\NotificationService::class));
+
+        $notif = Notification::where('user_id', $claimant->id)->where('type', 'claim_submitted')->first();
+        $this->assertNotNull($notif);
+        $this->assertEquals('claimant', $notif->data['sub_type']);
+        $this->assertEquals($claim->id, $notif->data['claim_id']);
+        $this->assertEquals($item->id, $notif->data['item_id']);
+        $this->assertArrayNotHasKey('message', $notif->data);
+    }
+
+    public function test_user_can_get_unread_count(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 1],
+            'is_read' => false,
+        ]);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 2],
+            'is_read' => false,
+        ]);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'item_match',
+            'data' => ['match_id' => 1],
+            'is_read' => true,
+            'read_at' => now(),
+        ]);
+
+        $response = $this->getJson('/api/v1/notifications/unread-count');
+        $response->assertOk()
+            ->assertJsonPath('unread_count', 2);
+    }
+
+    public function test_user_can_mark_read_and_read_all_via_post(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 10],
+            'is_read' => false,
+        ]);
+
+        // POST /api/v1/notifications/{id}/read
+        $response = $this->postJson("/api/v1/notifications/{$notification->id}/read");
+        $response->assertOk();
+        $this->assertTrue($notification->fresh()->is_read);
+
+        // Create another unread
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'report_generated',
+            'data' => ['report_id' => 1],
+            'is_read' => false,
+        ]);
+
+        // POST /api/v1/notifications/read-all
+        $responseAll = $this->postJson('/api/v1/notifications/read-all');
+        $responseAll->assertOk();
+        $this->assertEquals(0, Notification::where('user_id', $user->id)->where('is_read', false)->count());
+    }
+
+    public function test_user_can_delete_own_notification(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 1],
+            'is_read' => false,
+        ]);
+
+        $response = $this->deleteJson("/api/v1/notifications/{$notification->id}");
+        $response->assertOk();
+        $this->assertDatabaseMissing('notifications', ['id' => $notification->id]);
+    }
+
+    public function test_user_cannot_delete_other_users_notification(): void
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        $notificationA = Notification::create([
+            'user_id' => $userA->id,
+            'type' => 'claim_submitted',
+            'data' => ['claim_id' => 1],
+            'is_read' => false,
+        ]);
+
+        $this->actingAs($userB);
+        $response = $this->deleteJson("/api/v1/notifications/{$notificationA->id}");
+        $response->assertNotFound();
+        $this->assertDatabaseHas('notifications', ['id' => $notificationA->id]);
+    }
 }

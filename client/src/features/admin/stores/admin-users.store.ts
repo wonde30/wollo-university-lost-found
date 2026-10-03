@@ -9,7 +9,7 @@ import { ref } from 'vue'
 import * as adminApi from '../api/admin.api'
 import type { User } from '@/features/auth/types/auth.types'
 import type { PaginationMeta } from '@/types/common.types'
-import type { UserListParams, UpdateUserData, UpdateUserRoleData } from '../types/admin.types'
+import type { UserListParams, UpdateUserData, UpdateUserRoleData, StoreUserData } from '../types/admin.types'
 
 export const useAdminUsersStore = defineStore('adminUsers', () => {
   // ==========================================
@@ -120,15 +120,15 @@ export const useAdminUsersStore = defineStore('adminUsers', () => {
       const updated = await adminApi.toggleUserActive(userId)
       _patchInList(updated)
       if (currentUser.value?.id === userId) currentUser.value = updated
-    } catch (err: any) {
-      error.value = err.message ?? 'Failed to toggle user status'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Failed to toggle user status'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  async function createUser(userData: any): Promise<User> {
+  async function createUser(userData: StoreUserData): Promise<User> {
     loading.value = true
     error.value = null
     try {
@@ -136,8 +136,8 @@ export const useAdminUsersStore = defineStore('adminUsers', () => {
       users.value.unshift(created)
       pagination.value.total++
       return created
-    } catch (err: any) {
-      error.value = err.message ?? 'Failed to create user'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Failed to create user'
       throw err
     } finally {
       loading.value = false

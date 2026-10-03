@@ -32,7 +32,7 @@ class LoginController extends Controller
         $lockoutMinutes = (int) SystemSetting::get('login_lockout_minutes', 30);
 
         /** @var User|null $user */
-        $user = User::with(['profile', 'organizationalUnits'])
+        $user = User::with(['profile', 'organizationalUnits', 'role.permissions', 'directPermissions'])
             ->where('email', $request->email)
             ->first();
 
@@ -94,7 +94,7 @@ class LoginController extends Controller
 
     public function me(Request $request): JsonResponse
     {
-        $user = $request->user()->load(['profile', 'organizationalUnits']);
+        $user = $request->user()->load(['profile', 'organizationalUnits', 'role.permissions', 'directPermissions']);
 
         return response()->json([
             'user' => new AuthUserResource($user),

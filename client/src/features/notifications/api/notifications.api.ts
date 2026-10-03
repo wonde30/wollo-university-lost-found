@@ -49,17 +49,34 @@ export async function getNotifications(
 }
 
 /**
+ * Get current unread notification count.
+ */
+export async function getUnreadCount(): Promise<number> {
+  const { data } = await apiClient.get<{ unread_count: number }>(
+    NOTIFICATIONS.UNREAD_COUNT
+  )
+  return data.unread_count ?? 0
+}
+
+/**
  * Mark a notification as read.
  */
 export async function markNotificationAsRead(id: string | number): Promise<void> {
-  await apiClient.patch(NOTIFICATIONS.MARK_AS_READ(id))
+  await apiClient.post(NOTIFICATIONS.MARK_AS_READ(id))
 }
 
 /**
  * Mark all notifications as read.
  */
 export async function markAllNotificationsAsRead(): Promise<void> {
-  await apiClient.patch(NOTIFICATIONS.MARK_ALL_AS_READ)
+  await apiClient.post(NOTIFICATIONS.MARK_ALL_AS_READ)
+}
+
+/**
+ * Delete a notification.
+ */
+export async function deleteNotification(id: string | number): Promise<void> {
+  await apiClient.delete(NOTIFICATIONS.DELETE(id))
 }
 
 // ==========================================

@@ -13,6 +13,8 @@ import type {
   CustodyListParams,
   StoreCustodyEventData,
   MoveItemCustodyData,
+  CreateStorageLocationPayload,
+  UpdateStorageLocationPayload,
 } from '../types/custody.types'
 
 // ==========================================
@@ -80,7 +82,7 @@ export async function getStorageLocation(id: number): Promise<StorageLocation> {
  * Create storage location.
  * Staff/Admin only.
  */
-export async function createStorageLocation(locationData: any): Promise<StorageLocation> {
+export async function createStorageLocation(locationData: CreateStorageLocationPayload): Promise<StorageLocation> {
   const { data } = await apiClient.post<ApiResponse<StorageLocation>>(
     CUSTODY.STORAGE_LOCATIONS,
     locationData
@@ -94,7 +96,7 @@ export async function createStorageLocation(locationData: any): Promise<StorageL
  */
 export async function updateStorageLocation(
   id: number,
-  locationData: any
+  locationData: UpdateStorageLocationPayload
 ): Promise<StorageLocation> {
   const { data } = await apiClient.put<ApiResponse<StorageLocation>>(
     CUSTODY.STORAGE_LOCATION(id),

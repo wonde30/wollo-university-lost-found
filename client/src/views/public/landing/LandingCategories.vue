@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Category } from '@/types/common.types'
 import { getCategoryIcon } from '@/utils/categoryIcons'
+import { t, getLocalizedName } from '@/i18n'
 import AppSkeleton from '@/components/ui/AppSkeleton.vue'
 import { ArrowRight } from 'lucide-vue-next'
 
@@ -17,7 +18,7 @@ const displayList = computed(() => {
   if (!props.categories || props.categories.length === 0) return []
   return props.categories.map(c => ({
     id: c.id,
-    name: c.name,
+    name: getLocalizedName(c),
     count: c.items_count ?? 0,
     icon: getCategoryIcon(c.icon_slug),
   }))
@@ -34,13 +35,13 @@ function handleCategoryClick(catId: number) {
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
       <div class="space-y-1.5">
         <span class="text-xs font-black uppercase tracking-wider text-[#0B5D3B] dark:text-[#75bd97]">
-          BROWSE BY CATEGORY
+          {{ t('home.categories.tag') }}
         </span>
         <h2 id="browse-categories-heading" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-          Common Items on Campus
+          {{ t('home.categories.title') }}
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          Explore lost and found items organized by official campus category.
+          {{ t('home.categories.subtitle') }}
         </p>
       </div>
 
@@ -49,7 +50,7 @@ function handleCategoryClick(catId: number) {
         class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B5D3B] dark:text-[#75bd97] hover:text-[#084C30] dark:hover:text-emerald-300 transition-colors group cursor-pointer self-start sm:self-auto"
         @click="router.push('/browse')"
       >
-        <span>View All Categories</span>
+        <span>{{ t('home.categories.viewAll') }}</span>
         <ArrowRight class="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
       </button>
     </div>
@@ -79,7 +80,7 @@ function handleCategoryClick(catId: number) {
         role="listitem"
         class="group p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md hover:border-[#0B5D3B] dark:hover:border-[#75bd97] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col items-center text-center space-y-2 focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]/40"
         tabindex="0"
-        :aria-label="cat.name + ' (' + cat.count + ' items)'"
+        :aria-label="cat.name + ' ' + t('home.categories.itemsCount', { count: cat.count })"
         @click="handleCategoryClick(cat.id)"
         @keydown.enter="handleCategoryClick(cat.id)"
       >
@@ -105,7 +106,7 @@ function handleCategoryClick(catId: number) {
       v-else
       class="p-8 text-center bg-white dark:bg-[#111827] rounded-2xl border border-slate-200 dark:border-slate-800"
     >
-      <p class="text-xs text-slate-500 dark:text-slate-400">No categories currently configured.</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400">{{ t('home.categories.noCategories') }}</p>
     </div>
   </section>
 </template>

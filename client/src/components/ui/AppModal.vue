@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { t } from '@/i18n'
 
 interface Props {
   modelValue?: boolean
@@ -73,7 +74,7 @@ watch(
         nextTick(() => {
           if (modalContentRef.value) {
             const focusable = modalContentRef.value.querySelector<HTMLElement>(
-              'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]):not([aria-label="Close"])'
+              'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled])'
             )
             if (focusable) {
               focusable.focus()
@@ -137,7 +138,7 @@ onUnmounted(() => {
             <button
               v-if="closable"
               type="button"
-              aria-label="Close"
+              :aria-label="t('common.close')"
               class="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:text-slate-200 transition-colors cursor-pointer"
               @click="closeModal"
             >

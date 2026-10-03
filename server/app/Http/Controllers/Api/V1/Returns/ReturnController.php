@@ -89,17 +89,18 @@ class ReturnController extends Controller
                 ]);
             }
 
-            $item = Item::lockForUpdate()->findOrFail($validated['item_id']);
-
-            // Verify the item belongs to this claim
-            if ($item->id !== $claim->item_id) {
+            // BUG-06 fix: Derive item from claim; if item_id was explicitly provided, verify match
+            $targetItemId = (int) ($validated['item_id'] ?? $claim->item_id);
+            if (isset($validated['item_id']) && (int) $validated['item_id'] !== (int) $claim->item_id) {
                 throw ValidationException::withMessages([
                     'item_id' => ['The specified item does not match the claim.'],
                 ]);
             }
 
-            // Verify item is in claimed state
-            if ($item->status !== 'claimed') {
+            $item = Item::lockForUpdate()->findOrFail($targetItemId);
+
+            // Verify item is in claimed state (handles both 'claimed' and legacy 'found_claimed')
+            if (!in_array($item->status, ['claimed', 'found_claimed'], true)) {
                 throw ValidationException::withMessages([
                     'item_id' => [
                         "Item must be in 'claimed' status to process a return. "

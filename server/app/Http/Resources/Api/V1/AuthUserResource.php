@@ -6,6 +6,7 @@ namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class AuthUserResource extends JsonResource
 {
@@ -23,7 +24,9 @@ class AuthUserResource extends JsonResource
             'role_id'             => $this->role_id,
             'language'            => $this->language,
             'is_active'           => $this->is_active,
+            'must_change_password'=> (bool) $this->must_change_password,
             'profile_photo'       => $this->profile_photo,
+            'profile_photo_url'   => $this->profile_photo ? Storage::disk('public')->url($this->profile_photo) : null,
             'permissions'         => $this->getPermissionNames(),
             'direct_permissions'  => $this->getDirectPermissionNames(),
             'role_permissions'    => $this->getRolePermissionNames(),

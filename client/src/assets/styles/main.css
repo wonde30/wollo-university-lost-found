@@ -1,8 +1,29 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-wu-primary-50: var(--wu-primary-50);
+  --color-wu-primary-100: var(--wu-primary-100);
+  --color-wu-primary-200: var(--wu-primary-200);
+  --color-wu-primary-300: var(--wu-primary-300);
+  --color-wu-primary-400: var(--wu-primary-400);
+  --color-wu-primary-500: var(--wu-primary-500);
+  --color-wu-primary-600: var(--wu-primary-600);
+  --color-wu-primary-700: var(--wu-primary-700);
+  --color-wu-primary-800: var(--wu-primary-800);
+  --color-wu-primary-900: var(--wu-primary-900);
+  --color-wu-primary-950: var(--wu-primary-950);
+
+  --color-wu-gold-50: var(--wu-gold-50);
+  --color-wu-gold-100: var(--wu-gold-100);
+  --color-wu-gold-200: var(--wu-gold-200);
+  --color-wu-gold-300: var(--wu-gold-300);
+  --color-wu-gold-400: var(--wu-gold-400);
+  --color-wu-gold-500: var(--wu-gold-500);
+  --color-wu-gold-600: var(--wu-gold-600);
+}
+
 @import "./design-tokens.css";
 @import "./transitions.css";
 @import "./glass.css";
 @import "./utilities.css";
-

@@ -11,7 +11,7 @@ import { formatDate } from '@/utils/date'
 import { claimStatusLabels } from '@/utils/formatters'
 import { getExportFilename } from '@/stores/settings.store'
 import { t } from '@/i18n'
-import type { Claim } from '@/features/claims/types/claim.types'
+import type { Claim, ClaimStatus } from '@/features/claims/types/claim.types'
 import {
   ClipboardCheck,
   Search,
@@ -101,7 +101,7 @@ async function load(page = 1) {
     await loadClaims({
       page,
       per_page: perPage.value,
-      status: selectedStatus.value === 'all' ? undefined : (selectedStatus.value as any),
+      status: selectedStatus.value === 'all' ? undefined : (selectedStatus.value as ClaimStatus),
       search: searchQuery.value.trim() || undefined,
     }, true)
   } catch (err) {
@@ -118,8 +118,8 @@ function onSearchChange(val: string) {
   }, 350)
 }
 
-function onStatusChange(val: any) {
-  selectedStatus.value = val
+function onStatusChange(val: string | number | boolean) {
+  selectedStatus.value = String(val)
   load(1)
 }
 
@@ -204,7 +204,7 @@ onMounted(() => load())
     <!-- Breadcrumb Context -->
     <div class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
       <ClipboardCheck class="h-4 w-4 text-[#0B5D3B] dark:text-[#75bd97]" />
-      <span>Staff Operations</span>
+      <span>{{ t('nav.staffPortal') || 'Staff Operations' }}</span>
       <span>&rsaquo;</span>
       <span class="text-slate-900 dark:text-slate-100 font-extrabold">{{ t('claims.review.title') }}</span>
     </div>
@@ -215,7 +215,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Total Claims
+            {{ t('claims.review.totalClaims') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ totalCount }}
@@ -230,7 +230,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Pending Adjudication
+            {{ t('claims.review.pendingAdjudication') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ pendingCount }}
@@ -245,7 +245,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Approved for Handover
+            {{ t('claims.review.approvedForHandover') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ approvedCount }}
@@ -260,7 +260,7 @@ onMounted(() => load())
       <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
         <div>
           <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Rejected Proofs
+            {{ t('claims.review.rejectedInvalid') }}
           </p>
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
             {{ rejectedCount }}
@@ -296,7 +296,7 @@ onMounted(() => load())
         <div class="relative flex-1">
           <AppInput
             id="review-claim-search"
-            placeholder="Search by claim ID, item, or claimant..."
+            :placeholder="t('claims.review.searchPlaceholder')"
             :model-value="searchQuery"
             class="w-full text-sm"
             @update:model-value="onSearchChange"
@@ -320,7 +320,7 @@ onMounted(() => load())
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -329,7 +329,7 @@ onMounted(() => load())
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportClaimsCsv"
         >
@@ -339,7 +339,7 @@ onMounted(() => load())
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -356,7 +356,7 @@ onMounted(() => load())
     >
       <div>
         <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-          Adjudication Status
+          {{ t('claims.adjudicationStatus') }}
         </label>
         <AppSelect
           :options="statusFilterOptions"

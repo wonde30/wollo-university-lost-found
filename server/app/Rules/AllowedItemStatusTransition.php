@@ -18,6 +18,7 @@ class AllowedItemStatusTransition implements ValidationRule
             'lost'            => ['found_unclaimed', 'withdrawn', 'closed', 'expired'],
             'found_unclaimed' => ['claimed', 'withdrawn', 'closed', 'expired'],
             'claimed'         => ['returned', 'found_unclaimed', 'closed'],  // found_unclaimed = reversal
+            'found_claimed'   => ['returned', 'found_unclaimed', 'closed'],  // legacy alias for claimed
             'returned'        => ['closed'],
             'withdrawn'       => ['lost', 'found_unclaimed'],                // admin reopen
             'closed'          => ['lost', 'found_unclaimed'],                // admin reopen

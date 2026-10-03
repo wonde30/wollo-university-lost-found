@@ -28,6 +28,8 @@ class PermissionGroupController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
+        $this->authorize('viewAny', PermissionGroup::class);
+
         if ($request->boolean('all')) {
             $groups = $this->permissionGroupService->getAllActiveGroups();
             return response()->json([
@@ -46,6 +48,8 @@ class PermissionGroupController extends Controller
      */
     public function store(StorePermissionGroupRequest $request): JsonResponse
     {
+        $this->authorize('create', PermissionGroup::class);
+
         $group = $this->permissionGroupService->createGroup($request->validated());
 
         AuditLogger::log('permission_group.created', null, [], $group->toArray(), $request->user());
@@ -60,6 +64,8 @@ class PermissionGroupController extends Controller
      */
     public function show(PermissionGroup $permissionGroup): PermissionGroupResource
     {
+        $this->authorize('view', $permissionGroup);
+
         return new PermissionGroupResource($permissionGroup->load(['permissions']));
     }
 
@@ -68,6 +74,8 @@ class PermissionGroupController extends Controller
      */
     public function update(UpdatePermissionGroupRequest $request, PermissionGroup $permissionGroup): PermissionGroupResource
     {
+        $this->authorize('update', $permissionGroup);
+
         $oldData = $permissionGroup->toArray();
         $updated = $this->permissionGroupService->updateGroup($permissionGroup, $request->validated());
 
@@ -81,6 +89,8 @@ class PermissionGroupController extends Controller
      */
     public function destroy(Request $request, PermissionGroup $permissionGroup): JsonResponse
     {
+        $this->authorize('delete', $permissionGroup);
+
         try {
             $oldData = $permissionGroup->toArray();
             $this->permissionGroupService->deleteGroup($permissionGroup);
@@ -102,6 +112,8 @@ class PermissionGroupController extends Controller
      */
     public function toggleActive(Request $request, PermissionGroup $permissionGroup): PermissionGroupResource
     {
+        $this->authorize('update', $permissionGroup);
+
         $updated = $this->permissionGroupService->toggleActive($permissionGroup);
 
         AuditLogger::log('permission_group.toggle_active', null, [

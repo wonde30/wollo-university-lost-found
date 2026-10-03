@@ -9,6 +9,24 @@ class ItemResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $viewer = $request->user();
+        $canViewFullContact = $viewer && (
+            $viewer->isAdmin() ||
+            $viewer->isOfficer() ||
+            $viewer->id === $this->reporter_id
+        );
+
+        $reporterData = $this->whenLoaded('reporter', function () use ($canViewFullContact) {
+            if (!$this->reporter) {
+                return null;
+            }
+            return $canViewFullContact ? new UserResource($this->reporter) : [
+                'id' => $this->reporter->id,
+                'name' => $this->reporter->full_name,
+                'full_name' => $this->reporter->full_name,
+            ];
+        });
+
         return [
             'id' => $this->id,
             'reference_code' => $this->reference_code,
@@ -36,11 +54,11 @@ class ItemResource extends JsonResource
             'primary_photo' => $this->whenLoaded('photos', fn () => new ItemPhotoResource($this->photos->firstWhere('is_primary', true) ?? $this->photos->first())),
             'photos' => ItemPhotoResource::collection($this->whenLoaded('photos')),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('tag')),
-            'category' => new CategoryResource($this->whenLoaded('category')),
-            'location' => new LocationResource($this->whenLoaded('location')),
-            'campus' => new CampusResource($this->whenLoaded('campus')),
-            'reporter' => new UserResource($this->whenLoaded('reporter')),
-            'user' => new UserResource($this->whenLoaded('reporter')),
+            'category' => $this->whenLoaded('category', fn() => new CategoryResource($this->category)),
+            'location' => $this->whenLoaded('location', fn() => new LocationResource($this->location)),
+            'campus' => $this->whenLoaded('campus', fn() => new CampusResource($this->campus)),
+            'reporter' => $reporterData,
+            'user' => $reporterData,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

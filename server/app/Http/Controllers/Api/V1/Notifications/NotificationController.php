@@ -37,6 +37,18 @@ class NotificationController extends Controller
         ]);
     }
 
+    public function unreadCount(Request $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $count = Notification::where('user_id', $userId)
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json([
+            'unread_count' => $count,
+        ]);
+    }
+
     public function markAsRead(Request $request, string $id): JsonResponse
     {
         $notif = Notification::where('user_id', $request->user()->id)->findOrFail($id);
@@ -62,6 +74,16 @@ class NotificationController extends Controller
 
         return response()->json([
             'message' => 'All notifications marked as read',
+        ]);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        $notif = Notification::where('user_id', $request->user()->id)->findOrFail($id);
+        $notif->delete();
+
+        return response()->json([
+            'message' => 'Notification deleted successfully',
         ]);
     }
 }

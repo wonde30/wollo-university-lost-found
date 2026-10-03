@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { t } from '@/i18n'
+
 export interface PresetOption {
   label: string
   value: string
@@ -14,17 +17,21 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '90d',
-  options: () => [
-    { label: 'Today', value: 'today' },
-    { label: '7 Days', value: '7d' },
-    { label: '30 Days', value: '30d' },
-    { label: '90 Days', value: '90d' },
-    { label: '12 Months', value: '12m' },
-    { label: 'All Time', value: 'all' },
-  ],
+  options: undefined,
   disabled: false,
   size: 'md',
 })
+
+const defaultOptions = computed<PresetOption[]>(() => [
+  { label: t('common.today'), value: 'today' },
+  { label: t('common.days7'), value: '7d' },
+  { label: t('common.days30'), value: '30d' },
+  { label: t('common.days90'), value: '90d' },
+  { label: t('common.months12'), value: '12m' },
+  { label: t('common.allTime'), value: 'all' },
+])
+
+const effectiveOptions = computed(() => props.options || defaultOptions.value)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -42,10 +49,10 @@ function selectPreset(val: string) {
   <div
     class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/60 shadow-2xs select-none"
     role="radiogroup"
-    aria-label="Time period selector"
+    :aria-label="t('common.timePeriodSelector')"
   >
     <button
-      v-for="opt in options"
+      v-for="opt in effectiveOptions"
       :key="opt.value"
       type="button"
       role="radio"

@@ -42,6 +42,26 @@ class Item extends Model
 {
     use HasFactory;
 
+    public const STATUS_LOST = 'lost';
+    public const STATUS_FOUND_UNCLAIMED = 'found_unclaimed';
+    public const STATUS_CLAIMED = 'claimed';
+    public const STATUS_RETURNED = 'returned';
+    public const STATUS_WITHDRAWN = 'withdrawn';
+    public const STATUS_CLOSED = 'closed';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_DISPOSED = 'disposed';
+
+    public const VALID_STATUSES = [
+        self::STATUS_LOST,
+        self::STATUS_FOUND_UNCLAIMED,
+        self::STATUS_CLAIMED,
+        self::STATUS_RETURNED,
+        self::STATUS_WITHDRAWN,
+        self::STATUS_CLOSED,
+        self::STATUS_EXPIRED,
+        self::STATUS_DISPOSED,
+    ];
+
     protected $fillable = [
         'reference_code',
         'reporter_id',
@@ -159,6 +179,16 @@ class Item extends Model
     public function claims(): HasMany
     {
         return $this->hasMany(Claim::class);
+    }
+
+    /**
+     * Scoped relationship used by ItemDetailResource to check if the current viewer
+     * has an approved claim without firing an N+1 query.
+     * Must be eager-loaded with a claimant_id constraint in the controller.
+     */
+    public function approvedClaimByViewer(): HasMany
+    {
+        return $this->hasMany(Claim::class)->where('status', 'approved');
     }
 
     public function views(): HasMany

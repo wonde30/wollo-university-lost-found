@@ -64,6 +64,21 @@ export interface CustodyListParams extends PaginationParams {
   search?: string
 }
 
+export interface CreateStorageLocationPayload {
+  name: string
+  campus?: string
+  campus_id?: number | null
+  building?: string
+  room?: string
+  shelf_cabinet_code?: string
+  code?: string
+  capacity?: number
+  description?: string
+  is_active?: boolean
+}
+
+export type UpdateStorageLocationPayload = Partial<CreateStorageLocationPayload>
+
 // ==========================================
 // Response Types
 // ==========================================

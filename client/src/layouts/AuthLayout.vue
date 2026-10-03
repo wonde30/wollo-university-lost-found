@@ -72,7 +72,7 @@ const settingsStore = useSettingsStore()
       <div>
         <RouterLink to="/" class="hover:text-slate-700 dark:hover:text-slate-300 transition-colors inline-flex items-center gap-1 font-medium text-xs dark:text-slate-300">
           <ArrowLeft class="h-3.5 w-3.5" />
-          <span>{{ t('common.back') }} to {{ t('nav.home') }}</span>
+          <span>{{ t('common.backToHome') }}</span>
         </RouterLink>
       </div>
       <p class="text-[11px]">&copy; {{ new Date().getFullYear() }} {{ settingsStore.institutionName }} &bull; {{ settingsStore.tagline }}</p>

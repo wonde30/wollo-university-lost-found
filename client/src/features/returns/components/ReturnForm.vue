@@ -232,9 +232,9 @@ async function handleSubmit(): Promise<void> {
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AppInput
           id="ret-claim-id"
-          :label="t('claims.claimId') + ' *'"
+          :label="t('claims.claimId')"
           type="number"
-          placeholder="e.g. 1"
+          :placeholder="t('claims.numericIdPlaceholder')"
           :model-value="form.claim_id || ''"
           :error="errors.claim_id"
           required
@@ -243,9 +243,9 @@ async function handleSubmit(): Promise<void> {
 
         <AppInput
           id="ret-item-id"
-          :label="t('custody.itemId') + ' *'"
+          :label="t('custody.itemId')"
           type="number"
-          placeholder="e.g. 1"
+          :placeholder="t('claims.numericIdPlaceholder')"
           :model-value="form.item_id || ''"
           :error="errors.item_id"
           required
@@ -254,9 +254,9 @@ async function handleSubmit(): Promise<void> {
 
         <AppInput
           id="ret-user-id"
-          :label="t('returns.recipientId') + ' *'"
+          :label="t('returns.recipientId')"
           type="number"
-          placeholder="e.g. 4"
+          :placeholder="t('claims.numericIdPlaceholder')"
           :model-value="form.returned_to || ''"
           :error="errors.returned_to"
           required
@@ -269,7 +269,7 @@ async function handleSubmit(): Promise<void> {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <AppInput
         id="ret-date"
-        :label="t('returns.returnDate') + ' *'"
+        :label="t('returns.returnDate')"
         type="date"
         :model-value="form.return_date"
         :error="errors.return_date"
@@ -285,7 +285,7 @@ async function handleSubmit(): Promise<void> {
     </div>
 
     <AppSelect
-      :label="t('claims.conditionOnReturn') + ' *'"
+      :label="t('claims.conditionOnReturn')"
       :options="conditionOptions"
       :model-value="form.condition_on_return || 'good'"
       :error="errors.condition_on_return"

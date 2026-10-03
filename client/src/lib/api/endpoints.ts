@@ -34,6 +34,7 @@ export const PUBLIC = {
   TRACK: (referenceCode: string) => `${API_V1}/public/track/${referenceCode}`,
   SETTINGS: `${API_V1}/public/settings`,
   STATISTICS: `${API_V1}/public/statistics`,
+  UNIVERSITY_DOMAINS: `${API_V1}/public/university-domains`,
 } as const
 
 // ==================================================
@@ -42,6 +43,7 @@ export const PUBLIC = {
 export const ITEMS = {
   INDEX: `${API_V1}/items`,
   CHECK_DUPLICATE: `${API_V1}/items/check-duplicate`,
+  CROSS_LINK_CHECK: `${API_V1}/items/cross-link-check`,
   LOST: `${API_V1}/items/lost`,
   FOUND: `${API_V1}/items/found`,
   SHOW: (id: number) => `${API_V1}/items/${id}`,
@@ -70,8 +72,10 @@ export const CLAIMS = {
 export const NOTIFICATIONS = {
   STREAM: `${API_V1}/notifications/stream`,
   INDEX: `${API_V1}/notifications`,
+  UNREAD_COUNT: `${API_V1}/notifications/unread-count`,
   MARK_AS_READ: (id: string | number) => `${API_V1}/notifications/${id}/read`,
   MARK_ALL_AS_READ: `${API_V1}/notifications/read-all`,
+  DELETE: (id: string | number) => `${API_V1}/notifications/${id}`,
   PREFERENCES: `${API_V1}/notifications/preferences`,
   UPDATE_PREFERENCES: `${API_V1}/notifications/preferences`,
 } as const
@@ -158,6 +162,10 @@ export const ADMIN = {
   SETTINGS: `${API_V1}/admin/settings`,
   SETTING: (key: string) => `${API_V1}/admin/settings/${key}`,
   UPLOAD_LOGO: `${API_V1}/admin/settings/upload-logo`,
+
+  UNIVERSITY_DOMAINS: `${API_V1}/admin/university-domains`,
+  UNIVERSITY_DOMAIN: (id: number) => `${API_V1}/admin/university-domains/${id}`,
+  UNIVERSITY_DOMAIN_TOGGLE_ACTIVE: (id: number) => `${API_V1}/admin/university-domains/${id}/toggle-active`,
   
   REPORTS: `${API_V1}/admin/reports`,
   REPORTS_GENERATE: `${API_V1}/admin/reports/generate`,

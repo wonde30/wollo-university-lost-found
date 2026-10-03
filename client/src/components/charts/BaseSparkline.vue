@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { t } from '@/i18n'
 import {
   Chart,
   LineController,
@@ -150,14 +151,14 @@ watch(
     <div
       v-if="loading"
       class="w-full h-full rounded-md bg-slate-100 dark:bg-slate-800 animate-pulse"
-      aria-label="Loading sparkline"
+      :aria-label="t('charts.loadingSparkline')"
     />
 
     <!-- Error State -->
     <div
       v-else-if="error"
       class="w-full h-full flex items-center justify-center text-[10px] text-rose-500 font-mono"
-      title="Failed to load sparkline"
+      :title="t('charts.failedSparkline')"
     >
       &mdash;
     </div>
@@ -166,7 +167,7 @@ watch(
     <div
       v-else-if="!data || data.length === 0"
       class="w-full h-full flex items-center justify-center"
-      title="No sparkline data"
+      :title="t('charts.noSparklineData')"
     >
       <div class="w-full border-t border-dashed border-slate-300 dark:border-slate-700" />
     </div>

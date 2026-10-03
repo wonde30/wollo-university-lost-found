@@ -91,7 +91,7 @@ async function handleResend(): Promise<void> {
       id="verify-email"
       :label="t('auth.register.email')"
       type="email"
-      placeholder="student@wu.edu.et"
+      :placeholder="t('auth.emailPlaceholder')"
       :model-value="form.email"
       required
       @update:model-value="form.email = $event"
@@ -100,7 +100,7 @@ async function handleResend(): Promise<void> {
     <AppInput
       id="verify-code"
       :label="t('auth.verifyOtp.code')"
-      placeholder="e.g. 123456"
+      :placeholder="t('auth.otpPlaceholder')"
       :model-value="form.code"
       required
       @update:model-value="form.code = $event"

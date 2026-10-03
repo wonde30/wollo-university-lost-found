@@ -1,0 +1,114 @@
+{
+    "login": {
+        "status": 200,
+        "query_count": 22,
+        "slowest_query_ms": 0.19,
+        "slowest_sql": "select \"permissions\".*, \"permission_user\".\"user_id\" as \"pivo",
+        "response_time_ms": 21.26,
+        "response_size_bytes": 520
+    },
+    "registration": {
+        "status": 422,
+        "query_count": 12,
+        "slowest_query_ms": 0.14,
+        "slowest_sql": "insert into \"cache\" (\"expiration\", \"key\", \"value\") values (?",
+        "response_time_ms": 14.29,
+        "response_size_bytes": 114
+    },
+    "dashboard": {
+        "status": 200,
+        "query_count": 29,
+        "slowest_query_ms": 0.33,
+        "slowest_sql": "select \n                SUM(CASE WHEN type = 'lost' THEN 1 E",
+        "response_time_ms": 28.14,
+        "response_size_bytes": 4681
+    },
+    "users_list": {
+        "status": 200,
+        "query_count": 7,
+        "slowest_query_ms": 0.28,
+        "slowest_sql": "select \"organizational_units\".*, \"user_organizational_units\"",
+        "response_time_ms": 14.13,
+        "response_size_bytes": 4743
+    },
+    "user_detail": {
+        "status": 200,
+        "query_count": 6,
+        "slowest_query_ms": 0.14,
+        "slowest_sql": "select * from \"users\" where \"users\".\"id\" = ? limit 1",
+        "response_time_ms": 6.91,
+        "response_size_bytes": 504
+    },
+    "roles": {
+        "status": 200,
+        "query_count": 3,
+        "slowest_query_ms": 0.15,
+        "slowest_sql": "select \"permissions\".*, \"permission_role\".\"role_id\" as \"pivo",
+        "response_time_ms": 6.96,
+        "response_size_bytes": 1898
+    },
+    "permissions": {
+        "status": 200,
+        "query_count": 4,
+        "slowest_query_ms": 0.14,
+        "slowest_sql": "select * from \"permissions\" order by \"permission_group_id\" a",
+        "response_time_ms": 7.44,
+        "response_size_bytes": 1596
+    },
+    "permission_groups": {
+        "status": 200,
+        "query_count": 2,
+        "slowest_query_ms": 0.15,
+        "slowest_sql": "select \"permission_groups\".*, (select count(*) from \"permiss",
+        "response_time_ms": 5.12,
+        "response_size_bytes": 863
+    },
+    "items": {
+        "status": 200,
+        "query_count": 7,
+        "slowest_query_ms": 0.26,
+        "slowest_sql": "select * from \"items\" where \"is_deleted\" = ? order by \"creat",
+        "response_time_ms": 33.42,
+        "response_size_bytes": 9115
+    },
+    "claims": {
+        "status": 200,
+        "query_count": 12,
+        "slowest_query_ms": 0.31,
+        "slowest_sql": "select * from \"items\" where \"items\".\"id\" in (1, 2, 3, 4, 5)",
+        "response_time_ms": 40.85,
+        "response_size_bytes": 11270
+    },
+    "custody": {
+        "status": 200,
+        "query_count": 4,
+        "slowest_query_ms": 0.23,
+        "slowest_sql": "select * from \"items\" where \"items\".\"id\" in (1, 2, 3, 4, 5)",
+        "response_time_ms": 21.44,
+        "response_size_bytes": 8075
+    },
+    "returns": {
+        "status": 200,
+        "query_count": 6,
+        "slowest_query_ms": 0.22,
+        "slowest_sql": "select * from \"items\" where \"items\".\"id\" in (1, 2, 3, 4, 5)",
+        "response_time_ms": 32.92,
+        "response_size_bytes": 12725
+    },
+    "notifications": {
+        "status": 200,
+        "query_count": 3,
+        "slowest_query_ms": 0.14,
+        "slowest_sql": "select * from \"notifications\" where \"user_id\" = ? order by \"",
+        "response_time_ms": 7.69,
+        "response_size_bytes": 982
+    },
+    "reports": {
+        "status": 200,
+        "query_count": 3,
+        "slowest_query_ms": 0.17,
+        "slowest_sql": "select * from \"reports\" order by \"created_at\" desc limit 10 ",
+        "response_time_ms": 7.93,
+        "response_size_bytes": 1699
+    }
+}

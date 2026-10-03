@@ -29,6 +29,7 @@ import {
   HelpCircle,
   ChevronDown,
   Megaphone,
+  Globe,
   X,
 } from 'lucide-vue-next'
 import { t } from '@/i18n'
@@ -296,6 +297,14 @@ const rawNavigation: NavSection[] = [
             icon: Archive,
             isAuthorized: () => authStore.can('MANAGE_LOCATIONS'),
           },
+          {
+            id: 'universityDomains',
+            type: 'link',
+            titleKey: 'nav.universityDomains',
+            path: '/admin/university-domains',
+            icon: Globe,
+            isAuthorized: () => authStore.can('MANAGE_SETTINGS') || authStore.isAdmin,
+          },
         ],
       },
     ],
@@ -498,7 +507,7 @@ function handleNavClick(): void {
       <button
         type="button"
         class="lg:hidden text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer dark:text-slate-300"
-        aria-label="Close menu"
+        :aria-label="t('common.closeMenu')"
         @click="uiStore.setSidebarOpen(false)"
       >
         <X class="h-5 w-5" />

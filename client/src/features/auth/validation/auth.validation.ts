@@ -33,17 +33,6 @@ export function validateRegisterForm(data: RegisterData): Record<string, string>
     if (emailFormat) errors.email = emailFormat
   }
 
-  const passReq = required(data.password, 'Password')
-  if (passReq) errors.password = passReq
-  else {
-    const passMin = minLength(12, data.password, 'Password')
-    if (passMin) errors.password = passMin
-  }
-
-  if (data.password_confirmation !== undefined && data.password !== data.password_confirmation) {
-    errors.password_confirmation = 'Passwords do not match.'
-  }
-
   return errors
 }
 

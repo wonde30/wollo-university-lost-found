@@ -317,7 +317,7 @@ onMounted(() => load())
         >
           <X v-if="showFilters" class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
           <Filter v-else class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-          <span>{{ showFilters ? 'Hide Filter' : 'Filter' }}</span>
+          <span>{{ showFilters ? t('common.hideFilters') : t('common.filter') }}</span>
         </button>
       </div>
 
@@ -326,7 +326,7 @@ onMounted(() => load())
         <!-- Export CSV Button -->
         <button
           type="button"
-          title="Export CSV"
+          :title="t('common.exportCsv')"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer"
           @click="exportCsv"
         >
@@ -336,7 +336,7 @@ onMounted(() => load())
         <!-- Refresh Button -->
         <button
           type="button"
-          title="Refresh List"
+          :title="t('common.refreshList')"
           :disabled="isRefreshing || loading"
           class="h-10 w-10 rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
           @click="handleRefresh"
@@ -540,31 +540,31 @@ onMounted(() => load())
     <!-- Event Detail Modal -->
     <AppModal
       v-model:open="isDetailModalOpen"
-      title="Audit Event Details"
+      :title="t('admin.auditLogs.eventDetails')"
       max-width="lg"
     >
       <div v-if="selectedLogForDetail" class="space-y-4 text-xs py-2">
         <div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
           <div>
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Event Action</span>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">{{ t('admin.auditLogs.action') }}</span>
             <span class="font-bold text-slate-900 dark:text-white capitalize">{{ selectedLogForDetail.action }}</span>
           </div>
           <div>
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Auditable Target</span>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">{{ t('admin.auditLogs.target') }}</span>
             <span class="font-mono text-slate-800 dark:text-slate-200">{{ selectedLogForDetail.auditable_type }} #{{ selectedLogForDetail.auditable_id }}</span>
           </div>
           <div>
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">Origin Actor</span>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">{{ t('admin.auditLogs.actor') }}</span>
             <span class="text-slate-800 dark:text-slate-200">{{ selectedLogForDetail.actor?.full_name || selectedLogForDetail.user?.full_name || `Actor #${selectedLogForDetail.actor_id}` }}</span>
           </div>
           <div>
-            <span class="text-[10px] font-bold uppercase text-slate-400 block">IP Address</span>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">{{ t('admin.auditLogs.ipAddress') }}</span>
             <span class="font-mono text-slate-800 dark:text-slate-200">{{ selectedLogForDetail.ip_address || '127.0.0.1' }}</span>
           </div>
         </div>
 
         <div>
-          <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">Context Metadata / Payload</span>
+          <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">{{ t('admin.auditLogs.details') }}</span>
           <pre class="p-3.5 rounded-xl bg-slate-900 text-slate-100 font-mono text-[11px] overflow-x-auto max-h-60">{{ JSON.stringify((selectedLogForDetail as any).metadata || selectedLogForDetail.new_values || selectedLogForDetail, null, 2) }}</pre>
         </div>
       </div>

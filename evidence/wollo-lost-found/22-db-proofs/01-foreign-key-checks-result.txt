@@ -1,0 +1,28 @@
+﻿Check_Description
+--- 1. Claims referencing non-existent items ---
+orphaned_claims
+0
+Check_Description
+--- 2. Returns referencing non-existent claims ---
+orphaned_returns
+0
+Check_Description
+--- 3. Custody events referencing non-existent items ---
+orphaned_custody_events
+0
+Check_Description
+--- 4. Match suggestions referencing non-existent items ---
+orphaned_matches
+0
+Check_Description
+--- 5. Items referencing non-existent categories ---
+orphaned_item_categories
+0
+Check_Description
+--- 6. Items referencing non-existent campuses ---
+orphaned_item_campuses
+0
+Check_Description
+--- 7. Permission-Role bindings referencing non-existent roles ---
+orphaned_role_bindings
+0

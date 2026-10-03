@@ -20,13 +20,14 @@ class StorageLocationController extends Controller
 
         $query = StorageLocation::with('campus')
             ->when($request->filled('campus_id'), fn ($q) => $q->where('campus_id', $request->integer('campus_id')))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')->toString()))
+            ->when($request->has('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->string('status')->toString() === 'active'))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = trim($request->string('search')->toString());
                 $q->where(function ($sub) use ($search) {
                     $sub->where('name', 'like', "%{$search}%")
-                        ->orWhere('building', 'like', "%{$search}%")
-                        ->orWhere('shelf_cabinet_code', 'like', "%{$search}%");
+                        ->orWhere('code', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
                 });
             })
             ->orderBy('name');

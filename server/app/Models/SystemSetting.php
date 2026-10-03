@@ -44,13 +44,13 @@ class SystemSetting extends Model
     }
 
     /* ------------------------------------------------------------------ */
-    /*  In-process cache for fast repeated lookups                         */
+    /*  In-process and Redis/File cache for fast repeated lookups         */
     /* ------------------------------------------------------------------ */
 
     protected static array $settingsCache = [];
 
     /**
-     * Retrieve a typed setting value from the database, with in-process caching.
+     * Retrieve a typed setting value from cache/database.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -59,18 +59,20 @@ class SystemSetting extends Model
         }
 
         try {
-            $setting = static::where('key', $key)->first();
-            if (! $setting) {
-                return $default;
-            }
+            $value = \Illuminate\Support\Facades\Cache::remember('sys_setting_' . $key, 3600, function () use ($key, $default) {
+                $setting = static::where('key', $key)->first();
+                if (! $setting) {
+                    return $default;
+                }
 
-            $value = match ($setting->type) {
-                'integer', 'int'   => (int) $setting->value,
-                'boolean', 'bool'  => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
-                'json', 'array'    => json_decode($setting->value, true),
-                'float', 'double'  => (float) $setting->value,
-                default            => $setting->value,
-            };
+                return match ($setting->type) {
+                    'integer', 'int'   => (int) $setting->value,
+                    'boolean', 'bool'  => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
+                    'json', 'array'    => json_decode($setting->value, true),
+                    'float', 'double'  => (float) $setting->value,
+                    default            => $setting->value,
+                };
+            });
 
             static::$settingsCache[$key] = $value;
             return $value;
@@ -82,11 +84,24 @@ class SystemSetting extends Model
     public static function flushCache(): void
     {
         static::$settingsCache = [];
+        try {
+            \Illuminate\Support\Facades\Cache::flush();
+        } catch (\Throwable) {}
     }
 
     protected static function booted(): void
     {
-        static::saved(fn () => static::flushCache());
-        static::deleted(fn () => static::flushCache());
+        static::saved(function ($setting) {
+            static::$settingsCache = [];
+            try {
+                \Illuminate\Support\Facades\Cache::forget('sys_setting_' . $setting->key);
+            } catch (\Throwable) {}
+        });
+        static::deleted(function ($setting) {
+            static::$settingsCache = [];
+            try {
+                \Illuminate\Support\Facades\Cache::forget('sys_setting_' . $setting->key);
+            } catch (\Throwable) {}
+        });
     }
 }

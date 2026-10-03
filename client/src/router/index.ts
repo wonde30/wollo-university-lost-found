@@ -28,12 +28,18 @@ router.beforeEach(async (to) => {
   }
 
   // --- Guest guard: redirect authenticated users away from login/register ---
-  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+  const requiresGuest = to.matched.some(record => record.meta.requiresGuest)
+  if (requiresGuest && authStore.isAuthenticated) {
     return { path: authStore.dashboardRoute }
   }
 
   // --- Dynamic Role, Capability & Permission Guard ---
-  const isProtected = to.meta.requiresAuth || to.meta.permission || to.meta.capability || (to.meta.roles && (to.meta.roles as string[]).length > 0)
+  const isProtected = to.matched.some(record =>
+    record.meta.requiresAuth ||
+    record.meta.permission ||
+    record.meta.capability ||
+    (record.meta.roles && (record.meta.roles as string[]).length > 0)
+  )
 
   if (isProtected) {
     if (!authStore.isAuthenticated || !authStore.user?.role) {
@@ -46,16 +52,17 @@ router.beforeEach(async (to) => {
     }
 
     // 1. Explicit dynamic permission requirement (highest specificity)
-    if (to.meta.permission) {
-      const perm = to.meta.permission as string
-      if (!authStore.can(perm)) {
+    const requiredPermission = (to.meta.permission as string) || (to.matched.find(r => r.meta.permission)?.meta.permission as string)
+    if (requiredPermission) {
+      if (!authStore.can(requiredPermission)) {
         return { name: ROUTE_NAMES.FORBIDDEN }
       }
     }
 
     // 2. General portal capability requirement
-    if (to.meta.capability) {
-      const cap = to.meta.capability as 'admin' | 'staff' | 'student'
+    const requiredCapability = to.meta.capability || to.matched.find(r => r.meta.capability)?.meta.capability
+    if (requiredCapability) {
+      const cap = requiredCapability as 'admin' | 'staff' | 'student'
       if (cap === 'admin' && !authStore.canAccessAdminPortal) {
         return { name: ROUTE_NAMES.FORBIDDEN }
       }
@@ -68,8 +75,8 @@ router.beforeEach(async (to) => {
     }
 
     // 3. Fallback role check (if route explicitly demands a specific built-in role and no explicit permission was given)
-    if (to.meta.roles && (to.meta.roles as string[]).length > 0 && !to.meta.permission && !to.meta.capability) {
-      const requiredRoles = to.meta.roles as string[]
+    const requiredRoles = (to.meta.roles as string[]) || (to.matched.find(r => r.meta.roles)?.meta.roles as string[])
+    if (requiredRoles && requiredRoles.length > 0 && !requiredPermission && !requiredCapability) {
       if (!requiredRoles.includes(authStore.user.role)) {
         return { name: ROUTE_NAMES.FORBIDDEN }
       }

@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth.store'
 import { useSettingsStore } from '@/stores/settings.store'
+import { t } from '@/i18n'
 import AppButton from '@/components/ui/AppButton.vue'
 import { FilePlus2, PackagePlus } from 'lucide-vue-next'
 
@@ -42,36 +43,36 @@ function handleFoundClick() {
 
     <div class="relative z-10 max-w-3xl mx-auto space-y-5">
       <h2 id="cta-heading" class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-sm">
-        Lost or Found Something?
+        {{ t('home.finalCta.title') }}
       </h2>
 
       <p class="text-xs sm:text-sm text-slate-200/90 max-w-lg mx-auto leading-relaxed">
-        Help us reunite items with their rightful owners across {{ settingsStore.institutionName }}.
+        {{ t('home.finalCta.subtitle', { institution: settingsStore.institutionName }) }}
       </p>
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
         <AppButton
           variant="gold"
           size="lg"
-          class="w-full sm:w-auto font-bold border-0 shadow-lg shadow-black/30"
+          class="w-full sm:w-auto font-bold border-0 shadow-lg shadow-black/30 transition-all transform hover:-translate-y-0.5"
           @click="handleLostClick"
         >
           <template #icon-left>
             <FilePlus2 class="h-4 w-4 mr-1" />
           </template>
-          Report Lost Item
+          {{ t('home.finalCta.reportLost') }}
         </AppButton>
 
         <AppButton
           variant="outline-white"
           size="lg"
-          class="w-full sm:w-auto font-bold border-white/40 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm shadow-md"
+          class="w-full sm:w-auto font-bold border-white/40 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm shadow-md transition-all transform hover:-translate-y-0.5"
           @click="handleFoundClick"
         >
           <template #icon-left>
             <PackagePlus class="h-4 w-4 mr-1" />
           </template>
-          Report Found Item
+          {{ t('home.finalCta.reportFound') }}
         </AppButton>
       </div>
     </div>

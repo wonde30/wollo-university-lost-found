@@ -6,6 +6,7 @@ namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -23,6 +24,8 @@ class UserResource extends JsonResource
             'role_id'              => $this->role_id,
             'language'             => $this->language,
             'is_active'            => $this->is_active,
+            'profile_photo'        => $this->profile_photo,
+            'profile_photo_url'    => $this->profile_photo ? Storage::disk('public')->url($this->profile_photo) : null,
             // Only resolve permission names when the relation was eager-loaded.
             // Without this guard, each user in a paginated list triggers 3 extra
             // DB queries → N*3 queries eliminated for the /admin/users list endpoint.

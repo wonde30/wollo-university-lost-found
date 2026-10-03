@@ -25,11 +25,7 @@ class SendClaimDecisionNotification implements ShouldQueue
         $claim = $this->claim->loadMissing(['item']);
         $item  = $claim->item;
 
-        $type    = $this->decision === 'approved' ? 'claim_approved' : 'claim_rejected';
-        $message = $this->decision === 'approved'
-            ? "Great news! Your claim for \"{$item->title}\" (Ref: {$item->reference_code}) has been approved. Please visit the security office to collect your item."
-            : "Your claim for \"{$item->title}\" (Ref: {$item->reference_code}) was not approved."
-              . ($claim->review_note ? " Reason: {$claim->review_note}" : '');
+        $type = $this->decision === 'approved' ? 'claim_approved' : 'claim_rejected';
 
         $notificationService->send(new NotificationData(
             userId:  $claim->claimant_id,
@@ -41,7 +37,6 @@ class SendClaimDecisionNotification implements ShouldQueue
                 'title'          => $item->title,
                 'decision'       => $this->decision,
                 'review_note'    => $claim->review_note,
-                'message'        => $message,
             ]
         ));
 
